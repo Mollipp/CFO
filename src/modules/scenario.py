@@ -6,6 +6,7 @@ import streamlit as st
 from src import charts
 from src.engines import calculate_scenario
 from src.hud import investigate_url, module_url, render_html
+from src.news_partner import signal_to_scenario_kwargs
 
 DEFAULT_INPUTS = {
     "ecb": -50,
@@ -24,16 +25,57 @@ METHOD_CAPTION = (
 )
 
 
+def _signal_apply_panel():
+    from src.modules.news import load_extracted_signals  # deferred — avoids brief→news→scenario→news cycle
+    try:
+        signals = load_extracted_signals()
+    except Exception:
+        return
+    actionable = [s for s in signals if s.get("engine_param") in (
+        "rate_shock_bps", "deposit_outflow_pct",
+    )]
+    if not actionable:
+        return
+
+    render_html("""<div class="module-code" style="margin-top:1rem;">Overnight news signals</div>""")
+    applied = st.session_state.get("applied_signal")
+    for i, sig in enumerate(actionable):
+        article = sig.get("_article", {})
+        entity = sig.get("entity") or "Signal"
+        quote = sig.get("quote") or ""
+        source = article.get("source", "")
+        is_active = applied is not None and applied is sig
+        label = f"{entity} — *\"{quote}\"*" + (f" ({source})" if source else "")
+        col_text, col_btn = st.columns([4, 1])
+        with col_text:
+            st.markdown(label)
+        with col_btn:
+            btn_label = "Applied" if is_active else "Apply"
+            if st.button(btn_label, key=f"scenario_apply_{i}", disabled=is_active):
+                kwargs = signal_to_scenario_kwargs(sig)
+                new_inputs = dict(st.session_state.get("scenario_inputs", DEFAULT_INPUTS))
+                if "rate_shock_bps" in kwargs:
+                    new_inputs["ecb"] = max(-100, min(100, int(kwargs["rate_shock_bps"])))
+                if "deposit_outflow_pct" in kwargs:
+                    outflow = float(kwargs["deposit_outflow_pct"])
+                    new_inputs["deposit"] = max(-10.0, min(5.0, -abs(outflow)))
+                st.session_state["scenario_inputs"] = new_inputs
+                st.session_state["applied_signal"] = sig
+                st.rerun()
+
+
 def _controls(s):
     """Assumption form. Returns the submitted inputs, or None if not submitted."""
     render_html("""<div class="module-code">Scenario assumptions</div>""")
+
+    current = st.session_state.get("scenario_inputs", DEFAULT_INPUTS)
 
     with st.form("scenario_form"):
         ecb_shock = st.slider(
             "ECB rate shock",
             min_value=-100,
             max_value=100,
-            value=DEFAULT_INPUTS["ecb"],
+            value=current["ecb"],
             step=5,
             format="%d bps",
         )
@@ -41,7 +83,7 @@ def _controls(s):
             "Deposit balance shock",
             min_value=-10.0,
             max_value=5.0,
-            value=DEFAULT_INPUTS["deposit"],
+            value=current["deposit"],
             step=0.5,
             format="%.1f%%",
         )
@@ -49,7 +91,7 @@ def _controls(s):
             "Scenario horizon",
             min_value=30,
             max_value=365,
-            value=DEFAULT_INPUTS["horizon"],
+            value=current["horizon"],
             step=5,
             format="%d days",
         )
@@ -59,7 +101,7 @@ def _controls(s):
                 "Loan pass-through to ECB shock",
                 min_value=0,
                 max_value=100,
-                value=DEFAULT_INPUTS["loan_beta"],
+                value=current["loan_beta"],
                 step=5,
                 format="%d%%",
             )
@@ -67,7 +109,7 @@ def _controls(s):
                 "Deposit pass-through to ECB shock",
                 min_value=0,
                 max_value=100,
-                value=DEFAULT_INPUTS["deposit_beta"],
+                value=current["deposit_beta"],
                 step=5,
                 format="%d%%",
             )
@@ -75,12 +117,19 @@ def _controls(s):
                 "Replacement funding rate (%)",
                 min_value=0.0,
                 max_value=10.0,
-                value=DEFAULT_INPUTS["replacement_rate"],
+                value=current["replacement_rate"],
                 step=0.05,
                 format="%.2f",
             )
 
         submitted = st.form_submit_button("Run scenario", width="stretch")
+
+    if st.button("Reset to defaults", key="reset_scenario"):
+        st.session_state["scenario_inputs"] = dict(DEFAULT_INPUTS)
+        st.session_state.pop("applied_signal", None)
+        st.rerun()
+
+    _signal_apply_panel()
 
     render_html(
         f"""

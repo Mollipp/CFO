@@ -84,7 +84,7 @@ Verified dashboard facts:
 """
 
 
-def generate_gemini_response(user_question: str, facts: dict, model: str = "gemini-3.6-flash") -> str:
+def generate_gemini_response(user_question: str, facts: dict, model: str = "gemini-3.5-flash-lite") -> str:
     client = get_gemini_client()
     prompt = build_executive_prompt(user_question, facts)
     response = client.models.generate_content(model=model, contents=prompt)

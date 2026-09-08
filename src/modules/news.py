@@ -164,6 +164,7 @@ def _render_signal_workbench():
                     if applied:
                         st.session_state["scenario_inputs"] = inputs
                         st.session_state["scenario_from_signal"] = ", ".join(applied)
+                        st.session_state["applied_signal"] = signal
                         navigate_to_module("scenario")
                     else:
                         st.warning(
