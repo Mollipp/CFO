@@ -20,11 +20,15 @@ def generate_bank_history(months: int = 48, seed: int = 42) -> pd.DataFrame:
     hqla = 78_000
     securities = 95_000
     wholesale_funding = 70_000
-    cet1_capital = 31_500
+    cet1_capital = 26_000
     at1_capital = 5_500
     tier2_capital = 4_000
-    operating_costs = 1_060
+    operating_costs = 390
 
+
+    # Post-tax distribution assumptions.
+    tax_rate = 0.25
+    dividend_payout_ratio = 0.60
 
     # Interest-rate and credit-risk starting assumptions
     ecb_rate = 3.50
@@ -125,7 +129,13 @@ def generate_bank_history(months: int = 48, seed: int = 42) -> pd.DataFrame:
         )
 
         pre_tax_profit = operating_income - operating_costs - monthly_provision_charge
-        retained_earnings = max(pre_tax_profit * 0.70, -500)
+
+        # Losses are not sheltered by tax; profits are taxed and partly paid out.
+        tax_expense = max(pre_tax_profit, 0) * tax_rate
+        net_profit = pre_tax_profit - tax_expense
+        dividends = max(net_profit, 0) * dividend_payout_ratio
+        retained_earnings = net_profit - dividends
+
         cet1_capital += retained_earnings
 
         total_assets = loans + hqla + securities + 55_000
@@ -155,9 +165,15 @@ def generate_bank_history(months: int = 48, seed: int = 42) -> pd.DataFrame:
                 "avg_deposit_cost_pct": avg_deposit_cost,
                 "nii": nii,
                 "fee_income": fee_income,
+                "other_income": other_income,
                 "operating_income": operating_income,
                 "operating_costs": operating_costs,
+                "provision_charge": monthly_provision_charge,
                 "pre_tax_profit": pre_tax_profit,
+                "tax_expense": tax_expense,
+                "net_profit": net_profit,
+                "dividends": dividends,
+                "retained_earnings": retained_earnings,
                 "total_assets": total_assets,
                 "total_liabilities": total_liabilities,
             }

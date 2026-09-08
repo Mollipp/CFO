@@ -114,12 +114,12 @@ def render_signal_apply_panel(actionable_signals: list[dict]) -> None:
             with col_text:
                 st.markdown(f"**{summary}** \n*\"{quote}\"* - {source}")
             with col_btn:
-                if st.button("Apply", key=f"apply_signal_{i}", use_container_width=True):
+                if st.button("Apply", key=f"apply_signal_{i}", width="stretch"):
                     st.session_state["_pending_signal_kwargs"] = signal_to_scenario_kwargs(sig)
                     st.session_state["_pending_applied_signal"] = sig
                     st.rerun()
 
-    if st.button("Reset scenario", use_container_width=True):
+    if st.button("Reset scenario", width="stretch"):
         st.session_state["_pending_reset"] = True
         st.rerun()
 

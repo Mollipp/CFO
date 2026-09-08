@@ -77,9 +77,11 @@ def calculate_metrics(df: pd.DataFrame) -> pd.DataFrame:
         100 * result["provisions"] / result["gca"]
     )
 
-    # This represents the month-on-month change in total allowance balance.
-    # A real bank would use monthly IFRS 9 impairment charge directly.
-    result["provision_charge"] = result["provisions"].diff().clip(lower=0)
+    # The generator emits the monthly IFRS 9 impairment charge directly. Fall
+    # back to the month-on-month change in the allowance balance when a caller
+    # passes raw data that predates that column.
+    if "provision_charge" not in result.columns:
+        result["provision_charge"] = result["provisions"].diff().clip(lower=0)
 
     result["cost_of_risk_bps"] = (
         10_000 * 12 * result["provision_charge"] / result["loans"]
