@@ -1,0 +1,9 @@
+bank_id,bank_name,home_market,reported_return_pct,return_metric_type,cet1_ratio_pct,cost_income_ratio_pct,profitability_peer_median_pct,cet1_peer_median_pct,cost_income_peer_median_pct,profitability_vs_peer_median_pp,cet1_vs_peer_median_pp,efficiency_vs_peer_median_pp,positioning_quadrant,comparison_caveat
+ABN,ABN AMRO,Netherlands,8.7,ROE,15.4,,10.25,14.45,57.0,-1.55,0.95,,Capital strength / return gap,Directional peer benchmark only.
+ING,ING,Netherlands / Europe,13.2,ROE,13.1,54.6,10.25,14.45,57.0,2.95,-1.35,2.4,High return / lower capital,Directional peer benchmark only.
+RABO,Rabobank,Netherlands,9.1,ROE,20.3,54.5,10.25,14.45,57.0,-1.15,5.85,2.5,Capital strength / return gap,Directional peer benchmark only.
+DB,Deutsche Bank,Germany / Global,10.3,RoTE,14.2,64.0,10.25,14.45,57.0,0.05,-0.25,-7.0,High return / lower capital,Directional peer benchmark only.
+CBK,Commerzbank,Germany,8.7,Net RoTE,14.7,57.0,10.25,14.45,57.0,-1.55,0.25,0.0,Capital strength / return gap,Directional peer benchmark only.
+BNP,BNP Paribas,France / Belgium / Europe,11.6,RoTE,12.6,61.2,10.25,14.45,57.0,1.35,-1.85,-4.2,High return / lower capital,Directional peer benchmark only.
+SG,Societe Generale,France / Europe,10.2,RoTE,13.5,63.6,10.25,14.45,57.0,-0.05,-0.95,-6.6,Return & capital improvement zone,Directional peer benchmark only.
+KBC,KBC Group,Belgium / Central Europe,15.0,ROE,14.9,46.0,10.25,14.45,57.0,4.75,0.45,11.0,Strong profitability & capital,Directional peer benchmark only.

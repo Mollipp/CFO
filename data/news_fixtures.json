@@ -1,0 +1,44 @@
+[
+  {
+    "id": "ecb-rate-hike-sep26",
+    "headline": "ECB raises rates 25bps to 3.90% as inflation pressures persist",
+    "published": "2026-09-05",
+    "source": "Reuters",
+    "body": "The Governing Council of the European Central Bank raised its three key interest rates by 25 basis points at Thursday's policy meeting, effective 11 September 2026. The deposit facility rate now stands at 3.90%. President Christine Lagarde said the Council remained data-dependent but noted that core HICP at 3.2% warranted continued monetary restriction. Markets had priced a 70% probability of the move ahead of the decision."
+  },
+  {
+    "id": "ecb-emergency-cut-jan26",
+    "headline": "ECB cuts rates by 50 basis points in emergency response to recession fears",
+    "published": "2026-01-23",
+    "source": "Financial Times",
+    "body": "The European Central Bank cut all three key interest rates by 50 basis points on Thursday following an emergency teleconference of the Governing Council. The deposit facility rate falls to 2.00%. The Council cited a sharper-than-expected contraction in Eurozone GDP of -0.8% in Q4 2025 and deteriorating credit conditions across the periphery as grounds for the exceptional inter-meeting action."
+  },
+  {
+    "id": "dutch-bank-deposit-outflow",
+    "headline": "Dutch retail bank sees 8 percent deposit outflow amid competition from state savings bonds",
+    "published": "2026-08-14",
+    "source": "De Telegraaf",
+    "body": "A major Dutch retail bank disclosed on Wednesday that 8 percent of its retail deposit base had migrated to Dutch state savings bonds over the past quarter, driven by the government's elevated 3.5% savings rate. The bank's CFO said the institution was reviewing its deposit-pricing strategy to stabilise funding and that asset sales were not yet under consideration."
+  },
+  {
+    "id": "sme-credit-deterioration",
+    "headline": "European SME non-performing loans rise 1.2 percentage points on persistent energy costs",
+    "published": "2026-07-30",
+    "source": "Bloomberg",
+    "body": "Non-performing loans in the European SME segment rose to 4.8% of the portfolio in Q2 2026, a 1.2 percentage-point increase from the prior quarter. Analysts at the EBA attribute the deterioration to persistent energy-cost inflation squeezing SME operating margins. The share of outright defaulted exposures classified as Stage 3 under IFRS 9 accounts for the full 1.2 percentage-point increase."
+  },
+  {
+    "id": "eurozone-cpi-aug26",
+    "headline": "Eurozone HICP inflation edges down to 2.7% in August on energy base effects",
+    "published": "2026-09-01",
+    "source": "Eurostat",
+    "body": "Flash estimates released by Eurostat show Eurozone headline HICP inflation at 2.7% year-on-year in August 2026, down from 2.9% in July. Energy prices contributed -0.4 percentage points to the decline, while services inflation remained sticky at 4.1%. Economists broadly described the print as in line with ECB staff projections and insufficient on its own to trigger a change in the policy path."
+  },
+  {
+    "id": "ecb-hawk-speech-no-signal",
+    "headline": "ECB policymaker urges vigilance but signals no imminent policy change",
+    "published": "2026-09-03",
+    "source": "ECB Wire",
+    "body": "Executive Board member Isabel Schnabel said in a speech in Frankfurt that the ECB must remain vigilant against second-round inflation effects but stopped short of signalling any imminent policy change. 'We are watching the data carefully and will act as warranted,' she said. Markets interpreted the remarks as broadly neutral. No vote or formal policy decision is scheduled before the October 2026 Governing Council meeting."
+  }
+]

@@ -1,0 +1,245 @@
+news_id,published_date,country,country_code,bank_exposure_share_pct,geographic_relevance_weight,geo_impact_score,map_impact_level,impact_direction,signed_geo_score,exposure_reason
+NEWS_001,2026-01-14,Netherlands,NL,45.4,1.0,58.3,MEDIUM,Negative,-58.3,Direct or broad geographic relevance
+NEWS_001,2026-01-14,Germany,DE,22.45,1.0,49.4,MEDIUM,Negative,-49.4,Direct or broad geographic relevance
+NEWS_001,2026-01-14,France,FR,18.53,1.0,47.9,MEDIUM,Negative,-47.9,Direct or broad geographic relevance
+NEWS_001,2026-01-14,Belgium,BE,13.62,1.0,46.0,MEDIUM,Negative,-46.0,Direct or broad geographic relevance
+NEWS_002,2026-01-22,Netherlands,NL,45.4,1.0,67.2,HIGH,Negative,-67.2,Direct or broad geographic relevance
+NEWS_002,2026-01-22,Germany,DE,22.45,1.0,57.0,MEDIUM,Negative,-57.0,Direct or broad geographic relevance
+NEWS_002,2026-01-22,France,FR,18.53,1.0,55.3,MEDIUM,Negative,-55.3,Direct or broad geographic relevance
+NEWS_002,2026-01-22,Belgium,BE,13.62,1.0,53.1,MEDIUM,Negative,-53.1,Direct or broad geographic relevance
+NEWS_003,2026-02-04,Netherlands,NL,45.4,1.0,80.4,HIGH,Negative,-80.4,Direct or broad geographic relevance
+NEWS_003,2026-02-04,Germany,DE,22.45,1.0,68.2,HIGH,Negative,-68.2,Direct or broad geographic relevance
+NEWS_003,2026-02-04,France,FR,18.53,1.0,66.1,HIGH,Negative,-66.1,Direct or broad geographic relevance
+NEWS_003,2026-02-04,Belgium,BE,13.62,1.0,63.5,HIGH,Negative,-63.5,Direct or broad geographic relevance
+NEWS_004,2026-02-05,Netherlands,NL,45.4,1.0,89.1,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_004,2026-02-05,Germany,DE,22.45,1.0,75.6,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_004,2026-02-05,France,FR,18.53,1.0,73.3,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_004,2026-02-05,Belgium,BE,13.62,1.0,70.4,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_005,2026-02-05,Netherlands,NL,45.4,1.0,60.1,HIGH,Positive,60.1,Direct or broad geographic relevance
+NEWS_005,2026-02-05,Germany,DE,22.45,1.0,51.0,MEDIUM,Positive,51.0,Direct or broad geographic relevance
+NEWS_005,2026-02-05,France,FR,18.53,1.0,49.4,MEDIUM,Positive,49.4,Direct or broad geographic relevance
+NEWS_005,2026-02-05,Belgium,BE,13.62,1.0,47.4,MEDIUM,Positive,47.4,Direct or broad geographic relevance
+NEWS_006,2026-02-18,Netherlands,NL,45.4,1.0,27.4,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_006,2026-02-18,Germany,DE,22.45,1.0,23.2,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_006,2026-02-18,France,FR,18.53,1.0,22.5,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_006,2026-02-18,Belgium,BE,13.62,1.0,21.6,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_007,2026-02-25,Netherlands,NL,45.4,1.0,67.3,HIGH,Negative,-67.3,Direct or broad geographic relevance
+NEWS_007,2026-02-25,Germany,DE,22.45,1.0,57.1,MEDIUM,Negative,-57.1,Direct or broad geographic relevance
+NEWS_007,2026-02-25,France,FR,18.53,1.0,55.4,MEDIUM,Negative,-55.4,Direct or broad geographic relevance
+NEWS_007,2026-02-25,Belgium,BE,13.62,1.0,53.2,MEDIUM,Negative,-53.2,Direct or broad geographic relevance
+NEWS_008,2026-03-03,Netherlands,NL,45.4,1.0,59.8,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_008,2026-03-03,Germany,DE,22.45,1.0,50.7,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_008,2026-03-03,France,FR,18.53,1.0,49.2,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_008,2026-03-03,Belgium,BE,13.62,1.0,47.2,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_009,2026-03-18,Netherlands,NL,45.4,1.0,47.5,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_009,2026-03-18,Germany,DE,22.45,1.0,40.3,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_009,2026-03-18,France,FR,18.53,1.0,39.1,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_009,2026-03-18,Belgium,BE,13.62,1.0,37.5,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_010,2026-03-19,Netherlands,NL,45.4,1.0,93.1,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_010,2026-03-19,Germany,DE,22.45,1.0,78.9,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_010,2026-03-19,France,FR,18.53,1.0,76.5,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_010,2026-03-19,Belgium,BE,13.62,1.0,73.5,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_011,2026-03-31,Netherlands,NL,45.4,1.0,84.3,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_011,2026-03-31,Germany,DE,22.45,1.0,71.5,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_011,2026-03-31,France,FR,18.53,1.0,69.3,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_011,2026-03-31,Belgium,BE,13.62,1.0,66.6,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_012,2026-04-16,Netherlands,NL,45.4,1.0,69.3,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_012,2026-04-16,Germany,DE,22.45,1.0,58.8,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_012,2026-04-16,France,FR,18.53,1.0,57.0,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_012,2026-04-16,Belgium,BE,13.62,1.0,54.7,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_013,2026-04-29,Netherlands,NL,45.4,0.2,14.0,LOW,Negative,-14.0,Limited cross-border spillover
+NEWS_013,2026-04-29,Germany,DE,22.45,1.0,59.2,MEDIUM,Negative,-59.2,Direct or broad geographic relevance
+NEWS_013,2026-04-29,France,FR,18.53,0.15,8.6,LOW,Negative,-8.6,Limited cross-border spillover
+NEWS_013,2026-04-29,Belgium,BE,13.62,0.14,7.7,LOW,Negative,-7.7,Limited cross-border spillover
+NEWS_014,2026-04-30,Netherlands,NL,45.4,1.0,73.9,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_014,2026-04-30,Germany,DE,22.45,0.18,11.3,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_014,2026-04-30,France,FR,18.53,0.12,7.3,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_014,2026-04-30,Belgium,BE,13.62,0.2,11.7,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_015,2026-04-30,Netherlands,NL,45.4,0.15,10.9,LOW,Negative,-10.9,Limited cross-border spillover
+NEWS_015,2026-04-30,Germany,DE,22.45,0.15,9.3,LOW,Negative,-9.3,Limited cross-border spillover
+NEWS_015,2026-04-30,France,FR,18.53,1.0,60.0,HIGH,Negative,-60.0,Direct or broad geographic relevance
+NEWS_015,2026-04-30,Belgium,BE,13.62,0.28,16.1,LOW,Negative,-16.1,Meaningful regional spillover
+NEWS_016,2026-04-30,Netherlands,NL,45.4,0.2,13.8,LOW,Positive,13.8,Limited cross-border spillover
+NEWS_016,2026-04-30,Germany,DE,22.45,1.0,58.6,MEDIUM,Positive,58.6,Direct or broad geographic relevance
+NEWS_016,2026-04-30,France,FR,18.53,0.15,8.5,LOW,Positive,8.5,Limited cross-border spillover
+NEWS_016,2026-04-30,Belgium,BE,13.62,0.14,7.6,LOW,Positive,7.6,Limited cross-border spillover
+NEWS_017,2026-04-30,Netherlands,NL,45.4,1.0,90.1,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_017,2026-04-30,Germany,DE,22.45,1.0,76.4,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_017,2026-04-30,France,FR,18.53,1.0,74.1,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_017,2026-04-30,Belgium,BE,13.62,1.0,71.2,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_018,2026-04-30,Netherlands,NL,45.4,1.0,95.0,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_018,2026-04-30,Germany,DE,22.45,1.0,80.6,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_018,2026-04-30,France,FR,18.53,1.0,78.2,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_018,2026-04-30,Belgium,BE,13.62,1.0,75.1,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_019,2026-04-30,Netherlands,NL,45.4,1.0,63.5,HIGH,Negative,-63.5,Direct or broad geographic relevance
+NEWS_019,2026-04-30,Germany,DE,22.45,1.0,53.9,MEDIUM,Negative,-53.9,Direct or broad geographic relevance
+NEWS_019,2026-04-30,France,FR,18.53,1.0,52.2,MEDIUM,Negative,-52.2,Direct or broad geographic relevance
+NEWS_019,2026-04-30,Belgium,BE,13.62,1.0,50.1,MEDIUM,Negative,-50.1,Direct or broad geographic relevance
+NEWS_020,2026-04-30,Netherlands,NL,45.4,1.0,81.5,HIGH,Negative,-81.5,Direct or broad geographic relevance
+NEWS_020,2026-04-30,Germany,DE,22.45,0.9,62.2,HIGH,Negative,-62.2,Direct or broad geographic relevance
+NEWS_020,2026-04-30,France,FR,18.53,0.18,12.1,LOW,Negative,-12.1,Limited cross-border spillover
+NEWS_020,2026-04-30,Belgium,BE,13.62,0.78,50.2,MEDIUM,Negative,-50.2,Meaningful regional spillover
+NEWS_021,2026-04-30,Netherlands,NL,45.4,0.15,10.3,LOW,Negative,-10.3,Limited cross-border spillover
+NEWS_021,2026-04-30,Germany,DE,22.45,0.15,8.8,LOW,Negative,-8.8,Limited cross-border spillover
+NEWS_021,2026-04-30,France,FR,18.53,1.0,56.6,MEDIUM,Negative,-56.6,Direct or broad geographic relevance
+NEWS_021,2026-04-30,Belgium,BE,13.62,0.28,15.2,LOW,Negative,-15.2,Meaningful regional spillover
+NEWS_022,2026-04-30,Netherlands,NL,45.4,0.18,12.9,LOW,Negative,-12.9,Limited cross-border spillover
+NEWS_022,2026-04-30,Germany,DE,22.45,0.15,9.1,LOW,Negative,-9.1,Limited cross-border spillover
+NEWS_022,2026-04-30,France,FR,18.53,1.0,59.0,MEDIUM,Negative,-59.0,Direct or broad geographic relevance
+NEWS_022,2026-04-30,Belgium,BE,13.62,0.82,46.5,MEDIUM,Negative,-46.5,Direct or broad geographic relevance
+NEWS_023,2026-05-08,Netherlands,NL,45.4,0.2,14.8,LOW,Negative,-14.8,Limited cross-border spillover
+NEWS_023,2026-05-08,Germany,DE,22.45,1.0,62.7,HIGH,Negative,-62.7,Direct or broad geographic relevance
+NEWS_023,2026-05-08,France,FR,18.53,0.15,9.1,LOW,Negative,-9.1,Limited cross-border spillover
+NEWS_023,2026-05-08,Belgium,BE,13.62,0.14,8.2,LOW,Negative,-8.2,Limited cross-border spillover
+NEWS_024,2026-05-13,Netherlands,NL,45.4,1.0,85.1,HIGH,Negative,-85.1,Direct or broad geographic relevance
+NEWS_024,2026-05-13,Germany,DE,22.45,0.18,13.0,LOW,Negative,-13.0,Limited cross-border spillover
+NEWS_024,2026-05-13,France,FR,18.53,0.12,8.4,LOW,Negative,-8.4,Limited cross-border spillover
+NEWS_024,2026-05-13,Belgium,BE,13.62,0.2,13.5,LOW,Negative,-13.5,Limited cross-border spillover
+NEWS_025,2026-05-22,Netherlands,NL,45.4,1.0,54.2,MEDIUM,Negative,-54.2,Direct or broad geographic relevance
+NEWS_025,2026-05-22,Germany,DE,22.45,1.0,46.0,MEDIUM,Negative,-46.0,Direct or broad geographic relevance
+NEWS_025,2026-05-22,France,FR,18.53,1.0,44.6,MEDIUM,Negative,-44.6,Direct or broad geographic relevance
+NEWS_025,2026-05-22,Belgium,BE,13.62,1.0,42.8,MEDIUM,Negative,-42.8,Direct or broad geographic relevance
+NEWS_026,2026-05-29,Netherlands,NL,45.4,0.15,11.9,LOW,Negative,-11.9,Limited cross-border spillover
+NEWS_026,2026-05-29,Germany,DE,22.45,0.15,10.1,LOW,Negative,-10.1,Limited cross-border spillover
+NEWS_026,2026-05-29,France,FR,18.53,1.0,65.4,HIGH,Negative,-65.4,Direct or broad geographic relevance
+NEWS_026,2026-05-29,Belgium,BE,13.62,0.28,17.6,LOW,Negative,-17.6,Meaningful regional spillover
+NEWS_027,2026-06-02,Netherlands,NL,45.4,1.0,93.1,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_027,2026-06-02,Germany,DE,22.45,1.0,78.9,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_027,2026-06-02,France,FR,18.53,1.0,76.5,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_027,2026-06-02,Belgium,BE,13.62,1.0,73.5,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_028,2026-06-04,Netherlands,NL,45.4,1.0,68.2,HIGH,Positive,68.2,Direct or broad geographic relevance
+NEWS_028,2026-06-04,Germany,DE,22.45,1.0,57.8,MEDIUM,Positive,57.8,Direct or broad geographic relevance
+NEWS_028,2026-06-04,France,FR,18.53,1.0,56.1,MEDIUM,Positive,56.1,Direct or broad geographic relevance
+NEWS_028,2026-06-04,Belgium,BE,13.62,1.0,53.8,MEDIUM,Positive,53.8,Direct or broad geographic relevance
+NEWS_029,2026-06-08,Netherlands,NL,45.4,1.0,56.0,MEDIUM,Positive,56.0,Direct or broad geographic relevance
+NEWS_029,2026-06-08,Germany,DE,22.45,1.0,47.6,MEDIUM,Positive,47.6,Direct or broad geographic relevance
+NEWS_029,2026-06-08,France,FR,18.53,1.0,46.1,MEDIUM,Positive,46.1,Direct or broad geographic relevance
+NEWS_029,2026-06-08,Belgium,BE,13.62,1.0,44.3,MEDIUM,Positive,44.3,Direct or broad geographic relevance
+NEWS_030,2026-06-10,Netherlands,NL,45.4,1.0,29.4,LOW,Positive,29.4,Direct or broad geographic relevance
+NEWS_030,2026-06-10,Germany,DE,22.45,0.18,4.5,LOW,Positive,4.5,Limited cross-border spillover
+NEWS_030,2026-06-10,France,FR,18.53,0.12,2.9,LOW,Positive,2.9,Limited cross-border spillover
+NEWS_030,2026-06-10,Belgium,BE,13.62,0.2,4.7,LOW,Positive,4.7,Limited cross-border spillover
+NEWS_031,2026-06-11,Netherlands,NL,45.4,1.0,99.0,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_031,2026-06-11,Germany,DE,22.45,1.0,84.0,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_031,2026-06-11,France,FR,18.53,1.0,81.4,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_031,2026-06-11,Belgium,BE,13.62,1.0,78.2,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_032,2026-06-18,Netherlands,NL,45.4,1.0,76.6,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_032,2026-06-18,Germany,DE,22.45,1.0,65.0,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_032,2026-06-18,France,FR,18.53,1.0,63.0,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_032,2026-06-18,Belgium,BE,13.62,1.0,60.5,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_033,2026-06-18,Netherlands,NL,45.4,1.0,55.8,MEDIUM,Positive,55.8,Direct or broad geographic relevance
+NEWS_033,2026-06-18,Germany,DE,22.45,1.0,47.3,MEDIUM,Positive,47.3,Direct or broad geographic relevance
+NEWS_033,2026-06-18,France,FR,18.53,1.0,45.9,MEDIUM,Positive,45.9,Direct or broad geographic relevance
+NEWS_033,2026-06-18,Belgium,BE,13.62,1.0,44.0,MEDIUM,Positive,44.0,Direct or broad geographic relevance
+NEWS_034,2026-06-24,Netherlands,NL,45.4,1.0,37.6,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_034,2026-06-24,Germany,DE,22.45,1.0,31.9,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_034,2026-06-24,France,FR,18.53,1.0,30.9,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_034,2026-06-24,Belgium,BE,13.62,1.0,29.7,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_035,2026-07-01,Netherlands,NL,45.4,1.0,73.3,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_035,2026-07-01,Germany,DE,22.45,1.0,62.2,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_035,2026-07-01,France,FR,18.53,1.0,60.3,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_035,2026-07-01,Belgium,BE,13.62,1.0,57.9,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_036,2026-07-03,Netherlands,NL,45.4,1.0,48.1,MEDIUM,Positive,48.1,Direct or broad geographic relevance
+NEWS_036,2026-07-03,Germany,DE,22.45,1.0,40.8,MEDIUM,Positive,40.8,Direct or broad geographic relevance
+NEWS_036,2026-07-03,France,FR,18.53,1.0,39.6,MEDIUM,Positive,39.6,Direct or broad geographic relevance
+NEWS_036,2026-07-03,Belgium,BE,13.62,1.0,38.0,MEDIUM,Positive,38.0,Direct or broad geographic relevance
+NEWS_037,2026-07-17,Netherlands,NL,45.4,1.0,51.5,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_037,2026-07-17,Germany,DE,22.45,1.0,43.7,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_037,2026-07-17,France,FR,18.53,1.0,42.3,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_037,2026-07-17,Belgium,BE,13.62,1.0,40.7,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_038,2026-07-17,Netherlands,NL,45.4,1.0,56.4,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_038,2026-07-17,Germany,DE,22.45,1.0,47.8,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_038,2026-07-17,France,FR,18.53,1.0,46.4,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_038,2026-07-17,Belgium,BE,13.62,1.0,44.6,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_039,2026-07-21,Netherlands,NL,45.4,0.15,12.9,LOW,Negative,-12.9,Limited cross-border spillover
+NEWS_039,2026-07-21,Germany,DE,22.45,0.15,11.0,LOW,Negative,-11.0,Limited cross-border spillover
+NEWS_039,2026-07-21,France,FR,18.53,1.0,70.9,HIGH,Negative,-70.9,Direct or broad geographic relevance
+NEWS_039,2026-07-21,Belgium,BE,13.62,0.28,19.1,LOW,Negative,-19.1,Meaningful regional spillover
+NEWS_040,2026-07-22,Netherlands,NL,45.4,1.0,40.2,MEDIUM,Positive,40.2,Direct or broad geographic relevance
+NEWS_040,2026-07-22,Germany,DE,22.45,1.0,34.1,MEDIUM,Positive,34.1,Direct or broad geographic relevance
+NEWS_040,2026-07-22,France,FR,18.53,1.0,33.0,MEDIUM,Positive,33.0,Direct or broad geographic relevance
+NEWS_040,2026-07-22,Belgium,BE,13.62,1.0,31.7,MEDIUM,Positive,31.7,Direct or broad geographic relevance
+NEWS_041,2026-07-22,Netherlands,NL,45.4,0.18,11.3,LOW,Negative,-11.3,Limited cross-border spillover
+NEWS_041,2026-07-22,Germany,DE,22.45,0.15,8.0,LOW,Negative,-8.0,Limited cross-border spillover
+NEWS_041,2026-07-22,France,FR,18.53,1.0,51.8,MEDIUM,Negative,-51.8,Direct or broad geographic relevance
+NEWS_041,2026-07-22,Belgium,BE,13.62,0.82,40.8,MEDIUM,Negative,-40.8,Direct or broad geographic relevance
+NEWS_042,2026-07-23,Netherlands,NL,45.4,1.0,95.0,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_042,2026-07-23,Germany,DE,22.45,1.0,80.6,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_042,2026-07-23,France,FR,18.53,1.0,78.2,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_042,2026-07-23,Belgium,BE,13.62,1.0,75.1,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_043,2026-07-23,Netherlands,NL,45.4,1.0,67.2,HIGH,Negative,-67.2,Direct or broad geographic relevance
+NEWS_043,2026-07-23,Germany,DE,22.45,1.0,57.0,MEDIUM,Negative,-57.0,Direct or broad geographic relevance
+NEWS_043,2026-07-23,France,FR,18.53,1.0,55.2,MEDIUM,Negative,-55.2,Direct or broad geographic relevance
+NEWS_043,2026-07-23,Belgium,BE,13.62,1.0,53.1,MEDIUM,Negative,-53.1,Direct or broad geographic relevance
+NEWS_044,2026-07-24,Netherlands,NL,45.4,0.24,21.4,LOW,Negative,-21.4,Limited cross-border spillover
+NEWS_044,2026-07-24,Germany,DE,22.45,0.12,9.1,LOW,Negative,-9.1,Limited cross-border spillover
+NEWS_044,2026-07-24,France,FR,18.53,0.3,22.0,LOW,Negative,-22.0,Meaningful regional spillover
+NEWS_044,2026-07-24,Belgium,BE,13.62,1.0,70.4,HIGH,Negative,-70.4,Direct or broad geographic relevance
+NEWS_045,2026-07-24,Netherlands,NL,45.4,1.0,31.6,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_045,2026-07-24,Germany,DE,22.45,1.0,26.8,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_045,2026-07-24,France,FR,18.53,1.0,26.0,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_045,2026-07-24,Belgium,BE,13.62,1.0,25.0,LOW,Mixed,0.0,Direct or broad geographic relevance
+NEWS_046,2026-07-29,Netherlands,NL,45.4,0.2,14.7,LOW,Negative,-14.7,Limited cross-border spillover
+NEWS_046,2026-07-29,Germany,DE,22.45,1.0,62.4,HIGH,Negative,-62.4,Direct or broad geographic relevance
+NEWS_046,2026-07-29,France,FR,18.53,0.15,9.1,LOW,Negative,-9.1,Limited cross-border spillover
+NEWS_046,2026-07-29,Belgium,BE,13.62,0.14,8.1,LOW,Negative,-8.1,Limited cross-border spillover
+NEWS_047,2026-07-29,Netherlands,NL,45.4,1.0,45.4,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_047,2026-07-29,Germany,DE,22.45,1.0,38.5,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_047,2026-07-29,France,FR,18.53,1.0,37.3,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_047,2026-07-29,Belgium,BE,13.62,1.0,35.8,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_048,2026-07-30,Netherlands,NL,45.4,1.0,79.4,HIGH,Positive,79.4,Direct or broad geographic relevance
+NEWS_048,2026-07-30,Germany,DE,22.45,1.0,67.3,HIGH,Positive,67.3,Direct or broad geographic relevance
+NEWS_048,2026-07-30,France,FR,18.53,1.0,65.3,HIGH,Positive,65.3,Direct or broad geographic relevance
+NEWS_048,2026-07-30,Belgium,BE,13.62,1.0,62.7,HIGH,Positive,62.7,Direct or broad geographic relevance
+NEWS_049,2026-07-30,Netherlands,NL,45.4,0.2,14.6,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_049,2026-07-30,Germany,DE,22.45,1.0,61.7,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_049,2026-07-30,France,FR,18.53,0.15,9.0,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_049,2026-07-30,Belgium,BE,13.62,0.14,8.0,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_050,2026-07-30,Netherlands,NL,45.4,1.0,86.2,HIGH,Positive,86.2,Direct or broad geographic relevance
+NEWS_050,2026-07-30,Germany,DE,22.45,0.18,13.2,LOW,Positive,13.2,Limited cross-border spillover
+NEWS_050,2026-07-30,France,FR,18.53,0.12,8.5,LOW,Positive,8.5,Limited cross-border spillover
+NEWS_050,2026-07-30,Belgium,BE,13.62,0.2,13.6,LOW,Positive,13.6,Limited cross-border spillover
+NEWS_051,2026-07-30,Netherlands,NL,45.4,0.15,11.3,LOW,Positive,11.3,Limited cross-border spillover
+NEWS_051,2026-07-30,Germany,DE,22.45,0.15,9.6,LOW,Positive,9.6,Limited cross-border spillover
+NEWS_051,2026-07-30,France,FR,18.53,1.0,62.2,HIGH,Positive,62.2,Direct or broad geographic relevance
+NEWS_051,2026-07-30,Belgium,BE,13.62,0.28,16.7,LOW,Positive,16.7,Meaningful regional spillover
+NEWS_052,2026-07-30,Netherlands,NL,45.4,1.0,90.2,HIGH,Negative,-90.2,Direct or broad geographic relevance
+NEWS_052,2026-07-30,Germany,DE,22.45,0.9,68.8,HIGH,Negative,-68.8,Direct or broad geographic relevance
+NEWS_052,2026-07-30,France,FR,18.53,0.18,13.3,LOW,Negative,-13.3,Limited cross-border spillover
+NEWS_052,2026-07-30,Belgium,BE,13.62,0.78,55.6,MEDIUM,Negative,-55.6,Meaningful regional spillover
+NEWS_053,2026-07-30,Netherlands,NL,45.4,0.15,11.2,LOW,Negative,-11.2,Limited cross-border spillover
+NEWS_053,2026-07-30,Germany,DE,22.45,0.15,9.5,LOW,Negative,-9.5,Limited cross-border spillover
+NEWS_053,2026-07-30,France,FR,18.53,1.0,61.3,HIGH,Negative,-61.3,Direct or broad geographic relevance
+NEWS_053,2026-07-30,Belgium,BE,13.62,0.28,16.5,LOW,Negative,-16.5,Meaningful regional spillover
+NEWS_054,2026-07-30,Netherlands,NL,45.4,1.0,62.7,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_054,2026-07-30,Germany,DE,22.45,1.0,53.2,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_054,2026-07-30,France,FR,18.53,1.0,51.6,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_054,2026-07-30,Belgium,BE,13.62,1.0,49.5,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_055,2026-07-31,Netherlands,NL,45.4,1.0,83.2,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_055,2026-07-31,Germany,DE,22.45,1.0,70.5,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_055,2026-07-31,France,FR,18.53,1.0,68.4,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_055,2026-07-31,Belgium,BE,13.62,1.0,65.7,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_056,2026-08-04,Netherlands,NL,45.4,1.0,70.8,HIGH,Mixed,0.0,Direct or broad geographic relevance
+NEWS_056,2026-08-04,Germany,DE,22.45,0.18,10.8,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_056,2026-08-04,France,FR,18.53,0.12,7.0,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_056,2026-08-04,Belgium,BE,13.62,0.2,11.2,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_057,2026-08-12,Netherlands,NL,45.4,1.0,95.0,HIGH,Negative,-95.0,Direct or broad geographic relevance
+NEWS_057,2026-08-12,Germany,DE,22.45,0.18,14.5,LOW,Negative,-14.5,Limited cross-border spillover
+NEWS_057,2026-08-12,France,FR,18.53,0.12,9.4,LOW,Negative,-9.4,Limited cross-border spillover
+NEWS_057,2026-08-12,Belgium,BE,13.62,0.2,15.0,LOW,Negative,-15.0,Limited cross-border spillover
+NEWS_058,2026-08-12,Netherlands,NL,45.4,1.0,78.2,HIGH,Positive,78.2,Direct or broad geographic relevance
+NEWS_058,2026-08-12,Germany,DE,22.45,0.18,11.9,LOW,Positive,11.9,Limited cross-border spillover
+NEWS_058,2026-08-12,France,FR,18.53,0.12,7.7,LOW,Positive,7.7,Limited cross-border spillover
+NEWS_058,2026-08-12,Belgium,BE,13.62,0.2,12.4,LOW,Positive,12.4,Limited cross-border spillover
+NEWS_059,2026-08-19,Netherlands,NL,45.4,1.0,54.5,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_059,2026-08-19,Germany,DE,22.45,1.0,46.2,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_059,2026-08-19,France,FR,18.53,1.0,44.8,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_059,2026-08-19,Belgium,BE,13.62,1.0,43.0,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_060,2026-08-25,Netherlands,NL,45.4,0.2,13.4,LOW,Positive,13.4,Limited cross-border spillover
+NEWS_060,2026-08-25,Germany,DE,22.45,1.0,56.8,MEDIUM,Positive,56.8,Direct or broad geographic relevance
+NEWS_060,2026-08-25,France,FR,18.53,0.15,8.3,LOW,Positive,8.3,Limited cross-border spillover
+NEWS_060,2026-08-25,Belgium,BE,13.62,0.14,7.4,LOW,Positive,7.4,Limited cross-border spillover
+NEWS_061,2026-08-28,Netherlands,NL,45.4,0.15,10.3,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_061,2026-08-28,Germany,DE,22.45,0.15,8.8,LOW,Mixed,0.0,Limited cross-border spillover
+NEWS_061,2026-08-28,France,FR,18.53,1.0,56.6,MEDIUM,Mixed,0.0,Direct or broad geographic relevance
+NEWS_061,2026-08-28,Belgium,BE,13.62,0.28,15.2,LOW,Mixed,0.0,Meaningful regional spillover

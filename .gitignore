@@ -1,0 +1,24 @@
+# Python virtual environments
+.venv/
+venv/
+
+# API keys and local secrets
+.env
+.env.*
+!.env.example
+
+# Python cache
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# PyCharm local settings
+.idea/
+
+# Generated/local files
+output/
+*.log
+.DS_Store
+Thumbs.db
+
+test_gemini.py

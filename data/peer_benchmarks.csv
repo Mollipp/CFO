@@ -1,0 +1,6 @@
+metric,metric_label,peer_count,peer_min,peer_q1,peer_median,peer_q3,peer_max,benchmark_note
+reported_return_pct,Reported return,8,8.7,9.0,10.25,12.0,15.0,Based on collected FY2025 public peer disclosures.
+cet1_ratio_pct,CET1 ratio,8,12.6,13.4,14.45,15.03,20.3,Based on collected FY2025 public peer disclosures.
+cost_income_ratio_pct,Cost/income ratio,7,46.0,54.55,57.0,62.4,64.0,Based on collected FY2025 public peer disclosures.
+cost_of_risk_bps,Cost of risk,4,1.0,10.0,19.5,28.5,36.0,Based on collected FY2025 public peer disclosures.
+lcr_pct,LCR,2,144.0,147.75,151.5,155.25,159.0,Based on collected FY2025 public peer disclosures.
