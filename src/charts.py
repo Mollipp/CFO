@@ -340,7 +340,7 @@ def build_lcr_chart(history, months=24, height=330):
 # Horizon
 # ------------------------------------------------------------------
 
-def build_horizon_outlook_chart(baseline, height=360):
+def build_horizon_outlook_chart(baseline, height=360, shock_baseline=None):
     """
     Actual NIM path handed over to the deterministic run-rate baseline.
 
@@ -405,9 +405,29 @@ def build_horizon_outlook_chart(baseline, height=360):
         .encode(x=x_axis, y=y_axis)
     )
 
-    return _finish(
-        actual_line + actual_points + forecast_line + forecast_points, height
-    )
+    layers = actual_line + actual_points + forecast_line + forecast_points
+
+    if shock_baseline is not None and not shock_baseline.empty:
+        shock_df = shock_baseline[shock_baseline["series"] == "Baseline"].copy()
+        if not actual.empty and not shock_df.empty:
+            bridge = actual.tail(1).copy()
+            bridge["series"] = "Baseline"
+            shock_df = pd.concat([bridge, shock_df], ignore_index=True)
+        shock_line = (
+            alt.Chart(shock_df)
+            .mark_line(strokeWidth=2.5, strokeDash=[4, 3], color=AMBER)
+            .encode(
+                x=x_axis,
+                y=y_axis,
+                tooltip=[
+                    alt.Tooltip("month:T", title="Month", format="%B %Y"),
+                    alt.Tooltip("nim_pct:Q", title="Signal-shocked NIM", format=".3f"),
+                ],
+            )
+        )
+        layers = layers + shock_line
+
+    return _finish(layers, height)
 
 
 # ------------------------------------------------------------------

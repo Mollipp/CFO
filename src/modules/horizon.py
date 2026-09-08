@@ -3,6 +3,8 @@
 import streamlit as st
 
 from src import charts
+from src.cockpit_state import HORIZON_MONTHS_AHEAD
+from src.engines import build_horizon_baseline
 from src.hud import arrow_delta, investigate_url, module_url, render_html
 
 BASELINE_CAPTION = (
@@ -118,8 +120,49 @@ def render_horizon(s):
             <div class="section-title">NIM outlook</div>"""
         )
         _legend()
+
+        shock_baseline = None
+        try:
+            from src.modules.news import load_extracted_signals
+            rate_signals = [
+                sig for sig in load_extracted_signals()
+                if sig.get("engine_param") == "rate_shock_bps"
+            ]
+        except Exception:
+            rate_signals = []
+
+        if rate_signals:
+            options = {
+                f"{sig.get('entity', 'Signal')} {'+' if (sig.get('value') or 0) > 0 else ''}{int(sig.get('value') or 0)} bps"
+                f" ({(sig.get('_article') or {}).get('source', '')})"
+                : sig
+                for sig in rate_signals
+            }
+            selected_label = st.selectbox(
+                "Apply news signal to forecast",
+                list(options.keys()),
+                index=None,
+                placeholder="Select a rate signal to overlay…",
+                key="horizon_signal_select",
+            )
+            if selected_label:
+                sig = options[selected_label]
+                shock_bps = int(sig.get("value") or 0)
+                loan_beta, deposit_beta = 0.35, 0.55
+                shock_baseline, _ = build_horizon_baseline(
+                    s.monthly_nim,
+                    months_ahead=HORIZON_MONTHS_AHEAD,
+                    current_loans_m=s.current_loans_m,
+                    current_deposits_m=s.current_deposits_m,
+                    current_loan_rate_pct=s.current_loan_rate_pct + shock_bps / 100.0 * loan_beta,
+                    current_deposit_rate_pct=s.current_deposit_rate_pct + shock_bps / 100.0 * deposit_beta,
+                    loan_rate_30d_bps=s.loan_rate_30d_bps + shock_bps,
+                    deposit_rate_30d_bps=s.deposit_rate_30d_bps + shock_bps * deposit_beta,
+                    deposit_growth_30d_pct=s.total_deposit_30d_change_pct,
+                )
+
         st.altair_chart(
-            charts.build_horizon_outlook_chart(s.horizon_baseline, height=355),
+            charts.build_horizon_outlook_chart(s.horizon_baseline, height=355, shock_baseline=shock_baseline),
             use_container_width=True,
         )
         st.caption(BASELINE_CAPTION)

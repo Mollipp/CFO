@@ -7,6 +7,8 @@ import streamlit as st
 
 from src import charts
 from src.hud import clip_ui_text, investigate_url, navigate_to_module, render_html
+from src.modules.news import load_extracted_signals
+from src.news_ui import render_overnight_signals_panel
 
 BRIEF_COPILOT_PROMPT = (
     "Based on the latest CFO morning brief, explain what changed in NIM, "
@@ -138,6 +140,8 @@ def render_brief(s):
         )
     )
 
+    signals = load_extracted_signals()
+
     left, right = st.columns([1.4, 1])
 
     with left:
@@ -179,6 +183,8 @@ def render_brief(s):
                 render_html(_news_card(article))
         else:
             st.caption("No recent public-news records available.")
+
+        render_overnight_signals_panel(signals)
 
         if st.button(
             "Investigate the morning brief with CFO Copilot →",

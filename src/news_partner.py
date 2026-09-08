@@ -47,7 +47,7 @@ def load_articles() -> list[dict]:
 
 def _default_generate(prompt: str) -> str:
     client = get_gemini_client()
-    response = client.models.generate_content(model="gemini-3.6-flash", contents=prompt)
+    response = client.models.generate_content(model="gemini-3.5-flash-lite", contents=prompt)
     if not response.text:
         raise RuntimeError(
             "Gemini returned an empty response. Please retry or check "
