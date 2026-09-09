@@ -17,31 +17,70 @@ BRIEF_COPILOT_PROMPT = (
 )
 
 
-def _flow_card(number, title, change_label, change, why, impact, next_copy, topic):
-    """One movement, laid out as change / why / impact / next."""
+def _domain_tile(tile):
+    """One KPI: the number, its movement, and the first line of the reading."""
     return f"""
-    <div class="decision-flow-card">
-        <div class="flow-title">{number} / {title}</div>
-        <div class="flow-grid">
-            <div class="flow-cell">
-                <span class="flow-label">{change_label}</span>
-                <span class="flow-copy">{change}</span>
+        <div class="domain-tile tone-{tile['tone']}" data-tile="{tile['index']}" tabindex="0">
+            <div class="domain-tile-top">
+                <span class="domain-tile-label">{tile['label']}</span>
+                <span class="domain-tile-code">{tile['code']}</span>
             </div>
-            <div class="flow-cell">
-                <span class="flow-label">Why</span>
-                <span class="flow-copy">{why}</span>
+            <div class="domain-tile-value">{tile['value']}</div>
+            <div class="domain-tile-delta"><span class="domain-tile-dot"></span>{tile['delta']}</div>
+            <div class="domain-tile-why"><span>Why</span>{tile['why_short']}</div>
+            <span class="domain-tile-more">Impact + action</span>
+        </div>
+    """
+
+
+def _domain_detail(tile):
+    """The full reading, revealed in the panel's stage when a tile is held."""
+    return f"""
+        <div class="domain-detail" data-tile="{tile['index']}">
+            <div class="domain-detail-head">
+                <span>{tile['label']}</span>
+                <span class="domain-tile-code">{tile['code']}</span>
             </div>
-            <div class="flow-cell">
-                <span class="flow-label">Impact</span>
-                <span class="flow-copy">{impact}</span>
+            <div class="domain-detail-row">
+                <span class="domain-detail-tag">Why</span>
+                <p class="domain-detail-copy">{tile['why']}</p>
             </div>
-            <div class="flow-cell">
-                <span class="flow-label">Next</span>
-                <span class="flow-copy">{next_copy}</span>
-                <a class="copilot-action" href="{investigate_url(topic)}" target="_self">Ask Copilot →</a>
+            <div class="domain-detail-row">
+                <span class="domain-detail-tag">Impact</span>
+                <p class="domain-detail-copy">{tile['impact']}</p>
+            </div>
+            <div class="domain-detail-row">
+                <span class="domain-detail-tag">Next</span>
+                <p class="domain-detail-copy">{tile['next']}</p>
+            </div>
+            <a class="copilot-action" href="{investigate_url(tile['topic'])}" target="_self">Ask Copilot →</a>
+        </div>
+    """
+
+
+def _domain_panel(domain):
+    """One supervisory domain: its KPIs above a shared explanation stage."""
+    tiles = "".join(_domain_tile(tile) for tile in domain["tiles"])
+    details = "".join(_domain_detail(tile) for tile in domain["tiles"])
+
+    return f"""
+    <section class="domain-panel">
+        <div class="domain-panel-head">
+            <span class="domain-panel-code">{domain['code']}</span>
+            <span class="domain-panel-metrics">{domain['metrics']}</span>
+        </div>
+        <div class="domain-panel-title">{domain['name']}</div>
+        <div class="domain-panel-body">
+            {tiles}
+            <div class="domain-stage">
+                <div class="domain-stage-hint">
+                    <span class="domain-stage-glyph">◎</span>
+                    Hover to preview · select a KPI to keep impact and action open
+                </div>
+                {details}
             </div>
         </div>
-    </div>
+    </section>
     """
 
 
@@ -80,62 +119,19 @@ def render_brief(s):
     render_html(
         """
         <div class="module-code">Morning brief / executive view</div>
-        <div class="section-title">What changed — and what should I do with it?</div>
+        <div class="section-title">The bank this morning, by domain</div>
         <div class="section-subtitle">
-            Three movements worth reviewing this morning, each shown against its
-            reference period with the financial implication and a direct path to
-            investigate further.
+            Earnings, balance sheet, capital and risk, each read against its own
+            reference period. Hover a KPI for why it moved, what it is worth and
+            what to do next; select it to keep that reading open.
         </div>
         """
     )
 
     render_html(
-        f"""
-        <div class="comparison-basis">
-            <span class="comparison-chip"><strong>NIM</strong> vs {s.previous_month_label} / prior month</span>
-            <span class="comparison-chip"><strong>Deposits</strong> vs 30 days prior</span>
-            <span class="comparison-chip"><strong>Credit</strong> vs 30 days prior</span>
-        </div>
-        """
-    )
-
-    credit_change = (
-        "comparison unavailable"
-        if s.credit_hotspot_stage2_delta_pp is None
-        else f"{s.credit_hotspot_stage2_delta_pp:+.2f}pp"
-    )
-
-    render_html(
-        _flow_card(
-            "01",
-            "Net interest margin",
-            "Change vs prior month",
-            f"NIM {s.cert_current_nim:.2f}% · {s.nim_mom_bps:+.1f} bps vs {s.previous_month_label}",
-            s.nim_why,
-            s.nim_impact,
-            s.nim_next,
-            "nim",
-        )
-        + _flow_card(
-            "02",
-            "Deposits and funding",
-            "Change vs 30 days prior",
-            f"Deposits {s.total_deposit_30d_change_pct:+.2f}% · €{s.total_deposit_30d_change_m / 1000:+.2f}bn",
-            s.deposit_why,
-            s.deposit_impact,
-            s.deposit_next,
-            "deposits",
-        )
-        + _flow_card(
-            "03",
-            "Credit migration",
-            "Change vs 30 days prior",
-            f"{s.credit_signal_primary} · {credit_change}",
-            s.credit_why,
-            s.credit_impact,
-            s.credit_next,
-            "credit",
-        )
+        '<div class="domain-grid">'
+        + "".join(_domain_panel(domain) for domain in s.domain_grid)
+        + "</div>"
     )
 
     left, right = st.columns([1.4, 1])

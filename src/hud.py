@@ -91,10 +91,10 @@ def module_url(module):
     """
     Build a vector's destination.
 
-    Selecting a module scrolls to the output panel; the Overview control
-    collapses the cockpit and scrolls back to the dial.
+    Selecting a module scrolls to the output panel; going home returns to the
+    top of the cockpit, where the snapshot and the dial live.
     """
-    anchor = "radial-command" if module == "home" else "module-output"
+    anchor = "command-bar" if module == "home" else "module-output"
     return f"?module={module}#{anchor}"
 
 
@@ -139,26 +139,41 @@ def scroll_to_module_output():
     the module after the browser has already tried to honour the hash, so the
     jump lands on an element that does not exist yet. This retries from inside
     a zero-height component until the banner has actually rendered.
+
+    The jump is then re-asserted for a short settling window. Streamlit runs
+    scroll adjustments of its own after the module paints — the chat view
+    scrolls itself to the bottom — which would otherwise leave the banner
+    parked underneath the frozen command bar. ``scroll-margin-top`` on the
+    target is what keeps it clear of that bar.
     """
     components.html(
         """
         <script>
         (function () {
             let attempts = 0;
+            let settled = 0;
 
             function jump() {
+                let target = null;
                 try {
-                    const target = window.parent.document
+                    target = window.parent.document
                         .getElementById("module-output");
-                    if (target) {
-                        target.scrollIntoView({behavior: "smooth", block: "start"});
-                        return;
-                    }
                 } catch (err) {
                     // Parent DOM out of reach; the link's #module-output
                     // fragment is the fallback.
                     return;
                 }
+
+                if (target) {
+                    target.scrollIntoView({behavior: "auto", block: "start"});
+                    // Keep re-asserting briefly so a later scroll by Streamlit
+                    // does not leave the banner behind the command bar.
+                    if (settled++ < 24) {
+                        window.setTimeout(jump, 60);
+                    }
+                    return;
+                }
+
                 if (attempts++ < 40) {
                     window.setTimeout(jump, 50);
                 }
@@ -177,8 +192,17 @@ def scroll_to_module_output():
 # ------------------------------------------------------------------
 
 def arrow_delta(value, unit="pp"):
+    """
+    A signed movement with its direction.
+
+    Capital ratios move in hundredths of a point, and one decimal renders a
+    real move as "0.0". Small non-zero values get a second decimal so the
+    arrow and the number never contradict each other.
+    """
     arrow = "↑" if value > 0 else "↓" if value < 0 else "→"
-    return f"{arrow} {abs(value):.1f}{unit}"
+    magnitude = abs(value)
+    precision = 2 if 0 < magnitude < 0.1 else 1
+    return f"{arrow} {magnitude:.{precision}f}{unit}"
 
 
 def clip_ui_text(value, max_chars=62):
@@ -308,12 +332,12 @@ def build_rate_sensitivity_svg(df, width=300, height=118):
     for x, y in zip(x_values, y_values):
         px, py = sx(x), sy(y)
         circles.append(
-            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3.4" fill="#DDFBFF" '
-            f'stroke="#52E7FF" stroke-width="1.2" />'
+            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3.4" fill="#E6F5E9" '
+            f'stroke="#13AC33" stroke-width="1.2" />'
         )
         labels.append(
             f'<text x="{px:.1f}" y="{height - 5:.1f}" text-anchor="middle" '
-            f'fill="#557F8E" font-size="8" '
+            f'fill="#476F51" font-size="8" '
             f'font-family="Cascadia Mono, Consolas, monospace">{x:+.0f}bp</text>'
         )
 
@@ -321,11 +345,11 @@ def build_rate_sensitivity_svg(df, width=300, height=118):
         f'<svg class="sensitivity-svg" viewBox="0 0 {width} {height}" role="img" '
         f'aria-label="Treasury economic-value sensitivity to pure rate shocks">'
         f'<line x1="{left}" y1="{zero_y:.1f}" x2="{right}" y2="{zero_y:.1f}" '
-        f'stroke="#1A4B5A" stroke-width="1" stroke-dasharray="3 4" />'
+        f'stroke="#184523" stroke-width="1" stroke-dasharray="3 4" />'
         f'<line x1="{left}" y1="{top}" x2="{left}" y2="{bottom}" '
-        f'stroke="#123744" stroke-width="1" />'
-        f'<polyline points="{points}" fill="none" stroke="#52E7FF" '
-        f'stroke-width="2.2" filter="drop-shadow(0 0 4px rgba(82,231,255,0.35))" />'
+        f'stroke="#1B231D" stroke-width="1" />'
+        f'<polyline points="{points}" fill="none" stroke="#13AC33" '
+        f'stroke-width="2.2" filter="drop-shadow(0 0 4px rgba(19,172,51,0.35))" />'
         + "".join(circles)
         + "".join(labels)
         + "</svg>"

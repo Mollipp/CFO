@@ -2,7 +2,7 @@
 Altair chart builders, themed to the HUD.
 
 Every chart shares one visual contract: a transparent view (the CSS paints the
-panel behind it), Cascadia Mono axis labels in muted slate, faint cyan grid
+panel behind it), Cascadia Mono axis labels in muted slate, faint green grid
 lines, and the cockpit's four accent colours for series. The helpers at the top
 express that contract once so each builder stays about its data.
 """
@@ -10,19 +10,21 @@ express that contract once so each builder stays about its data.
 import altair as alt
 import pandas as pd
 
-# HUD palette. Cyan is the primary series, violet the counterfactual or
-# comparison series, green and amber the outcome accents.
-CYAN = "#52E7FF"
+# HUD palette. Green is the primary series, violet the counterfactual or
+# comparison series, amber and pale mint the remaining accents. Mint sits last
+# so it only appears on four-series charts, where its lightness separates it
+# from the primary green.
+ACCENT = "#13AC33"
 VIOLET = "#B88CFF"
-GREEN = "#42F5A7"
+MINT = "#CCEAD6"
 AMBER = "#FFCB66"
 RED = "#FF5D7A"
-INK = "#DDFBFF"
+INK = "#E6F5E9"
 
-AXIS_LABEL = "#789EAC"
-AXIS_VALUE = "#B8D4DC"
-GRID = "#12313E"
-DOMAIN = "#173B49"
+AXIS_LABEL = "#759D7F"
+AXIS_VALUE = "#C2D2C6"
+GRID = "#19201B"
+DOMAIN = "#1F2721"
 MONO = "Cascadia Mono"
 
 
@@ -147,8 +149,8 @@ def build_nim_chart(monthly_nim, height=300):
         ],
     )
 
-    line = base.mark_line(strokeWidth=3, color=CYAN, interpolate="linear")
-    points = base.mark_circle(size=58, color=CYAN, stroke=INK, strokeWidth=1.2)
+    line = base.mark_line(strokeWidth=3, color=ACCENT, interpolate="linear")
+    points = base.mark_circle(size=58, color=ACCENT, stroke=INK, strokeWidth=1.2)
 
     return _finish(line + points, height)
 
@@ -164,7 +166,7 @@ def build_deposit_country_chart(deposit_country, height=245):
 
     chart = (
         alt.Chart(chart_df)
-        .mark_bar(cornerRadiusEnd=3, color=CYAN, opacity=0.78)
+        .mark_bar(cornerRadiusEnd=3, color=ACCENT, opacity=0.78)
         .encode(
             x=_quant(
                 "deposit_change_30d_pct:Q", "30-day deposit change (%)"
@@ -234,7 +236,7 @@ def _trend_chart(history, series_spec, y_title, height, months, threshold=None):
         return _empty(["date", "value"])
 
     frame = history.tail(months)
-    palette = [CYAN, VIOLET, GREEN, AMBER]
+    palette = [ACCENT, VIOLET, AMBER, MINT]
 
     long = frame.melt(
         id_vars="date",
@@ -274,7 +276,7 @@ def _trend_chart(history, series_spec, y_title, height, months, threshold=None):
                     domain=list(series_spec.values()),
                     range=palette[: len(series_spec)],
                 ),
-                legend=alt.Legend(title=None, labelColor="#9BBECA", orient="top"),
+                legend=alt.Legend(title=None, labelColor="#95BB9E", orient="top"),
             ),
             tooltip=[
                 alt.Tooltip("date:T", title="Month", format="%B %Y"),
@@ -371,7 +373,7 @@ def build_horizon_outlook_chart(baseline, height=360):
 
     actual_line = (
         alt.Chart(actual)
-        .mark_line(strokeWidth=3, color=CYAN)
+        .mark_line(strokeWidth=3, color=ACCENT)
         .encode(
             x=x_axis,
             y=y_axis,
@@ -383,7 +385,7 @@ def build_horizon_outlook_chart(baseline, height=360):
     )
     actual_points = (
         alt.Chart(actual)
-        .mark_circle(size=58, color=CYAN, stroke=INK, strokeWidth=1.2)
+        .mark_circle(size=58, color=ACCENT, stroke=INK, strokeWidth=1.2)
         .encode(x=x_axis, y=y_axis)
     )
 
@@ -401,7 +403,7 @@ def build_horizon_outlook_chart(baseline, height=360):
     )
     forecast_points = (
         alt.Chart(forecast.iloc[1:] if len(forecast) > 1 else forecast)
-        .mark_circle(size=56, fill="#031019", stroke="#C7A8FF", strokeWidth=2)
+        .mark_circle(size=56, fill="#080c09", stroke="#C7A8FF", strokeWidth=2)
         .encode(x=x_axis, y=y_axis)
     )
 
@@ -429,9 +431,9 @@ def build_scenario_comparison_chart(comparison, height=300):
             color=alt.Color(
                 "series:N",
                 scale=alt.Scale(
-                    domain=["Current", "Scenario"], range=[CYAN, VIOLET]
+                    domain=["Current", "Scenario"], range=[ACCENT, VIOLET]
                 ),
-                legend=alt.Legend(title=None, labelColor="#9BBECA", orient="top"),
+                legend=alt.Legend(title=None, labelColor="#95BB9E", orient="top"),
             ),
             tooltip=[
                 alt.Tooltip("metric:N", title="Metric"),
@@ -500,7 +502,7 @@ def build_treasury_asset_class_chart(portfolio, height=280):
 
     chart = (
         alt.Chart(by_class)
-        .mark_bar(cornerRadiusEnd=3, color=CYAN, opacity=0.78)
+        .mark_bar(cornerRadiusEnd=3, color=ACCENT, opacity=0.78)
         .encode(
             x=_quant("market_value_m:Q", "Market value (€m)"),
             y=alt.Y("asset_class:N", title=None, sort="-x", axis=_category_axis()),
@@ -574,8 +576,8 @@ def build_peer_positioning_chart(peer_plot, height=390):
         ),
         color=alt.Color(
             "is_our_bank:N",
-            scale=alt.Scale(domain=["Peer", "Our Bank"], range=[CYAN, VIOLET]),
-            legend=alt.Legend(title=None, labelColor="#9BBECA", orient="top"),
+            scale=alt.Scale(domain=["Peer", "Our Bank"], range=[ACCENT, VIOLET]),
+            legend=alt.Legend(title=None, labelColor="#95BB9E", orient="top"),
         ),
         tooltip=[
             alt.Tooltip("bank_name:N", title="Bank"),
@@ -591,7 +593,7 @@ def build_peer_positioning_chart(peer_plot, height=390):
     points = base.mark_circle(opacity=0.84, stroke=INK, strokeWidth=0.5)
     labels = (
         alt.Chart(peer_plot[peer_plot["is_our_bank"] == "Our Bank"])
-        .mark_text(dy=-18, font=MONO, fontSize=11, color="#EAFDFF")
+        .mark_text(dy=-18, font=MONO, fontSize=11, color="#E6F5E9")
         .encode(
             x="reported_return_pct:Q",
             y="cet1_ratio_pct:Q",
@@ -635,8 +637,8 @@ def build_strategy_radar_chart(radar, height=390):
             "preferred_route:N",
             legend=alt.Legend(
                 title="Route",
-                labelColor="#9BBECA",
-                titleColor="#9BBECA",
+                labelColor="#95BB9E",
+                titleColor="#95BB9E",
                 orient="top",
             ),
         ),
@@ -660,7 +662,7 @@ def build_strategy_radar_chart(radar, height=390):
     points = base.mark_circle(opacity=0.82, stroke=INK, strokeWidth=0.6)
     labels = (
         alt.Chart(radar.head(5))
-        .mark_text(dy=-17, font=MONO, fontSize=10, color="#CDEFF5")
+        .mark_text(dy=-17, font=MONO, fontSize=10, color="#D9E9DC")
         .encode(
             x="strategic_fit_score:Q",
             y="financial_attractiveness_score:Q",
@@ -692,7 +694,7 @@ def build_strategy_delta_chart(strategy_delta, top_name, second_name, height=245
             y=alt.Y("Component:N", title=None, sort="-x", axis=_category_axis()),
             color=alt.condition(
                 alt.datum["Weighted delta"] >= 0,
-                alt.value(CYAN),
+                alt.value(ACCENT),
                 alt.value(VIOLET),
             ),
             tooltip=[
@@ -707,7 +709,7 @@ def build_strategy_delta_chart(strategy_delta, top_name, second_name, height=245
 
     zero = (
         alt.Chart(pd.DataFrame({"x": [0]}))
-        .mark_rule(color="#3E6978", strokeDash=[3, 3])
+        .mark_rule(color="#345D3F", strokeDash=[3, 3])
         .encode(x="x:Q")
     )
 
@@ -720,7 +722,7 @@ def build_capability_gap_chart(gaps, height=280):
 
     chart = (
         alt.Chart(gaps)
-        .mark_bar(cornerRadiusEnd=3, color=CYAN, opacity=0.78)
+        .mark_bar(cornerRadiusEnd=3, color=ACCENT, opacity=0.78)
         .encode(
             x=_quant("capability_gap:Q", "Capability gap"),
             y=alt.Y("capability:N", title=None, sort="-x", axis=_category_axis()),

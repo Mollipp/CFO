@@ -3,10 +3,10 @@
 # Dark base is what keeps those consistent with the cockpit.
 [theme]
 base = "dark"
-backgroundColor = "#02070c"
-secondaryBackgroundColor = "#06111a"
-primaryColor = "#52e7ff"
-textColor = "#e9fbff"
+backgroundColor = "#000000"
+secondaryBackgroundColor = "#080a08"
+primaryColor = "#13ac33"
+textColor = "#e6f5e9"
 
 [client]
 toolbarMode = "minimal"

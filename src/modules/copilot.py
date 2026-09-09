@@ -32,6 +32,30 @@ INVESTIGATION_PROMPTS = {
         "30-day change and Stage 3 position, and identify what can and cannot be "
         "concluded about the underlying cause."
     ),
+    "efficiency": (
+        "Investigate the year-to-date cost/income ratio. Separate the cost and "
+        "income movements that drove it, quantify what one point of the ratio is "
+        "worth in annualised operating income, compare it with the peer median, "
+        "and identify what the CFO should test before approving new cost."
+    ),
+    "balance_sheet": (
+        "Investigate the balance-sheet position: the loan book, the deposit base "
+        "and the loan-to-deposit ratio. Quantify the 30-day movements, identify "
+        "the business lines and countries driving them, and explain how much "
+        "further lending the current funding base can carry."
+    ),
+    "capital": (
+        "Investigate the capital position. Split the CET1 ratio movement into its "
+        "capital-generation and risk-weighted-asset components, quantify the "
+        "headroom over the regulatory requirement, and identify what the CFO "
+        "should stress before committing capital to growth or distribution."
+    ),
+    "liquidity": (
+        "Investigate the liquidity position. Explain the LCR movement in terms of "
+        "high-quality liquid assets and net cash outflows, relate it to the "
+        "30-day deposit movement and the loan-to-deposit ratio, and identify the "
+        "funding risk the CFO should review next."
+    ),
     "news": (
         "Review the latest public news developments. Lead with the actual "
         "headlines and sources, explain the potentially affected bank metrics, "
@@ -151,7 +175,7 @@ def render_copilot(s):
                 </div>
             </div>
             <div class="copilot-context-strip">
-                <div class="copilot-context-item"><span>As of</span><strong>{s.reporting_date}</strong></div>
+                <div class="copilot-context-item"><span>Live data</span><strong>{s.live_date}</strong></div>
                 <div class="copilot-context-item"><span>NIM</span><strong>{s.cert_current_nim:.2f}%</strong></div>
                 <div class="copilot-context-item"><span>CET1</span><strong>{s.cet1_ratio:.1f}%</strong></div>
                 <div class="copilot-context-item"><span>LCR</span><strong>{s.lcr_ratio:.1f}%</strong></div>
@@ -194,7 +218,7 @@ def render_copilot(s):
             """
             <div class="panel" style="margin-top:0.85rem;">
                 <div class="readout-label">Start with a decision, not a search</div>
-                <div style="margin-top:0.45rem; color:#789fac; font-size:0.82rem; line-height:1.5;">
+                <div style="margin-top:0.45rem; color:#78ac86; font-size:0.82rem; line-height:1.5;">
                     Ask the assistant to challenge an assumption, compare alternatives,
                     connect a market development to the bank's exposures, or tell you what
                     evidence would change a decision.

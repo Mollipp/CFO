@@ -81,6 +81,52 @@ def read_bank_history(path: Path) -> Dict[date, Dict[str, float]]:
     return history
 
 
+def project_month_end(history: Dict[date, Dict[str, float]], target: date) -> Dict[str, float]:
+    """
+    A forward anchor for a month that has not closed yet.
+
+    The daily series interpolates between the previous and the current
+    month-end close, so generating days in the open month needs an anchor that
+    does not exist in the certified history. Carrying the mean month-on-month
+    step of the last closes forward keeps the open month on the trend the
+    audited numbers were already describing, rather than inventing a level.
+    """
+    closes = sorted(history)
+    if target in history:
+        return history[target]
+
+    recent = closes[-4:]
+    if len(recent) < 2:
+        raise ValueError("bank_history.csv needs at least two closes to project forward.")
+
+    steps = float((target - closes[-1]).days) / 30.44
+    last = history[closes[-1]]
+    projected: Dict[str, float] = {"date": target}
+
+    for field, value in last.items():
+        if field == "date":
+            continue
+        deltas = [
+            history[b][field] - history[a][field]
+            for a, b in zip(recent, recent[1:])
+        ]
+        projected[field] = float(value + steps * (sum(deltas) / len(deltas)))
+
+    return projected
+
+
+def resolve_history(
+    history: Dict[date, Dict[str, float]], start: date, end: date
+) -> Dict[date, Dict[str, float]]:
+    """The certified closes plus whatever forward anchors the window needs."""
+    resolved = dict(history)
+    for d in (start, end):
+        for anchor in (previous_month_end(d), month_end(d)):
+            if anchor not in resolved:
+                resolved[anchor] = project_month_end(history, anchor)
+    return resolved
+
+
 def bridge_profile(d: date, center_day: int, sigma: float) -> float:
     days = calendar.monthrange(d.year, d.month)[1]
     x = d.day
@@ -157,8 +203,18 @@ def calibrate_monthly_rate_paths(targets, history):
         source = history[me]
         days_in_month = calendar.monthrange(me.year, me.month)[1]
 
-        source_interest_income = source["loans"] * (source["avg_loan_yield_pct"] / 100.0) / 12.0
-        source_interest_expense = source["deposits"] * (source["avg_deposit_cost_pct"] / 100.0) / 12.0
+        # An open month contributes only the days generated so far, so the
+        # month-end interest target is pro-rated to those days. Calibrating a
+        # part-month against a whole month's interest would inflate every daily
+        # rate in it.
+        observed_share = len(dates) / days_in_month
+
+        source_interest_income = (
+            source["loans"] * (source["avg_loan_yield_pct"] / 100.0) / 12.0 * observed_share
+        )
+        source_interest_expense = (
+            source["deposits"] * (source["avg_deposit_cost_pct"] / 100.0) / 12.0 * observed_share
+        )
 
         raw_income = sum(targets[d]["loans"] * (targets[d]["avg_loan_yield_pct"] / 100.0) / 365.0 for d in dates)
         raw_expense = sum(targets[d]["deposits"] * (targets[d]["avg_deposit_cost_pct"] / 100.0) / 365.0 for d in dates)
@@ -283,11 +339,13 @@ def anomaly_for_row(d, country, business, product):
     return (1 if anomalies else 0, "|".join(anomalies))
 
 
-def generate_bank_daily_signals(bank_history_path, output_path, start="2026-01-01", end="2026-08-31", seed=43):
+def generate_bank_daily_signals(bank_history_path, output_path, start="2026-01-01", end=None, seed=43):
     history = read_bank_history(bank_history_path)
     start_date = parse_date(start)
-    end_date = parse_date(end)
-    bank_targets = daily_bank_targets(history, start_date, end_date, seed)
+    end_date = parse_date(end) if end else date.today()
+    bank_targets = daily_bank_targets(
+        resolve_history(history, start_date, end_date), start_date, end_date, seed
+    )
 
     all_rows = []
     for d in daterange(start_date, end_date):
@@ -432,7 +490,7 @@ if __name__ == "__main__":
     parser.add_argument("--input", default="data/bank_history.csv")
     parser.add_argument("--output", default="data/bank_daily_signals.csv")
     parser.add_argument("--start", default="2026-01-01")
-    parser.add_argument("--end", default="2026-08-31")
+    parser.add_argument("--end", default=date.today().isoformat())
     parser.add_argument("--seed", type=int, default=43)
     args = parser.parse_args()
 
