@@ -2,7 +2,7 @@ import json
 import re
 from pathlib import Path
 
-from src.openai_partner import get_openai_client
+from src.openai_partner import generate_prompt_response
 
 _FIXTURES_PATH = Path(__file__).parent.parent / "data" / "news_fixtures.json"
 
@@ -46,18 +46,7 @@ def load_articles() -> list[dict]:
 
 
 def _default_generate(prompt: str) -> str:
-    client = get_openai_client()
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[{"role": "user", "content": prompt}],
-    )
-    text = response.choices[0].message.content
-    if not text:
-        raise RuntimeError(
-            "OpenAI returned an empty response. Please retry or check "
-            "the API key and quota."
-        )
-    return text
+    return generate_prompt_response(prompt)
 
 
 def _validate_signal(signal: dict) -> bool:

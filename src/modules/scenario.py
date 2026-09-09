@@ -122,7 +122,7 @@ def _controls(s):
                 format="%.2f",
             )
 
-        submitted = st.form_submit_button("Run scenario", width="stretch")
+        submitted = st.form_submit_button("Run scenario")
 
     if st.button("Reset to defaults", key="reset_scenario"):
         st.session_state["scenario_inputs"] = dict(DEFAULT_INPUTS)

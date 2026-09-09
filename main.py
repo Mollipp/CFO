@@ -8,8 +8,9 @@ Everything below the dispatch lives in ``src/modules``.
 """
 
 import html
-
+import os
 import streamlit as st
+import importlib.util
 
 from src.cockpit_state import build_state
 from src.extended_data_loader import datasets_available
@@ -31,12 +32,18 @@ from src.modules import MODULE_METADATA, RENDERERS
 from src.modules.copilot import consume_investigation_topic
 from src.weather import get_local_weather
 
+
 st.set_page_config(
     page_title="A.R.C. | CFO Command",
     page_icon="◉",
     layout="wide",
     initial_sidebar_state="collapsed",
 )
+
+from src.openai_partner import test_llm
+
+if st.button("Test LLM"):
+    st.write(test_llm())
 
 # Emitted in cascade order; LOCAL_CSS last so this cockpit's overrides win.
 for stylesheet in (BASE_CSS, EXTENSIONS_CSS, PANELS_CSS, LOCAL_CSS):
