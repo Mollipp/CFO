@@ -4,7 +4,7 @@ from src.config import (
     DATABRICKS_TOKEN,
     DATABRICKS_SERVING_ENDPOINT,
 )
-from src.gemini_partner import build_executive_prompt
+from src.openai_partner import build_executive_prompt
 
 _MOCK_COCKPIT_RESPONSE = (
     "[MOCK Databricks response] CET1 ratio is within the reported range. "

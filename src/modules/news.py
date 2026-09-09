@@ -2,7 +2,7 @@
 News — overnight external developments and their potential bank impact.
 
 Two layers sit here. The upper one is the curated news feed with its
-per-country attention scoring. The lower one runs the Gemini signal extractor
+per-country attention scoring. The lower one runs the OpenAI signal extractor
 over the fixture articles and lets a signal be pushed straight into the What-If
 engine as a starting assumption.
 """
@@ -30,7 +30,7 @@ IMPACT_BADGE = {"HIGH": "alert-red", "MEDIUM": "alert-amber"}
 @st.cache_data(show_spinner="Extracting overnight news signals…")
 def load_extracted_signals():
     """
-    Run the Gemini signal extractor over the fixture articles.
+    Run the OpenAI signal extractor over the fixture articles.
 
     Cached so the model is called once per session rather than on every rerun.
     An article that fails extraction is skipped rather than failing the module.
@@ -107,7 +107,7 @@ def _news_card(article):
 
 
 def _render_signal_workbench():
-    """The Gemini extraction layer, below the curated feed."""
+    """The OpenAI extraction layer, below the curated feed."""
     render_html(
         """
         <div class="module-code" style="margin-top:1rem;">Signal extraction / model-assisted</div>

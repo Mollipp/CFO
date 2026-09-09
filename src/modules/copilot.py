@@ -2,7 +2,7 @@
 CFO Copilot — conversational investigation over the cockpit data.
 
 The reference cockpit talks to Databricks Genie. This one uses the local
-partners instead: Gemini when an API key is configured, and the deterministic
+partners instead: OpenAI when an API key is configured, and the deterministic
 rule-based partner otherwise, so the module still answers with no network.
 """
 
@@ -10,7 +10,7 @@ import streamlit as st
 
 from src.ai_partner import answer_question, build_morning_briefing
 from src.cockpit_views import metrics_history
-from src.gemini_partner import build_cockpit_facts, generate_gemini_response
+from src.openai_partner import build_cockpit_facts, generate_openai_response
 from src.hud import clear_query_value, get_query_value, module_url, render_html
 
 INVESTIGATION_PROMPTS = {
@@ -110,14 +110,14 @@ def consume_investigation_topic(selected_module):
 
 def _answer(question, history):
     """
-    Answer through Gemini, falling back to the deterministic partner.
+    Answer through OpenAI, falling back to the deterministic partner.
 
     The fallback matters: without an API key the module must still respond
     rather than surface a stack trace.
     """
     try:
         facts = build_cockpit_facts(history)
-        return generate_gemini_response(question, facts), "Gemini"
+        return generate_openai_response(question, facts), "OpenAI"
     except Exception:
         lowered = question.lower()
         if "brief" in lowered or "what changed" in lowered:

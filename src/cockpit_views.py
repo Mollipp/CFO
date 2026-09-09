@@ -717,6 +717,6 @@ def metrics_history():
     The monthly metrics frame indexed by date.
 
     This is the shape the AI partners expect (``src.ai_partner`` and
-    ``src.gemini_partner`` both index by position and read ``df.index[-1]``).
+    ``src.openai_partner`` both index by position and read ``df.index[-1]``).
     """
     return raw_bank_history().set_index("date")
