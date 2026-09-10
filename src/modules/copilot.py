@@ -10,6 +10,7 @@ import streamlit as st
 
 from src.ai_partner import answer_question, build_morning_briefing
 from src.cockpit_views import metrics_history
+from src.copilot_partner import answer_data_question
 from src.openai_partner import build_cockpit_facts, generate_openai_response
 from src.hud import clear_query_value, get_query_value, module_url, render_html
 
@@ -123,6 +124,94 @@ def _answer(question, history):
         if "brief" in lowered or "what changed" in lowered:
             return build_morning_briefing(history), "Deterministic partner"
         return answer_question(question, history), "Deterministic partner"
+
+
+def _render_data_copilot():
+    """
+    A Genie-backed data Q&A thread, separate from the decision-partner thread
+    above. Its own session-state key and chat_input container keep it from
+    colliding with the decision thread's chat_input.
+    """
+    render_html(
+        """
+        <div class="module-code" style="margin-top:1.4rem;">Data copilot</div>
+        <div class="section-title" style="font-size:1.05rem;">Ask the data</div>
+        <div class="section-subtitle">
+            Ask a plain-language data question. Genie retrieves the figures and the
+            answer below is grounded only in what it returns.
+        </div>
+        """
+    )
+
+    st.session_state.setdefault("copilot_messages", [])
+    data_messages = st.session_state["copilot_messages"]
+
+    with st.container():
+        for message in data_messages:
+            role = message.get("role", "assistant")
+            avatar = ":material/person:" if role == "user" else ":material/database:"
+
+            with st.chat_message(role, avatar=avatar):
+                st.markdown(message.get("content", ""))
+
+                provenance = message.get("provenance")
+                if role == "assistant" and provenance:
+                    with st.expander("How this was derived"):
+                        st.markdown(
+                            "**Question sent to Genie:** "
+                            f"{provenance.get('refined_question') or '_none_'}"
+                        )
+
+                        sql = provenance.get("sql")
+                        if sql:
+                            st.code(sql, language="sql")
+                        else:
+                            st.caption("No SQL was returned.")
+
+                        data = provenance.get("data")
+                        if data is not None and not (
+                            hasattr(data, "empty") and data.empty
+                        ):
+                            st.dataframe(data, width="stretch")
+                        else:
+                            st.caption("No data rows were returned.")
+
+        data_question = st.chat_input(
+            "Ask a data question — e.g. how did NIM trend last quarter?",
+            key="copilot_data_chat_input",
+        )
+
+    if data_question and data_question.strip():
+        question = data_question.strip()
+        data_messages.append({"role": "user", "content": question})
+
+        try:
+            with st.spinner("Asking Genie…"):
+                result = answer_data_question(question)
+            data_messages.append(
+                {
+                    "role": "assistant",
+                    "content": result["final_answer"],
+                    "provenance": {
+                        "refined_question": result["refined_question"],
+                        "sql": result["sql"],
+                        "data": result["data"],
+                    },
+                }
+            )
+        except Exception as error:
+            data_messages.append(
+                {
+                    "role": "assistant",
+                    "content": (
+                        "The data question could not be answered right now. "
+                        f"Technical detail: `{error}`"
+                    ),
+                    "provenance": None,
+                }
+            )
+
+        st.rerun()
 
 
 def render_copilot(s):
@@ -267,6 +356,8 @@ def render_copilot(s):
             )
 
         st.rerun()
+
+    _render_data_copilot()
 
     render_html(
         f"""
