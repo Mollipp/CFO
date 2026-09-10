@@ -354,9 +354,19 @@ def build_horizon_outlook_chart(baseline, height=360):
 
     chart_df = baseline.dropna(subset=["nim_pct"]).sort_values("month")
     chart_df = chart_df.reset_index(drop=True)
+    # The baseline can run into the next year, so the month name alone would
+    # put two Januaries on one ordinal slot.
+    chart_df["month_label"] = pd.to_datetime(chart_df["month"]).dt.strftime("%b %y")
     month_sort = chart_df["month_label"].tolist()
 
-    scale = _padded_domain(chart_df["nim_pct"], minimum_spread=0.05, padding_ratio=0.20)
+    has_band = "nim_low_pct" in chart_df.columns
+    band_values = (
+        pd.concat([chart_df["nim_pct"], chart_df["nim_low_pct"], chart_df["nim_high_pct"]])
+        .dropna()
+        if has_band
+        else chart_df["nim_pct"]
+    )
+    scale = _padded_domain(band_values, minimum_spread=0.05, padding_ratio=0.08)
 
     actual = chart_df[chart_df["series"] == "Actual"].copy()
     forecast = chart_df[chart_df["series"] == "Baseline"].copy()
@@ -364,6 +374,10 @@ def build_horizon_outlook_chart(baseline, height=360):
     if not actual.empty and not forecast.empty:
         bridge = actual.tail(1).copy()
         bridge["series"] = "Baseline"
+        if has_band:
+            # The band opens from the last actual, where there is no error yet.
+            bridge["nim_low_pct"] = bridge["nim_pct"]
+            bridge["nim_high_pct"] = bridge["nim_pct"]
         forecast = pd.concat([bridge, forecast], ignore_index=True)
 
     x_axis = alt.X(
@@ -401,15 +415,39 @@ def build_horizon_outlook_chart(baseline, height=360):
             ],
         )
     )
+
+    forecast_tooltip = [
+        alt.Tooltip("month:T", title="Month", format="%B %Y"),
+        alt.Tooltip("nim_pct:Q", title="Baseline NIM", format=".3f"),
+    ]
+    if has_band:
+        forecast_tooltip += [
+            alt.Tooltip("nim_low_pct:Q", title="90% band low", format=".3f"),
+            alt.Tooltip("nim_high_pct:Q", title="90% band high", format=".3f"),
+            alt.Tooltip("confidence_pct:Q", title="Confidence within ±10 bps (%)", format=".0f"),
+        ]
+
     forecast_points = (
         alt.Chart(forecast.iloc[1:] if len(forecast) > 1 else forecast)
         .mark_circle(size=56, fill="#080c09", stroke="#C7A8FF", strokeWidth=2)
-        .encode(x=x_axis, y=y_axis)
+        .encode(x=x_axis, y=y_axis, tooltip=forecast_tooltip)
     )
 
-    return _finish(
-        actual_line + actual_points + forecast_line + forecast_points, height
-    )
+    layers = actual_line + actual_points + forecast_line + forecast_points
+
+    if has_band:
+        band = (
+            alt.Chart(forecast)
+            .mark_area(color=VIOLET, opacity=0.13)
+            .encode(
+                x=x_axis,
+                y=alt.Y("nim_low_pct:Q", title="NIM (%)", scale=scale, axis=_percent_axis()),
+                y2="nim_high_pct:Q",
+            )
+        )
+        layers = band + layers
+
+    return _finish(layers, height)
 
 
 # ------------------------------------------------------------------

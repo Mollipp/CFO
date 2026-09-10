@@ -10,6 +10,7 @@ and the presentation layer never reaches into a dataframe itself.
 """
 
 import html
+import math
 from types import SimpleNamespace
 
 import pandas as pd
@@ -17,7 +18,21 @@ import streamlit as st
 
 from src import cockpit_views as views
 from src.engines import build_horizon_baseline
+from src.extended_data_loader import load_bank_daily_signals
 from src.hud import clip_ui_text, safe_float
+from src.rag import (
+    AMBER,
+    GREEN,
+    HIGH,
+    LOW,
+    MEDIUM,
+    confidence_fixed,
+    confidence_probability,
+    confidence_within,
+    normal_cdf,
+    rag,
+    rag_from_status,
+)
 
 # The reference cockpit's lookback windows.
 DEPOSIT_LOOKBACK_DAYS = 30
@@ -31,6 +46,21 @@ HORIZON_MONTHS_AHEAD = 4
 # Basel III floors the executive KPI cards measure their headroom against.
 REGULATORY_CET1_REQUIREMENT_PCT = 10.5
 REGULATORY_LCR_REQUIREMENT_PCT = 100.0
+
+# RAG thresholds shared by more than one reading: (green from, red below).
+NIM_RAG_PCT = (1.75, 1.55)
+
+# Tolerances the prediction confidence is measured against: the band a CFO
+# would still call "on the projection".
+NIM_TOLERANCE_BPS = 10.0
+FY_NII_TOLERANCE_PCT = 2.0
+ASSET_GROWTH_TOLERANCE_PP = 0.25
+
+# Composite-score noise assumed on the synthetic strategy assessments.
+STRATEGY_SCORE_NOISE_PTS = 3.0
+
+# Days of silence that separate one anomaly episode from the next.
+ANOMALY_EPISODE_GAP_DAYS = 3
 
 
 def _latest_rows(frame, date_column="date"):
@@ -544,6 +574,9 @@ def build_state():
     _build_narrative(s)
     _build_kpi_explainers(s)
     _build_domain_grid(s)
+    _build_predictions(s)
+    _build_ratings(s)
+    _build_internal_news(s)
 
     return s
 
@@ -607,7 +640,6 @@ def _build_kpi_explainers(s):
 
     s.kpi_cards = [
         {
-            "code": "CAP / 01",
             "label": "CET1 RATIO",
             "value": f"{s.cet1_ratio:.1f}%",
             "delta_pp": s.cet1_mom_pp,
@@ -616,6 +648,7 @@ def _build_kpi_explainers(s):
                 f"€{s.cet1_capital / 1000:.1f}bn CET1"
             ),
             "module": "brief",
+            "rag": rag(s.cet1_ratio, 13.0, 11.5, unit="%"),
             "why": (
                 f"CET1 capital of €{s.cet1_capital / 1000:.2f}bn {_direction(s.cet1_mom_pp)} "
                 f"against €{s.latest_history['rwa_m'] / 1000:.1f}bn of risk-weighted assets, "
@@ -634,7 +667,6 @@ def _build_kpi_explainers(s):
             ),
         },
         {
-            "code": "LIQ / 02",
             "label": "LIQUIDITY COVERAGE",
             "value": f"{s.lcr_ratio:.1f}%",
             "delta_pp": s.lcr_mom_pp,
@@ -643,6 +675,7 @@ def _build_kpi_explainers(s):
                 f"L/D {s.loan_to_deposit_ratio:.1f}%"
             ),
             "module": "treasury",
+            "rag": rag(s.lcr_ratio, 130.0, 110.0, unit="%", precision=0),
             "why": (
                 f"€{s.hqla / 1000:.1f}bn of high-quality liquid assets against 30-day net "
                 f"outflows, while the deposit base moved "
@@ -660,7 +693,6 @@ def _build_kpi_explainers(s):
             ),
         },
         {
-            "code": "RET / 03",
             "label": "ANNUALISED YTD ROE PROXY",
             "value": f"{s.ytd_roe_proxy:.1f}%",
             "delta_pp": s.ytd_roe_delta_pp,
@@ -668,6 +700,7 @@ def _build_kpi_explainers(s):
                 f"{s.roe_peer_gap_pp:+.1f}pp vs peer median · directional comparison"
             ),
             "module": "peers",
+            "rag": rag(s.ytd_roe_proxy, 10.0, 6.0, unit="%"),
             "why": (
                 f"Year-to-date net profit over average CET1 capital "
                 f"({annualisation}). Net interest margin is "
@@ -687,7 +720,6 @@ def _build_kpi_explainers(s):
             ),
         },
         {
-            "code": "EFF / 04",
             "label": "YTD COST / INCOME",
             "value": f"{s.ytd_cost_income:.1f}%",
             "delta_pp": s.ytd_ci_delta_pp,
@@ -696,6 +728,7 @@ def _build_kpi_explainers(s):
             ),
             "module": "peers",
             "lower_is_better": True,
+            "rag": rag(s.ytd_cost_income, 55.0, 65.0, higher_is_better=False, unit="%"),
             "why": (
                 f"Year-to-date operating costs over operating income across "
                 f"{annualisation.split(',')[0]}. The ratio {_direction(s.ytd_ci_delta_pp)} "
@@ -857,9 +890,8 @@ def _movement(value, unit="pp", lower_is_better=False):
     return f"{arrow} {magnitude:,.{precision}f}{unit}", tone
 
 
-def _tile(code, label, value, delta_text, tone, why, impact, next_copy, topic):
+def _tile(label, value, delta_text, tone, why, impact, next_copy, topic, reading):
     return {
-        "code": code,
         "label": label,
         "value": value,
         "delta": delta_text,
@@ -868,6 +900,7 @@ def _tile(code, label, value, delta_text, tone, why, impact, next_copy, topic):
         "impact": impact,
         "next": next_copy,
         "topic": topic,
+        "rag": reading,
     }
 
 
@@ -933,10 +966,16 @@ def _earnings_tiles(s):
     monthly_income = s.ytd_operating_income / max(s.months_observed, 1)
     one_point_of_ci_m = monthly_income * 12.0 / 100.0
     ytd_costs_m = s.ytd_operating_income * s.ytd_cost_income / 100.0
+    nii_change_pct = (
+        _pct_change(
+            s.cert_current_monthly_nii,
+            s.cert_current_monthly_nii - s.monthly_nii_change_m,
+        )
+        or 0.0
+    )
 
     return [
         _tile(
-            "ERN / 01",
             "Net interest margin",
             f"{s.cert_current_nim:.2f}%",
             f"{nim_delta} vs {s.previous_month_label}",
@@ -945,9 +984,9 @@ def _earnings_tiles(s):
             s.nim_impact,
             s.nim_next,
             "nim",
+            rag(s.cert_current_nim, *NIM_RAG_PCT, unit="%", precision=2),
         ),
         _tile(
-            "ERN / 02",
             "Net interest income",
             f"€{s.cert_current_monthly_nii:,.0f}m",
             f"{nii_delta} vs {s.previous_month_label}",
@@ -970,9 +1009,9 @@ def _earnings_tiles(s):
                 "reading the run rate as a forecast."
             ),
             "nim",
+            rag(nii_change_pct, 0.0, -3.0, unit="% MoM"),
         ),
         _tile(
-            "ERN / 03",
             "Cost / income ratio",
             f"{s.ytd_cost_income:.1f}%",
             f"{ci_delta} vs prior YTD",
@@ -996,6 +1035,7 @@ def _earnings_tiles(s):
                 "new cost commitments."
             ),
             "efficiency",
+            rag(s.ytd_cost_income, 55.0, 65.0, higher_is_better=False, unit="%"),
         ),
     ]
 
@@ -1019,12 +1059,12 @@ def _balance_sheet_tiles(s):
     loans = _loan_book_30d()
 
     if loans is None:
+        loan_growth_mom_pct = safe_float(s.latest_history["loan_growth_mom_pct"])
         loan_tile = _tile(
-            "BAL / 02",
             "Loan book",
             f"€{s.current_loans_m / 1000:,.1f}bn",
-            f"{_movement(safe_float(s.latest_history['loan_growth_mom_pct']), '%')[0]} MoM",
-            _movement(safe_float(s.latest_history["loan_growth_mom_pct"]), "%")[1],
+            f"{_movement(loan_growth_mom_pct, '%')[0]} MoM",
+            _movement(loan_growth_mom_pct, "%")[1],
             (
                 "The daily signal table does not reach 30 days back, so the loan "
                 "book is read at the certified month-end close."
@@ -1035,12 +1075,12 @@ def _balance_sheet_tiles(s):
             ),
             "Open the funding view once the daily window is long enough to compare.",
             "balance_sheet",
+            rag(loan_growth_mom_pct, 0.0, -1.0, unit="% MoM"),
         )
     else:
         loan_delta, loan_tone = _movement(loans["change_pct"], "%")
         leader, laggard = loans["leader"], loans["laggard"]
         loan_tile = _tile(
-            "BAL / 02",
             "Loan book",
             f"€{loans['total_now_m'] / 1000:,.1f}bn",
             f"{loan_delta} over 30D",
@@ -1062,11 +1102,11 @@ def _balance_sheet_tiles(s):
                 "it consumes before extending the book further."
             ),
             "balance_sheet",
+            rag(loans["change_pct"], 0.0, -1.0, unit="% 30D"),
         )
 
     return [
         _tile(
-            "BAL / 01",
             "Deposit base",
             f"€{deposit_total_m / 1000:,.1f}bn",
             f"{deposit_delta} over 30D",
@@ -1075,10 +1115,10 @@ def _balance_sheet_tiles(s):
             s.deposit_impact,
             s.deposit_next,
             "deposits",
+            rag(s.total_deposit_30d_change_pct, 0.0, -1.0, unit="% 30D"),
         ),
         loan_tile,
         _tile(
-            "BAL / 03",
             "Loan-to-deposit ratio",
             f"{s.loan_to_deposit_ratio:.1f}%",
             f"{ltd_delta} vs {s.previous_month_label}",
@@ -1102,6 +1142,10 @@ def _balance_sheet_tiles(s):
                 "the remaining deposit headroom to new lending."
             ),
             "balance_sheet",
+            rag(
+                s.loan_to_deposit_ratio, 90.0, 100.0,
+                higher_is_better=False, unit="%", precision=0,
+            ),
         ),
     ]
 
@@ -1128,7 +1172,6 @@ def _capital_tiles(s):
 
     return [
         _tile(
-            "CAP / 01",
             "CET1 ratio",
             f"{s.cet1_ratio:.2f}%",
             f"{cet1_delta} vs {s.previous_month_label}",
@@ -1137,9 +1180,9 @@ def _capital_tiles(s):
             cet1_card["impact"],
             cet1_card["next"],
             "capital",
+            cet1_card["rag"],
         ),
         _tile(
-            "LIQ / 02",
             "Liquidity coverage ratio",
             f"{s.lcr_ratio:.1f}%",
             f"{lcr_delta} vs {s.previous_month_label}",
@@ -1148,9 +1191,9 @@ def _capital_tiles(s):
             lcr_card["impact"],
             lcr_card["next"],
             "liquidity",
+            lcr_card["rag"],
         ),
         _tile(
-            "CAP / 03",
             "Total capital ratio",
             f"{s.total_capital_ratio:.2f}%",
             f"{tc_delta} vs {s.previous_month_label}",
@@ -1171,6 +1214,7 @@ def _capital_tiles(s):
                 "new issuance."
             ),
             "capital",
+            rag(s.total_capital_ratio, 17.0, 14.5, unit="%"),
         ),
     ]
 
@@ -1219,9 +1263,15 @@ def _risk_tiles(s):
         _pct_change(rwa_m, rwa_prior_m) or 0.0, "%", lower_is_better=True
     )
 
+    provisions_rag = (
+        rag(provisions_m / stage_3_exposure_m * 100.0, 60.0, 45.0,
+            unit="% of Stage 3", precision=0)
+        if stage_3_exposure_m
+        else rag(coverage_pct, 1.5, 1.0, unit="% of GCA")
+    )
+
     return [
         _tile(
-            "RAQ / 01",
             "Provisions",
             f"€{provisions_m / 1000:,.2f}bn",
             f"{prov_delta} vs {s.previous_month_label}",
@@ -1245,9 +1295,9 @@ def _risk_tiles(s):
                 "because the charge was released, before reading it as good news."
             ),
             "credit",
+            provisions_rag,
         ),
         _tile(
-            "RAQ / 02",
             "Exposure at default",
             f"€{ead_m / 1000:,.1f}bn",
             f"{ead_delta} vs {s.previous_month_label}",
@@ -1270,9 +1320,12 @@ def _risk_tiles(s):
                 "sizing new limits."
             ),
             "credit",
+            rag(
+                _pct_change(ead_m, ead_prior_m) or 0.0, 1.0, 2.5,
+                higher_is_better=False, unit="% MoM",
+            ),
         ),
         _tile(
-            "RAQ / 03",
             "Gross carrying amount",
             f"€{gca_m / 1000:,.1f}bn",
             f"{gca_delta} vs {s.previous_month_label}",
@@ -1293,9 +1346,12 @@ def _risk_tiles(s):
                 "highest Stage 2 concentration."
             ),
             "credit",
+            rag(
+                s.stage_2_share_pct, 8.0, 12.0,
+                higher_is_better=False, unit="% in Stage 2",
+            ),
         ),
         _tile(
-            "RAQ / 04",
             "Risk-weighted assets",
             f"€{rwa_m / 1000:,.1f}bn",
             f"{rwa_delta} vs {s.previous_month_label}",
@@ -1318,6 +1374,10 @@ def _risk_tiles(s):
                 "growth or distribution."
             ),
             "capital",
+            rag(
+                _pct_change(rwa_m, rwa_prior_m) or 0.0, 1.0, 2.0,
+                higher_is_better=False, unit="% MoM",
+            ),
         ),
     ]
 
@@ -1334,25 +1394,21 @@ def _build_domain_grid(s):
 
     s.domain_grid = [
         {
-            "code": "Domain 01 / ERN",
             "name": "Earnings",
             "metrics": "NII · NIM · cost / income",
             "tiles": _earnings_tiles(s),
         },
         {
-            "code": "Domain 02 / BAL",
             "name": "Balance sheet",
             "metrics": "Deposits · loans · funding mix",
             "tiles": _balance_sheet_tiles(s),
         },
         {
-            "code": "Domain 03 / CAP-LIQ",
             "name": "Capital & Liquidity",
             "metrics": "CET1 · LCR · total capital",
             "tiles": _capital_tiles(s),
         },
         {
-            "code": "Domain 04 / RISK",
             "name": "Risk & Asset Quality",
             "metrics": "Provisions · EAD · GCA · RWA",
             "tiles": _risk_tiles(s),
@@ -1363,11 +1419,11 @@ def _build_domain_grid(s):
     # they go. Unescaping first makes the pass idempotent, so a reused string is
     # never double-escaped into visible entities.
     for domain in s.domain_grid:
-        for field in ("code", "name", "metrics"):
+        for field in ("name", "metrics"):
             domain[field] = escape(domain[field])
 
         for index, tile in enumerate(domain["tiles"], start=1):
-            for field in ("code", "label", "value", "delta"):
+            for field in ("label", "value", "delta"):
                 tile[field] = escape(tile[field])
 
             tile["index"] = index
@@ -1376,3 +1432,411 @@ def _build_domain_grid(s):
             tile["why_short"] = escape(clip_ui_text(tile["why"], 150))
             for field in ("why", "impact", "next"):
                 tile[field] = escape(tile[field])
+
+
+# ------------------------------------------------------------------
+# Prediction confidence
+# ------------------------------------------------------------------
+
+def _robust_sigma(values):
+    """
+    1.4826 × the median absolute deviation.
+
+    A standard-deviation estimate that one outlier month cannot set on its
+    own, which matters with only a handful of monthly observations.
+    """
+    series = pd.Series(values, dtype=float).dropna()
+    if len(series) < 2:
+        return 0.0
+    return 1.4826 * float((series - series.median()).abs().median())
+
+
+def _full_months(monthly_nim):
+    """Monthly rows with every day observed; the open month is noisier."""
+    frame = monthly_nim.dropna(subset=["nim_pct"]).sort_values("month")
+    days_in_month = pd.to_datetime(frame["month"]).dt.days_in_month
+    return frame[frame["days_observed"] >= days_in_month]
+
+
+def _build_predictions(s):
+    """
+    A confidence level for every forward-looking number the cockpit shows.
+
+    The Horizon error is treated as a random walk: each projected month adds
+    a surprise drawn from the observed month-to-month moves, so the spread
+    grows with the square root of the months ahead. Confidence is then the
+    probability of landing within a tolerance a CFO would still call "on the
+    projection".
+    """
+    full = _full_months(s.monthly_nim)
+    nim_sigma_bps = _robust_sigma(full["nim_pct"].diff() * 100.0)
+    nii_sigma_m = _robust_sigma(full["monthly_nii_m"].diff())
+    growth_sigma_pp = _robust_sigma(
+        full["avg_interest_earning_assets_m"].pct_change() * 100.0
+    )
+
+    baseline = s.horizon_baseline.copy()
+    months_ahead = (
+        int((baseline["series"] == "Baseline").sum()) if not baseline.empty else 0
+    )
+
+    s.conf_horizon_first_step = confidence_within(
+        nim_sigma_bps, NIM_TOLERANCE_BPS, f"±{NIM_TOLERANCE_BPS:.0f} bps"
+    )
+    s.conf_horizon_first_step["basis"] += (
+        f" one month out (month-to-month σ {nim_sigma_bps:.0f} bps)"
+    )
+
+    s.conf_horizon_ye_nim = confidence_within(
+        nim_sigma_bps * math.sqrt(max(months_ahead, 1)),
+        NIM_TOLERANCE_BPS,
+        f"±{NIM_TOLERANCE_BPS:.0f} bps",
+    )
+    s.conf_horizon_ye_nim["basis"] += (
+        f" {months_ahead} months out (σ {nim_sigma_bps:.0f} bps per month, "
+        f"compounding)"
+    )
+
+    # The FY figure is mostly booked actuals; only the projected months carry
+    # error, and a random-walk level error sums to σ·√(n(n+1)(2n+1)/6).
+    n = months_ahead
+    nii_sum_sigma_m = nii_sigma_m * math.sqrt(n * (n + 1) * (2 * n + 1) / 6.0)
+    nii_tolerance_m = FY_NII_TOLERANCE_PCT / 100.0 * s.horizon_full_year_nii_m
+    s.conf_horizon_fy_nii = confidence_within(
+        nii_sum_sigma_m,
+        nii_tolerance_m,
+        f"±{FY_NII_TOLERANCE_PCT:.0f}% (€{nii_tolerance_m:,.0f}m)",
+    )
+    s.conf_horizon_fy_nii["basis"] += (
+        f" of the FY baseline ({s.months_observed} months already booked)"
+    )
+
+    s.conf_horizon_balance_sheet = confidence_within(
+        growth_sigma_pp,
+        ASSET_GROWTH_TOLERANCE_PP,
+        f"±{ASSET_GROWTH_TOLERANCE_PP:.2f}pp",
+    )
+    s.conf_horizon_balance_sheet["basis"] += (
+        f" of the monthly run rate (σ {growth_sigma_pp:.2f}pp per month)"
+    )
+
+    # Each projected month carries its own band and confidence on the chart.
+    if not baseline.empty:
+        steps = (baseline["series"] == "Baseline").cumsum().where(
+            baseline["series"] == "Baseline"
+        )
+        sigma_pp = nim_sigma_bps * steps.pow(0.5) / 100.0
+        baseline["nim_low_pct"] = baseline["nim_pct"] - 1.645 * sigma_pp
+        baseline["nim_high_pct"] = baseline["nim_pct"] + 1.645 * sigma_pp
+        baseline["confidence_pct"] = [
+            None
+            if pd.isna(sigma)
+            else confidence_within(
+                sigma * 100.0, NIM_TOLERANCE_BPS, ""
+            )["pct"]
+            for sigma in sigma_pp
+        ]
+    s.horizon_baseline = baseline
+    s.nim_sigma_bps = nim_sigma_bps
+
+    # Treasury: the +50bp figure is a revaluation, so its confidence is about
+    # the method. The convexity share says how far a linear reading would miss.
+    scenarios = s.treasury_scenarios
+    pure = scenarios[scenarios["credit_spread_shock_bps"].fillna(0).abs() < 0.001]
+    ev_by_shock = pure.groupby("rate_shock_bps")["economic_value_impact_m"].sum()
+
+    if 25 in ev_by_shock.index and 50 in ev_by_shock.index and ev_by_shock[50]:
+        convexity_share = abs(ev_by_shock[50] - 2.0 * ev_by_shock[25]) / abs(
+            ev_by_shock[50]
+        )
+        level = HIGH if convexity_share < 0.05 else MEDIUM if convexity_share < 0.15 else LOW
+        s.conf_treasury_rate50 = confidence_fixed(
+            level,
+            f"Full revaluation of a parallel shift; convexity is "
+            f"{convexity_share:.1%} of the move. Curve twists and spread moves "
+            f"are not captured.",
+        )
+    else:
+        s.conf_treasury_rate50 = confidence_fixed(
+            MEDIUM, "No +25bp scenario to check the revaluation's linearity against."
+        )
+
+    s.conf_hedges = confidence_fixed(
+        MEDIUM,
+        "Simplified DV01 hedge estimate; basis, curve and carry-path risk are "
+        "not modelled.",
+    )
+
+    # Strategy: how likely the #1 rank survives the scoring noise.
+    noise = STRATEGY_SCORE_NOISE_PTS
+    s.conf_strategy_rank = (
+        confidence_probability(
+            normal_cdf(s.strategy_score_gap / (noise * math.sqrt(2))),
+            f"Probability #1 stays ahead of #2 if each composite carries "
+            f"±{noise:.0f} pts of assessment noise (gap {s.strategy_score_gap:.1f} pts)",
+        )
+        if s.second_strategy is not None
+        else confidence_fixed(LOW, "Only one scored opportunity; no rank to test.")
+    )
+
+
+# ------------------------------------------------------------------
+# Lens metric RAG
+# ------------------------------------------------------------------
+
+def _build_ratings(s):
+    """RAG readings for the metrics the Treasury, Peers, News, Strategy and
+    Horizon lenses show, shared with the home dock."""
+    tier1_m = safe_float(s.latest_history["cet1_capital_m"]) + safe_float(
+        s.latest_history["at1_capital_m"]
+    )
+    rate50_loss_pct = (
+        abs(min(s.treasury_rate50_impact_m, 0.0)) / s.cet1_capital * 100.0
+        if s.cet1_capital
+        else 0.0
+    )
+    dv01_200bp_pct = s.treasury_dv01 * 200.0 / tier1_m * 100.0 if tier1_m else 0.0
+    unrealised_pct = (
+        s.treasury_unrealised_pnl_m / s.treasury_market_value_m * 100.0
+        if s.treasury_market_value_m
+        else 0.0
+    )
+
+    news = s.news_recent
+    negative_share_pct = (
+        float((news["impact_direction"].astype(str).str.lower() == "negative").mean() * 100.0)
+        if news is not None and not news.empty
+        else 0.0
+    )
+    focus = s.geo_focus
+    attention = safe_float(focus["geo_attention_score"]) if focus is not None else 0.0
+    exposure = safe_float(focus["bank_exposure_share_pct"]) if focus is not None else 0.0
+
+    top, gap = s.top_strategy, s.top_capability_gap
+
+    full = _full_months(s.monthly_nim)
+    ytd_monthly_nii = float(full["monthly_nii_m"].mean()) if not full.empty else 0.0
+    forward_months = (
+        int((s.horizon_baseline["series"] == "Baseline").sum())
+        if not s.horizon_baseline.empty
+        else 0
+    )
+    forward_monthly_nii = s.horizon_remaining_nii_m / max(forward_months, 1)
+    nii_vs_ytd_pct = _pct_change(forward_monthly_nii, ytd_monthly_nii) or 0.0
+
+    s.ratings = {
+        "treasury_value": rag(unrealised_pct, 0.0, -2.0, unit="% of MV unrealised"),
+        "treasury_dv01": rag(
+            dv01_200bp_pct, 10.0, 15.0, higher_is_better=False,
+            unit="% of Tier 1 at ±200bp", precision=0,
+        ),
+        "treasury_duration": rag(
+            s.treasury_duration, 4.0, 6.0, higher_is_better=False, unit="y"
+        ),
+        "treasury_rate50": rag(
+            rate50_loss_pct, 5.0, 10.0, higher_is_better=False,
+            unit="% of CET1 lost", precision=0,
+        ),
+        "peer_roe": rag(s.roe_peer_gap_pp, 0.0, -3.0, unit="pp vs median"),
+        "peer_cet1": rag(s.cet1_peer_gap_pp, 0.0, -1.5, unit="pp vs median"),
+        "peer_ci": rag(s.efficiency_peer_advantage_pp, 0.0, -5.0, unit="pp vs median"),
+        "news_articles": rag(
+            negative_share_pct, 40.0, 60.0, higher_is_better=False,
+            unit="% negative", precision=0,
+        ),
+        "news_high": rag(
+            s.high_impact_news_count, 0, 2, higher_is_better=False,
+            unit=" high-impact", precision=0,
+        ),
+        "news_attention": rag(
+            attention, 50.0, 75.0, higher_is_better=False, precision=0
+        ),
+        "news_exposure": rag(
+            exposure, 30.0, 50.0, higher_is_better=False, unit="%", precision=0
+        ),
+        "strategy_top": (
+            rag(safe_float(top["overall_opportunity_score"]), 75.0, 60.0, unit=" pts", precision=0)
+            if top is not None
+            else rag_from_status(AMBER, "No scored opportunity")
+        ),
+        "strategy_fit": (
+            rag(safe_float(top["strategic_fit_score"]), 75.0, 60.0, unit=" pts", precision=0)
+            if top is not None
+            else rag_from_status(AMBER, "No scored opportunity")
+        ),
+        "strategy_gap": (
+            rag(
+                safe_float(gap["capability_gap"]), 15.0, 30.0,
+                higher_is_better=False, unit=" pts", precision=0,
+            )
+            if gap is not None
+            else rag_from_status(GREEN, "No capability gap recorded")
+        ),
+        "horizon_ye_nim": rag(s.horizon_year_end_nim, *NIM_RAG_PCT, unit="%", precision=2),
+        "horizon_fy_nii": rag(
+            nii_vs_ytd_pct, -1.0, -3.0, unit="% vs YTD monthly NII"
+        ),
+        "horizon_first_step": rag(s.horizon_first_month_bps, 0.0, -5.0, unit=" bps"),
+        "horizon_balance_sheet": rag(
+            s.horizon_asset_growth_pct, 0.0, -0.5, unit="% / month"
+        ),
+    }
+
+
+# ------------------------------------------------------------------
+# Internal news — what happened inside the bank
+# ------------------------------------------------------------------
+
+ANOMALY_COPY = {
+    "TEMP_DEPOSIT_OUTFLOW": ("Deposits", "Temporary deposit outflow"),
+    "DEPOSIT_STRESS": ("Deposits", "Deposit stress"),
+    "CREDIT_WATCH": ("Credit", "Credit watch"),
+}
+
+
+def _join_names(values):
+    names = sorted({str(value) for value in values})
+    return names[0] if len(names) == 1 else ", ".join(names[:-1]) + " & " + names[-1]
+
+
+def _anomaly_episodes(daily):
+    """The latest episode of each anomaly type the daily monitor flagged."""
+    flagged = daily[daily["anomaly_flag"] == 1]
+    episodes = []
+
+    for anomaly_type, rows in flagged.groupby("anomaly_type"):
+        dates = pd.Series(sorted(rows["date"].unique()))
+        breaks = dates.diff().dt.days.fillna(0) > ANOMALY_EPISODE_GAP_DAYS
+        episode_dates = dates[breaks.cumsum() == breaks.cumsum().max()]
+        start, end = episode_dates.min(), episode_dates.max()
+        episode = rows[rows["date"].between(start, end)]
+        episodes.append((anomaly_type, start, end, episode))
+
+    return episodes
+
+
+def _episode_item(daily, anomaly_type, start, end, episode, live_date):
+    tag, label = ANOMALY_COPY.get(
+        anomaly_type, ("Signal", anomaly_type.replace("_", " ").title())
+    )
+    segments = episode[["country", "business_line", "product"]].drop_duplicates()
+    in_scope = daily.merge(segments, on=["country", "business_line", "product"])
+    before = in_scope[in_scope["date"] == start - pd.Timedelta(days=1)]
+    at_end = in_scope[in_scope["date"] == end]
+
+    if tag == "Deposits":
+        # The deepest point of the episode, not its last day: an outflow that
+        # partly reversed inside the window would otherwise read as small.
+        balance_before = float(before["deposit_balance_m"].sum())
+        during = in_scope[in_scope["date"].between(start, end)]
+        trough_m = float(during.groupby("date")["deposit_balance_m"].sum().min())
+        change_m = trough_m - balance_before
+        change_pct = change_m / balance_before * 100.0 if balance_before else 0.0
+        movement = (
+            f"At the deepest point balances were {change_pct:+.1f}% "
+            f"(€{change_m / 1000:+,.2f}bn) against the day before, across "
+            f"{_join_names(segments['product']).lower()}."
+        )
+    else:
+        def stage_2(frame):
+            weight = frame["loan_balance_m"].sum()
+            return (
+                float((frame["stage_2_share_pct"] * frame["loan_balance_m"]).sum() / weight)
+                if weight
+                else 0.0
+            )
+
+        movement = (
+            f"Stage 2 share on {_join_names(segments['product']).lower()} went "
+            f"{stage_2(before):.1f}% → {stage_2(at_end):.1f}%."
+        )
+
+    open_episode = end >= live_date - pd.Timedelta(days=1)
+
+    return {
+        "sort": end,
+        "date": (
+            start.strftime("%d %b")
+            if start == end
+            else f"{start.strftime('%d %b')} – {end.strftime('%d %b')}"
+        ),
+        "tag": tag,
+        "headline": (
+            f"{label} flagged in {_join_names(segments['country'])} "
+            f"{_join_names(segments['business_line']).lower()}"
+        ),
+        "detail": movement,
+        "source": "Daily signal monitor",
+        "status": "Open" if open_episode else "Closed",
+    }
+
+
+def _build_internal_news(s):
+    """
+    The bank's own developments, as a feed alongside the public news.
+
+    Built from what the data records happening inside the bank: the certified
+    close, the anomaly episodes the daily monitor flagged, and the latest
+    treasury revaluation. Newest first.
+    """
+    items = [
+        {
+            "sort": s.reporting_date_ts,
+            "date": s.reporting_date_ts.strftime("%d %b"),
+            "tag": "Close",
+            "headline": f"{s.reporting_date_ts.strftime('%B')} month-end close certified",
+            "detail": (
+                f"CET1 {s.cet1_ratio:.2f}%, LCR {s.lcr_ratio:.0f}%, YTD cost/income "
+                f"{s.ytd_cost_income:.1f}% on {s.months_observed} months of actuals."
+            ),
+            "source": "Finance / certified close",
+            "status": "Certified",
+        }
+    ]
+
+    if s.treasury_summary is not None:
+        as_of = pd.to_datetime(s.treasury_summary["as_of_date"])
+        items.append(
+            {
+                "sort": as_of,
+                "date": as_of.strftime("%d %b"),
+                "tag": "Treasury",
+                "headline": "Treasury portfolio revalued",
+                "detail": (
+                    f"Market value €{s.treasury_market_value_m / 1000:,.1f}bn, "
+                    f"unrealised P&L €{s.treasury_unrealised_pnl_m:+,.0f}m, "
+                    f"DV01 €{s.treasury_dv01:.1f}m per bp."
+                ),
+                "source": "Treasury / portfolio snapshot",
+                "status": "Snapshot",
+            }
+        )
+
+    daily = load_bank_daily_signals()
+    if daily is not None and not daily.empty:
+        daily = daily.copy()
+        daily["date"] = pd.to_datetime(daily["date"])
+        for anomaly_type, start, end, episode in _anomaly_episodes(daily):
+            items.append(
+                _episode_item(daily, anomaly_type, start, end, episode, s.live_date_ts)
+            )
+
+    if s.current_credit_watch_count:
+        items.append(
+            {
+                "sort": s.live_date_ts,
+                "date": s.live_date_ts.strftime("%d %b"),
+                "tag": "Credit",
+                "headline": f"{s.current_credit_watch_count} credit watch flag(s) open",
+                "detail": s.credit_signal_primary,
+                "source": "Daily signal monitor",
+                "status": "Open",
+            }
+        )
+
+    items.sort(key=lambda item: item["sort"], reverse=True)
+    for item in items:
+        for field in ("date", "tag", "headline", "detail", "source", "status"):
+            item[field] = html.escape(html.unescape(str(item[field])))
+
+    s.internal_news = items

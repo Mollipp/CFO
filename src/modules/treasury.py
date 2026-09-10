@@ -6,13 +6,13 @@ import streamlit as st
 
 from src import charts
 from src.cockpit_views import load_treasury_portfolio
-from src.hud import render_html, safe_float
+from src.hud import explained_metric_card, metric_row, render_html, safe_float
+from src.rag import confidence_badge, confidence_label
 
 
 def render_treasury(s):
     render_html(
         """
-        <div class="module-code">Intelligence 05 / Treasury and hedge intelligence</div>
         <div class="section-title">Treasury Pulse</div>
         <div class="section-subtitle">
             Portfolio sensitivity, predefined market-risk scenarios and
@@ -33,86 +33,93 @@ def render_treasury(s):
         safe_float(hedge["estimated_annual_carry_m"]) if hedge is not None else 0.0
     )
 
-    change_copy = (
-        f"Market value {s.treasury_market_trend_text} ({s.treasury_market_trend_label})"
-        if s.treasury_market_change_m is not None
-        else (
+    if s.treasury_market_change_m is not None:
+        change_copy = (
+            f"Market value {s.treasury_market_trend_text} "
+            f"({s.treasury_market_trend_label})."
+        )
+        change_next = "Compare the move with the market-risk scenarios below."
+    else:
+        change_copy = (
             "No prior treasury snapshot is available, so day-over-day "
             "market-value change cannot yet be measured."
         )
+        change_next = "Trend appears automatically once a prior snapshot exists."
+
+    hedge_option = (
+        f"Largest predefined DV01 reduction: {hedge_name} — {hedge_reduction:.0f}% · "
+        f"carry €{hedge_carry:+,.0f}m/year. Prototype option, not a trading "
+        "recommendation."
     )
 
+    ratings = s.ratings
     render_html(
-        f"""
-        <div class="decision-strip">
-            <div class="decision-strip-item">
-                <span class="flow-label">Change</span>
-                <strong>{change_copy}</strong>
-                <span>Trend appears automatically once a prior snapshot exists.</span>
-            </div>
-            <div class="decision-strip-item">
-                <span class="flow-label">Why</span>
-                <strong>Duration {s.treasury_duration:.2f}y · DV01 €{s.treasury_dv01:.1f}m/bp</strong>
-                <span>These sensitivity measures explain why parallel rate moves affect economic value.</span>
-            </div>
-            <div class="decision-strip-item">
-                <span class="flow-label">Impact</span>
-                <strong>+50bp → {s.treasury_rate50_text}</strong>
-                <span>Economic-value impact; OCI and immediate P&amp;L are reported separately below.</span>
-            </div>
-            <div class="decision-strip-item">
-                <span class="flow-label">Next option</span>
-                <strong>{hedge_name}</strong>
-                <span>Largest predefined DV01 reduction: {hedge_reduction:.0f}% · carry €{hedge_carry:+,.0f}m/year. Prototype option, not a trading recommendation.</span>
-            </div>
-        </div>
-        """
+        metric_row(
+            [
+                explained_metric_card(
+                    "MARKET VALUE",
+                    f"€{s.treasury_market_value_m / 1000:.1f}bn",
+                    f"unrealised P&amp;L €{s.treasury_unrealised_pnl_m:+,.0f}m",
+                    ratings["treasury_value"],
+                    why=change_copy,
+                    impact=(
+                        f"Unrealised P&amp;L of €{s.treasury_unrealised_pnl_m:+,.0f}m "
+                        "on the current portfolio marks."
+                    ),
+                    next_step=change_next,
+                ),
+                explained_metric_card(
+                    "PORTFOLIO DV01",
+                    f"€{s.treasury_dv01:.1f}m",
+                    "per 1 bp parallel rate move",
+                    ratings["treasury_dv01"],
+                    why=(
+                        f"Each 1bp parallel rate move changes economic value by "
+                        f"about €{s.treasury_dv01:.1f}m."
+                    ),
+                    impact=(
+                        "The sensitivity that explains why parallel rate moves "
+                        "affect economic value."
+                    ),
+                    next_step=hedge_option,
+                ),
+                explained_metric_card(
+                    "MODIFIED DURATION",
+                    f"{s.treasury_duration:.2f}y",
+                    "market-value weighted",
+                    ratings["treasury_duration"],
+                    why=f"Market-value-weighted modified duration of {s.treasury_duration:.2f}y.",
+                    impact=(
+                        "The longer the duration, the larger the economic-value swing "
+                        "for the same rate move."
+                    ),
+                    next_step="See where it sits in the DV01-by-maturity chart below.",
+                ),
+                explained_metric_card(
+                    "RATES +50BP",
+                    s.treasury_rate50_text,
+                    "economic-value impact",
+                    ratings["treasury_rate50"],
+                    why=(
+                        f"A +50bp parallel shock moves economic value by "
+                        f"{s.treasury_rate50_text}, driven by DV01 €{s.treasury_dv01:.1f}m/bp."
+                    ),
+                    impact=(
+                        "Economic-value impact; OCI and immediate P&amp;L are reported "
+                        "separately in the scenarios below."
+                    ),
+                    next_step=hedge_option,
+                    confidence=s.conf_treasury_rate50,
+                ),
+            ]
+        )
     )
-
-    t1, t2, t3, t4 = st.columns(4)
-
-    with t1:
-        render_html(
-            f"""<div class="kpi-card" data-module="MKT / 05">
-            <div class="kpi-label">MARKET VALUE</div>
-            <div class="kpi-value">€{s.treasury_market_value_m / 1000:.1f}bn</div>
-            <div class="{s.treasury_market_trend_css}">{s.treasury_market_trend_label}: {s.treasury_market_trend_text}</div>
-            <span class="micro-line"></span></div>"""
-        )
-
-    with t2:
-        render_html(
-            f"""<div class="kpi-card" data-module="RISK / 05">
-            <div class="kpi-label">PORTFOLIO DV01</div>
-            <div class="kpi-value">€{s.treasury_dv01:.1f}m</div>
-            <div class="kpi-neutral">per 1 bp parallel rate move</div>
-            <span class="micro-line"></span></div>"""
-        )
-
-    with t3:
-        render_html(
-            f"""<div class="kpi-card" data-module="DUR / 05">
-            <div class="kpi-label">MODIFIED DURATION</div>
-            <div class="kpi-value">{s.treasury_duration:.2f}y</div>
-            <div class="kpi-neutral">market-value weighted</div>
-            <span class="micro-line"></span></div>"""
-        )
-
-    with t4:
-        impact_css = "kpi-alert" if s.treasury_rate50_impact_m < 0 else "kpi-track"
-        render_html(
-            f"""<div class="kpi-card" data-module="SIM / 05">
-            <div class="kpi-label">RATES +50BP</div>
-            <div class="kpi-value">{s.treasury_rate50_text}</div>
-            <div class="{impact_css}">economic-value impact</div>
-            <span class="micro-line"></span></div>"""
-        )
 
     left, right = st.columns([1.25, 1])
 
     with left:
         render_html(
-            """<div class="module-code">Scenario lattice / Portfolio outputs</div>
+            """<div class="module-code">Portfolio outputs</div>
             <div class="section-title">Market-risk scenarios</div>"""
         )
         st.altair_chart(
@@ -141,7 +148,7 @@ def render_treasury(s):
 
     with right:
         render_html(
-            """<div class="module-code">Hedge lattice / Predefined alternatives</div>
+            """<div class="module-code">Predefined alternatives</div>
             <div class="section-title">Hedge options</div>"""
         )
 
@@ -158,6 +165,7 @@ def render_treasury(s):
                         annual carry €{safe_float(best['estimated_annual_carry_m']):+,.0f}m.
                         Prototype estimate, not an executable trading recommendation.
                     </div>
+                    {confidence_badge(s.conf_hedges, with_basis=True)}
                 </div>
                 """
             )
@@ -178,6 +186,8 @@ def render_treasury(s):
                 "+50bp impact after hedge (€m)",
                 "Annual carry (€m)",
             ]
+            # Every row is an estimate from the same simplified method.
+            display["Confidence"] = confidence_label(s.conf_hedges)
             st.dataframe(display, width="stretch", hide_index=True)
         else:
             st.caption("No hedge alternatives available.")

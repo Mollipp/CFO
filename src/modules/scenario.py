@@ -4,8 +4,9 @@ import pandas as pd
 import streamlit as st
 
 from src import charts
-from src.engines import calculate_scenario
-from src.hud import investigate_url, module_url, render_html
+from src.engines import BETA_UNCERTAINTY_PP, calculate_scenario, scenario_beta_range
+from src.hud import investigate_url, metric_card, module_url, render_html
+from src.rag import HIGH, confidence_badge, confidence_fixed, confidence_within, rag
 
 DEFAULT_INPUTS = {
     "ecb": -50,
@@ -19,9 +20,24 @@ DEFAULT_INPUTS = {
 METHOD_CAPTION = (
     "Prototype deterministic scenario: the current NIM, balances and rates are "
     "the anchor. Loan and deposit pass-through, replacement funding and the "
-    "deposit shock are explicit assumptions. The next production step is to move "
-    "this calculation upstream into a governed scenario layer."
+    "deposit shock are explicit assumptions. Confidence re-runs the scenario "
+    f"with both pass-through betas ±{BETA_UNCERTAINTY_PP:.0f}pp and reads the spread "
+    "of outcomes as a 90% range. The next production step is to move this "
+    "calculation upstream into a governed scenario layer."
 )
+
+# What still counts as "the same answer" for each output.
+NIM_TOLERANCE_BPS = 5.0
+NII_TOLERANCE_M = 50.0
+
+
+def _range_confidence(value_range, tolerance, tolerance_text):
+    """Confidence from the beta sweep: the range is read as a 90% interval."""
+    low, high = value_range
+    sigma = (high - low) / 2.0 / 1.645
+    reading = confidence_within(sigma, tolerance, tolerance_text)
+    reading["basis"] += f" (pass-through range {low:+,.1f} to {high:+,.1f})"
+    return reading
 
 
 def _controls(s):
@@ -149,7 +165,6 @@ def _decision_copy(scenario, inputs):
 def render_scenario(s):
     render_html(
         """
-        <div class="module-code">Module 03 / Decision stress</div>
         <div class="section-title">What-If Engine</div>
         <div class="section-subtitle">
             Change the assumptions and quantify the effect on the NII/NIM
@@ -188,45 +203,83 @@ def render_scenario(s):
         replacement_funding_rate_pct=inputs["replacement_rate"],
     )
 
+    spread = scenario_beta_range(
+        current_nim_pct=s.cert_current_nim,
+        current_loans_m=s.current_loans_m,
+        current_deposits_m=s.current_deposits_m,
+        current_loan_rate_pct=s.current_loan_rate_pct,
+        current_deposit_rate_pct=s.current_deposit_rate_pct,
+        ecb_shock_bps=inputs["ecb"],
+        deposit_balance_shock_pct=inputs["deposit"],
+        horizon_days=inputs["horizon"],
+        loan_beta_pct=inputs["loan_beta"],
+        deposit_beta_pct=inputs["deposit_beta"],
+        replacement_funding_rate_pct=inputs["replacement_rate"],
+    )
+    nii_text = f"±€{NII_TOLERANCE_M:.0f}m"
+    confidence = {
+        "nim": _range_confidence(
+            spread["nim_impact_bps"], NIM_TOLERANCE_BPS, f"±{NIM_TOLERANCE_BPS:.0f} bps"
+        ),
+        "nii": _range_confidence(spread["horizon_nii_impact_m"], NII_TOLERANCE_M, nii_text),
+        "loan": _range_confidence(spread["loan_repricing_impact_m"], NII_TOLERANCE_M, nii_text),
+        "funding": _range_confidence(spread["funding_cost_change_m"], NII_TOLERANCE_M, nii_text),
+        "annual": _range_confidence(spread["scenario_annual_nii_m"], NII_TOLERANCE_M, nii_text),
+        "replacement": confidence_fixed(
+            HIGH, "Mechanical: the assumed deposit shock applied to today's balance."
+        ),
+    }
+
+    anchor_nii_m = scenario["current_annual_nii_m"] or 1.0
+    lost = scenario["lost_deposits_m"]
+    ratings = {
+        "nim": rag(scenario["nim_impact_bps"], 0.0, -10.0, unit=" bps"),
+        "nii": rag(
+            scenario["annual_nii_impact_m"] / anchor_nii_m * 100.0, 0.0, -2.0,
+            unit="% of annual NII",
+        ),
+        "replacement": rag(
+            lost / max(s.current_deposits_m, 1.0) * 100.0, 0.5, 3.0,
+            higher_is_better=False, unit="% of deposits",
+        ),
+    }
+
     with results:
         render_html(
             """<div class="module-code">Scenario result</div>
             <div class="section-title">What changes?</div>"""
         )
 
-        c1, c2, c3 = st.columns(3)
+        cards = [
+            metric_card(
+                "NIM IMPACT",
+                f"{scenario['nim_impact_bps']:+.1f} bps",
+                f"{scenario['current_nim_pct']:.2f}% → {scenario['scenario_nim_pct']:.2f}%",
+                ratings["nim"],
+                confidence["nim"],
+                detail_class="executive-delta",
+            ),
+            metric_card(
+                "NII IMPACT / HORIZON",
+                f"€{scenario['horizon_nii_impact_m']:+,.0f}m",
+                f"{inputs['horizon']} day impact",
+                ratings["nii"],
+                confidence["nii"],
+                detail_class="executive-delta",
+            ),
+            metric_card(
+                "REPLACEMENT FUNDING",
+                f"€{lost / 1000:.2f}bn",
+                f"{inputs['deposit']:+.1f}% deposit shock",
+                ratings["replacement"],
+                confidence["replacement"],
+                detail_class="executive-delta",
+            ),
+        ]
 
-        with c1:
-            nim_class = "kpi-alert" if scenario["nim_impact_bps"] < 0 else "kpi-track"
-            render_html(
-                f"""<div class="kpi-card" data-module="SIM / NIM">
-                <div class="kpi-label">NIM IMPACT</div>
-                <div class="kpi-value">{scenario['nim_impact_bps']:+.1f} bps</div>
-                <div class="{nim_class}">{scenario['current_nim_pct']:.2f}% → {scenario['scenario_nim_pct']:.2f}%</div>
-                <span class="micro-line"></span></div>"""
-            )
-
-        with c2:
-            nii_class = (
-                "kpi-alert" if scenario["horizon_nii_impact_m"] < 0 else "kpi-track"
-            )
-            render_html(
-                f"""<div class="kpi-card" data-module="SIM / NII">
-                <div class="kpi-label">NII IMPACT / HORIZON</div>
-                <div class="kpi-value">€{scenario['horizon_nii_impact_m']:+,.0f}m</div>
-                <div class="{nii_class}">{inputs['horizon']} day impact</div>
-                <span class="micro-line"></span></div>"""
-            )
-
-        with c3:
-            lost = scenario["lost_deposits_m"]
-            render_html(
-                f"""<div class="kpi-card" data-module="SIM / FUND">
-                <div class="kpi-label">REPLACEMENT FUNDING</div>
-                <div class="kpi-value">€{lost / 1000:.2f}bn</div>
-                <div class="executive-delta">{inputs['deposit']:+.1f}% deposit shock</div>
-                <span class="micro-line"></span></div>"""
-            )
+        for column, card in zip(st.columns(3), cards):
+            with column:
+                render_html(card)
 
         render_html(
             f"""
@@ -235,16 +288,19 @@ def render_scenario(s):
                     <div class="scenario-impact-label">Loan repricing</div>
                     <div class="scenario-impact-value">€{scenario['loan_repricing_impact_m']:+,.0f}m / yr</div>
                     <div class="scenario-impact-copy">{scenario['current_loan_rate_pct']:.2f}% → {scenario['scenario_loan_rate_pct']:.2f}%</div>
+                    {confidence_badge(confidence["loan"])}
                 </div>
                 <div class="scenario-impact-cell">
                     <div class="scenario-impact-label">Funding-cost change</div>
                     <div class="scenario-impact-value">€{scenario['funding_cost_change_m']:+,.0f}m / yr</div>
                     <div class="scenario-impact-copy">Deposit rate {scenario['current_deposit_rate_pct']:.2f}% → {scenario['scenario_deposit_rate_pct']:.2f}%</div>
+                    {confidence_badge(confidence["funding"])}
                 </div>
                 <div class="scenario-impact-cell">
                     <div class="scenario-impact-label">Annualised NII</div>
                     <div class="scenario-impact-value">€{scenario['scenario_annual_nii_m'] / 1000:.2f}bn</div>
                     <div class="scenario-impact-copy">vs €{scenario['current_annual_nii_m'] / 1000:.2f}bn anchor run-rate</div>
+                    {confidence_badge(confidence["annual"])}
                 </div>
             </div>
             """
@@ -272,6 +328,7 @@ def render_scenario(s):
             <div class="scenario-decision-card">
                 <div class="scenario-decision-line"><span>Change</span><span>ECB {inputs['ecb']:+.0f} bps · deposits {inputs['deposit']:+.1f}% · {inputs['horizon']} days.</span></div>
                 <div class="scenario-decision-line"><span>Impact</span><span>NIM {scenario['nim_impact_bps']:+.1f} bps and NII €{scenario['horizon_nii_impact_m']:+,.0f}m over the selected horizon.</span></div>
+                <div class="scenario-decision-line"><span>Confidence</span><span>{confidence_badge(confidence["nim"])} {confidence["nim"]["basis"]}.</span></div>
                 <div class="scenario-decision-line"><span>Meaning</span><span>{meaning}</span></div>
                 <div class="scenario-decision-line"><span>Next</span><span>{next_step}</span></div>
             </div>

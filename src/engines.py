@@ -264,3 +264,37 @@ def calculate_scenario(
         "replacement_funding_expense_m": replacement_funding_expense_m,
         "horizon_factor": horizon_factor,
     }
+
+
+# How far either pass-through beta could plausibly sit from the assumption.
+BETA_UNCERTAINTY_PP = 15.0
+
+
+def scenario_beta_range(**scenario_inputs):
+    """
+    The scenario result across the plausible range of pass-through betas.
+
+    The betas are the least observable assumptions in the engine, so the
+    scenario is re-run at every corner of ±15pp on both and the spread of
+    outcomes is returned. That spread is what the confidence reading measures.
+    """
+    loan_beta = float(scenario_inputs["loan_beta_pct"])
+    deposit_beta = float(scenario_inputs["deposit_beta_pct"])
+
+    outcomes = []
+    for loan_shift in (-BETA_UNCERTAINTY_PP, BETA_UNCERTAINTY_PP):
+        for deposit_shift in (-BETA_UNCERTAINTY_PP, BETA_UNCERTAINTY_PP):
+            corner = dict(scenario_inputs)
+            corner["loan_beta_pct"] = max(0.0, min(100.0, loan_beta + loan_shift))
+            corner["deposit_beta_pct"] = max(
+                0.0, min(100.0, deposit_beta + deposit_shift)
+            )
+            outcomes.append(calculate_scenario(**corner))
+
+    return {
+        key: (
+            min(outcome[key] for outcome in outcomes),
+            max(outcome[key] for outcome in outcomes),
+        )
+        for key in outcomes[0]
+    }

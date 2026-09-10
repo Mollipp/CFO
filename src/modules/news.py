@@ -16,15 +16,25 @@ from src import charts
 from src.hud import (
     clip_ui_text,
     investigate_url,
+    metric_card,
     module_url,
     navigate_to_module,
     render_html,
     safe_float,
 )
+from src.rag import confidence_badge, confidence_probability
 from src.modules.scenario import DEFAULT_INPUTS
 from src.news_partner import extract_signals, load_articles, signal_to_scenario_kwargs
 
 IMPACT_BADGE = {"HIGH": "alert-red", "MEDIUM": "alert-amber"}
+
+
+def article_confidence(article):
+    """How sure the classifier is about an article's potential bank impact."""
+    return confidence_probability(
+        safe_float(article.get("confidence_score"), 0.0),
+        "Classifier confidence in the potential bank impact",
+    )
 
 
 @st.cache_data(show_spinner="Extracting overnight news signals…")
@@ -94,6 +104,10 @@ def _news_card(article):
                 <span class="news-context-copy">{escape(str(article['primary_affected_metric']))} · <span class="{badge_class}">{escape(level or 'UNRATED')}</span></span>
             </div>
             <div class="news-context-line">
+                <span class="news-context-label">Confidence</span>
+                <span class="news-context-copy">{confidence_badge(article_confidence(article))}</span>
+            </div>
+            <div class="news-context-line">
                 <span class="news-context-label">Next</span>
                 <span class="news-context-copy">{escape(clip_ui_text(article.get('suggested_action', ''), 140))}</span>
             </div>
@@ -145,7 +159,7 @@ def _render_signal_workbench():
                 render_html(
                     f"""
                     <div class="feature-callout">
-                        <div class="feature-callout-title">{html.escape(str(signal.get('entity') or 'Signal'))} · confidence {confidence:.0%}</div>
+                        <div class="feature-callout-title">{html.escape(str(signal.get('entity') or 'Signal'))} {confidence_badge(confidence_probability(confidence, "Model confidence in the extracted signal"))}</div>
                         <div class="feature-callout-copy">
                             “{html.escape(clip_ui_text(quote, 180))}”<br>
                             <span class="news-public-note">{html.escape(str(article.get('source', '—')))} · {html.escape(str(article.get('headline', '')))}</span>
@@ -187,7 +201,6 @@ def _render_signal_workbench():
 def render_news(s):
     render_html(
         """
-        <div class="module-code">Intelligence 08 / External developments</div>
         <div class="section-title">News Intelligence</div>
         <div class="section-subtitle">
             Public news mapped to the bank's country exposures, with a prepared
@@ -200,49 +213,42 @@ def render_news(s):
     articles = 0 if s.news_recent is None else len(s.news_recent)
     focus = s.geo_focus
 
-    n1, n2, n3, n4 = st.columns(4)
+    focus_name = html.escape(str(focus["country"])) if focus is not None else "—"
+    focus_score = safe_float(focus["geo_attention_score"]) if focus is not None else 0.0
+    exposure = safe_float(focus["bank_exposure_share_pct"]) if focus is not None else 0.0
 
-    with n1:
-        render_html(
-            f"""<div class="kpi-card" data-module="FEED / 08">
-            <div class="kpi-label">ARTICLES IN WINDOW</div>
-            <div class="kpi-value">{articles}</div>
-            <div class="kpi-neutral">deduplicated public sources</div>
-            <span class="micro-line"></span></div>"""
-        )
+    ratings = s.ratings
+    cards = [
+        metric_card(
+            "ARTICLES IN WINDOW",
+            f"{articles}",
+            "deduplicated public sources",
+            ratings["news_articles"],
+        ),
+        metric_card(
+            "HIGH POTENTIAL IMPACT",
+            f"{s.high_impact_news_count}",
+            "flagged for review",
+            ratings["news_high"],
+        ),
+        metric_card(
+            "HIGHEST ATTENTION",
+            focus_name,
+            f"attention score {focus_score:.1f}",
+            ratings["news_attention"],
+            value_class="kpi-value-name",
+        ),
+        metric_card(
+            "EXPOSURE THERE",
+            f"{exposure:.1f}%",
+            "share of bank exposure",
+            ratings["news_exposure"],
+        ),
+    ]
 
-    with n2:
-        impact_css = "kpi-alert" if s.high_impact_news_count else "kpi-track"
-        render_html(
-            f"""<div class="kpi-card" data-module="RISK / 08">
-            <div class="kpi-label">HIGH POTENTIAL IMPACT</div>
-            <div class="kpi-value">{s.high_impact_news_count}</div>
-            <div class="{impact_css}">flagged for review</div>
-            <span class="micro-line"></span></div>"""
-        )
-
-    with n3:
-        focus_name = html.escape(str(focus["country"])) if focus is not None else "—"
-        focus_score = safe_float(focus["geo_attention_score"]) if focus is not None else 0.0
-        render_html(
-            f"""<div class="kpi-card" data-module="GEO / 08">
-            <div class="kpi-label">HIGHEST ATTENTION</div>
-            <div class="kpi-value" style="font-size:1.75rem;">{focus_name}</div>
-            <div class="kpi-neutral">attention score {focus_score:.1f}</div>
-            <span class="micro-line"></span></div>"""
-        )
-
-    with n4:
-        exposure = (
-            safe_float(focus["bank_exposure_share_pct"]) if focus is not None else 0.0
-        )
-        render_html(
-            f"""<div class="kpi-card" data-module="EXP / 08">
-            <div class="kpi-label">EXPOSURE THERE</div>
-            <div class="kpi-value">{exposure:.1f}%</div>
-            <div class="kpi-neutral">share of bank exposure</div>
-            <span class="micro-line"></span></div>"""
-        )
+    for column, card in zip(st.columns(4), cards):
+        with column:
+            render_html(card)
 
     render_html(
         f"""
@@ -261,6 +267,7 @@ def render_news(s):
                 <span class="flow-label">Impact</span>
                 <strong>Potential metric: {s.news_impact}</strong>
                 <span>Potential, not measured — the internal data does not attribute causality.</span>
+                {confidence_badge(article_confidence(s.top_news)) if s.top_news is not None else ""}
             </div>
             <div class="decision-strip-item">
                 <span class="flow-label">Next</span>

@@ -3,53 +3,13 @@
 import streamlit as st
 
 from src import charts
-from src.hud import render_html
+from src.hud import explained_metric_card, metric_row, render_html
 
 
 def render_peers(s):
-    render_html(
-        """
-        <div class="module-code">Intelligence 06 / European peer positioning</div>
-        <div class="section-title">Peer Benchmarking</div>
-        <div class="section-subtitle">
-            Directional comparison with public FY2025 peer disclosures. Peer
-            profitability mixes ROE, RoTE and Net RoTE; our bank is shown using
-            its annualised YTD ROE proxy, so return comparisons are not fully
-            like-for-like.
-        </div>
-        """
-    )
-
-    p1, p2, p3 = st.columns(3)
-
-    with p1:
-        render_html(
-            f"""<div class="kpi-card" data-module="RET / 06">
-            <div class="kpi-label">OUR ROE PROXY</div>
-            <div class="kpi-value">{s.ytd_roe_proxy:.1f}%</div>
-            <div class="kpi-neutral">peer median {s.peer_profitability_median:.1f}%</div>
-            <span class="micro-line"></span></div>"""
-        )
-
-    with p2:
-        render_html(
-            f"""<div class="kpi-card" data-module="CAP / 06">
-            <div class="kpi-label">OUR CET1</div>
-            <div class="kpi-value">{s.cet1_ratio:.1f}%</div>
-            <div class="kpi-neutral">peer median {s.peer_cet1_median:.1f}%</div>
-            <span class="micro-line"></span></div>"""
-        )
-
-    with p3:
-        render_html(
-            f"""<div class="kpi-card" data-module="EFF / 06">
-            <div class="kpi-label">OUR COST / INCOME</div>
-            <div class="kpi-value">{s.ytd_cost_income:.1f}%</div>
-            <div class="kpi-neutral">peer median {s.peer_cost_income_median:.1f}%</div>
-            <span class="micro-line"></span></div>"""
-        )
-
+    ratings = s.ratings
     gap_word = "below" if s.roe_peer_gap_pp < 0 else "above"
+    cet1_word = "below" if s.cet1_peer_gap_pp < 0 else "above"
     efficiency_word = (
         "better"
         if s.efficiency_peer_advantage_pp > 0
@@ -59,28 +19,73 @@ def render_peers(s):
     )
 
     render_html(
-        f"""
-        <div class="decision-strip">
-            <div class="decision-strip-item">
-                <span class="flow-label">Gap</span>
-                <strong>ROE proxy {abs(s.roe_peer_gap_pp):.1f}pp {gap_word} median</strong>
-                <span>Directional only, because peers mix ROE, RoTE and Net RoTE.</span>
-            </div>
-            <div class="decision-strip-item">
-                <span class="flow-label">Why</span>
-                <strong>CET1 {s.cet1_peer_gap_pp:+.1f}pp vs median</strong>
-                <span>Capital position and reported return should be read together, not as a one-dimensional ranking.</span>
-            </div>
-            <div class="decision-strip-item">
-                <span class="flow-label">Impact</span>
-                <strong>Cost/income {abs(s.efficiency_peer_advantage_pp):.1f}pp {efficiency_word} than median</strong>
-                <span>Shows whether the return gap is accompanied by an efficiency gap.</span>
-            </div>
-            <div class="decision-strip-item">
-                <span class="flow-label">Next</span>
-                <strong>Investigate return levers</strong>
-                <span>Separate revenue/NII, fee income, cost and capital-deployment drivers before drawing conclusions.</span>
-            </div>
+        metric_row(
+            [
+                explained_metric_card(
+                    "OUR ROE PROXY",
+                    f"{s.ytd_roe_proxy:.1f}%",
+                    f"peer median {s.peer_profitability_median:.1f}% · {s.roe_peer_gap_pp:+.1f}pp",
+                    ratings["peer_roe"],
+                    why=(
+                        f"Our annualised YTD ROE proxy sits {abs(s.roe_peer_gap_pp):.1f}pp "
+                        f"{gap_word} the peer median of {s.peer_profitability_median:.1f}%."
+                    ),
+                    impact=(
+                        "Directional only: peers report a mix of ROE, RoTE and Net "
+                        "RoTE, so the gap is not fully like-for-like."
+                    ),
+                    next_step=(
+                        "Investigate return levers — separate revenue/NII, fee income, "
+                        "cost and capital-deployment drivers before drawing conclusions."
+                    ),
+                ),
+                explained_metric_card(
+                    "OUR CET1",
+                    f"{s.cet1_ratio:.1f}%",
+                    f"peer median {s.peer_cet1_median:.1f}% · {s.cet1_peer_gap_pp:+.1f}pp",
+                    ratings["peer_cet1"],
+                    why=(
+                        f"CET1 sits {abs(s.cet1_peer_gap_pp):.1f}pp {cet1_word} the "
+                        f"peer median of {s.peer_cet1_median:.1f}%."
+                    ),
+                    impact=(
+                        "Capital position and reported return should be read together, "
+                        "not as a one-dimensional ranking."
+                    ),
+                    next_step=(
+                        "Read it against the ROE proxy on the position matrix below to "
+                        "see whether the return gap reflects how much capital we hold."
+                    ),
+                ),
+                explained_metric_card(
+                    "OUR COST / INCOME",
+                    f"{s.ytd_cost_income:.1f}%",
+                    f"peer median {s.peer_cost_income_median:.1f}% · "
+                    f"{s.efficiency_peer_advantage_pp:+.1f}pp advantage",
+                    ratings["peer_ci"],
+                    why=(
+                        f"Cost/income is {abs(s.efficiency_peer_advantage_pp):.1f}pp "
+                        f"{efficiency_word} than the peer median of "
+                        f"{s.peer_cost_income_median:.1f}%."
+                    ),
+                    impact="Shows whether the return gap is accompanied by an efficiency gap.",
+                    next_step=(
+                        "Use the comparison set below to see which peers pair lower "
+                        "cost/income with higher returns."
+                    ),
+                ),
+            ]
+        )
+    )
+
+    render_html(
+        """
+        <div class="section-title">Peer Benchmarking</div>
+        <div class="section-subtitle">
+            Directional comparison with public FY2025 peer disclosures. Peer
+            profitability mixes ROE, RoTE and Net RoTE; our bank is shown using
+            its annualised YTD ROE proxy, so return comparisons are not fully
+            like-for-like.
         </div>
         """
     )

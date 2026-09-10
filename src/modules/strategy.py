@@ -1,11 +1,47 @@
-"""Strategy — opportunity radar and capability-gap intelligence."""
+"""Opportunity — opportunity radar and capability-gap intelligence."""
 
 import html
 
 import streamlit as st
 
 from src import charts
-from src.hud import clip_ui_text, render_html, safe_float
+from src.hud import (
+    clip_ui_text,
+    explained_metric_card,
+    metric_row,
+    render_html,
+    safe_float,
+)
+from src.rag import confidence_badge
+
+
+def _ranking_table(radar):
+    """The top of the ranking with every scoring dimension, highest first."""
+    display = radar[
+        [
+            "opportunity_rank",
+            "company_name",
+            "capability_domain",
+            "strategic_fit_score",
+            "financial_attractiveness_score",
+            "integration_feasibility_score",
+            "affordability_score",
+            "time_to_value_score",
+            "overall_opportunity_score",
+        ]
+    ].head(7).copy()
+    display.columns = [
+        "Rank",
+        "Company",
+        "Capability",
+        "Strategic fit",
+        "Financial attractiveness",
+        "Integration",
+        "Affordability",
+        "Time to value",
+        "Overall score",
+    ]
+    st.dataframe(display, width="stretch", hide_index=True)
 
 
 def render_strategy(s):
@@ -13,8 +49,7 @@ def render_strategy(s):
 
     render_html(
         """
-        <div class="module-code">Intelligence 07 / Strategic opportunity radar</div>
-        <div class="section-title">Strategy Radar</div>
+        <div class="section-title">Opportunity Radar</div>
         <div class="section-subtitle">
             Public company facts are separated from synthetic management
             assessments. Strategic fit, attractiveness and capability scores are
@@ -31,37 +66,87 @@ def render_strategy(s):
         st.caption("No strategic radar data available.")
         return
 
-    k1, k2, k3 = st.columns(3)
+    _ranking_table(s.strategic_radar)
 
-    with k1:
-        render_html(
-            f"""<div class="kpi-card" data-module="TOP / 07">
-            <div class="kpi-label">TOP OPPORTUNITY</div>
-            <div class="kpi-value" style="font-size:1.75rem;">{escape(str(top['company_name']))}</div>
-            <div class="kpi-neutral">rank #{int(top['opportunity_rank'])} · {safe_float(top['overall_opportunity_score']):.1f}/100</div>
-            <span class="micro-line"></span></div>"""
-        )
+    top_name = escape(str(top["company_name"]))
+    top_score = safe_float(top["overall_opportunity_score"])
+    runner_up = (
+        f" against #2 {escape(str(second['company_name']))} at "
+        f"{safe_float(second['overall_opportunity_score']):.1f}"
+        if second is not None
+        else ""
+    )
 
-    with k2:
-        render_html(
-            f"""<div class="kpi-card" data-module="FIT / 07">
-            <div class="kpi-label">STRATEGIC FIT</div>
-            <div class="kpi-value">{safe_float(top['strategic_fit_score']):.0f}</div>
-            <div class="kpi-neutral">synthetic management score</div>
-            <span class="micro-line"></span></div>"""
+    gap = s.top_capability_gap
+    gap_name = escape(str(gap["capability"])) if gap is not None else "—"
+    gap_value = safe_float(gap["capability_gap"]) if gap is not None else 0.0
+    if gap is not None:
+        gap_why = (
+            f"{gap_name} is assessed at {safe_float(gap['current_score']):.0f} against a "
+            f"target of {safe_float(gap['target_score']):.0f} — the widest "
+            "current-to-target gap in the capability map."
         )
+        gap_impact = escape(clip_ui_text(gap["strategic_objective"], 160))
+        gap_next = (
+            f"Screen the linked companies — {escape(str(gap['linked_companies']))} — "
+            "against the ranking above."
+        )
+    else:
+        gap_why = "No capability gap is recorded in the capability map."
+        gap_impact = "Nothing to close on the current assessment."
+        gap_next = "Re-run the assessment when the capability map is refreshed."
 
-    with k3:
-        gap = s.top_capability_gap
-        gap_name = escape(str(gap["capability"])) if gap is not None else "—"
-        gap_value = safe_float(gap["capability_gap"]) if gap is not None else 0.0
-        render_html(
-            f"""<div class="kpi-card" data-module="GAP / 07">
-            <div class="kpi-label">LARGEST CAPABILITY GAP</div>
-            <div class="kpi-value" style="font-size:1.55rem;">{gap_name}</div>
-            <div class="kpi-neutral">gap {gap_value:.0f} points</div>
-            <span class="micro-line"></span></div>"""
+    render_html(
+        metric_row(
+            [
+                explained_metric_card(
+                    "TOP OPPORTUNITY",
+                    top_name,
+                    f"rank #{int(top['opportunity_rank'])} · {top_score:.1f}/100",
+                    s.ratings["strategy_top"],
+                    why=(
+                        f"Scores {top_score:.1f}/100 on the full seven-factor "
+                        f"composite{runner_up}, not just the two map axes."
+                    ),
+                    impact=escape(clip_ui_text(top["strategic_gap_addressed"], 160)),
+                    next_step=(
+                        f"Route: {escape(str(top['preferred_route']))}. Key risk: "
+                        f"{escape(clip_ui_text(top['key_risk'], 120))}"
+                    ),
+                    confidence=s.conf_strategy_rank,
+                    value_class="kpi-value-name",
+                ),
+                explained_metric_card(
+                    "STRATEGIC FIT",
+                    f"{safe_float(top['strategic_fit_score']):.0f}",
+                    "synthetic management score",
+                    s.ratings["strategy_fit"],
+                    why=(
+                        f"Synthetic management score for how closely {top_name} "
+                        "matches the bank's strategic priorities."
+                    ),
+                    impact=(
+                        "Fit carries 30% of the composite score and, with financial "
+                        "attractiveness, forms the two axes of the opportunity map."
+                    ),
+                    next_step=(
+                        "Weigh it against integration, affordability and time to "
+                        "value in the ranking table above."
+                    ),
+                ),
+                explained_metric_card(
+                    "LARGEST CAPABILITY GAP",
+                    gap_name,
+                    f"gap {gap_value:.0f} points",
+                    s.ratings["strategy_gap"],
+                    why=gap_why,
+                    impact=gap_impact,
+                    next_step=gap_next,
+                    value_class="kpi-value-name",
+                ),
+            ]
         )
+    )
 
     if second is not None:
         pills = "".join(
@@ -75,9 +160,10 @@ def render_strategy(s):
                     <div>
                         <div class="module-code">Why rank #1?</div>
                         <div class="strategy-score-bridge">
-                            {escape(str(top['company_name']))} <span>{safe_float(top['overall_opportunity_score']):.1f}</span>
+                            {top_name} <span>{top_score:.1f}</span>
                             vs {escape(str(second['company_name']))} {safe_float(second['overall_opportunity_score']):.1f}
                         </div>
+                        {confidence_badge(s.conf_strategy_rank, with_basis=True)}
                     </div>
                     <div class="strategy-explainer-copy">
                         The opportunity map below shows only <strong>strategic fit</strong> and
@@ -97,7 +183,7 @@ def render_strategy(s):
         <div class="decision-strip">
             <div class="decision-strip-item">
                 <span class="flow-label">Why #1</span>
-                <strong>{escape(str(top['company_name']))} / {safe_float(top['overall_opportunity_score']):.1f}</strong>
+                <strong>{top_name} / {top_score:.1f}</strong>
                 <span>Full seven-factor composite, not just the two map axes.</span>
             </div>
             <div class="decision-strip-item">
@@ -152,38 +238,10 @@ def render_strategy(s):
             )
 
         render_html(
-            """<div class="module-code" style="margin-top:0.8rem;">Capability vector / Current-to-target gap</div>
+            """<div class="module-code" style="margin-top:0.8rem;">Current-to-target gap</div>
             <div class="section-title">Capability gaps</div>"""
         )
         st.altair_chart(
             charts.build_capability_gap_chart(s.capability_gaps, height=245),
             use_container_width=True,
         )
-
-    radar = s.strategic_radar
-    if radar is not None and not radar.empty:
-        display = radar[
-            [
-                "opportunity_rank",
-                "company_name",
-                "capability_domain",
-                "strategic_fit_score",
-                "financial_attractiveness_score",
-                "integration_feasibility_score",
-                "affordability_score",
-                "time_to_value_score",
-                "overall_opportunity_score",
-            ]
-        ].head(7).copy()
-        display.columns = [
-            "Rank",
-            "Company",
-            "Capability",
-            "Strategic fit",
-            "Financial attractiveness",
-            "Integration",
-            "Affordability",
-            "Time to value",
-            "Overall score",
-        ]
-        st.dataframe(display, width="stretch", hide_index=True)

@@ -1288,8 +1288,7 @@ BASE_CSS = """\n<style>
         filter: brightness(1.25) drop-shadow(0 0 7px rgba(19,172,51,0.52));
     }
 
-    .dial-spoke-html,
-    .dial-vector-line-html {
+    .dial-spoke-html {
         position: absolute;
         left: 50%;
         top: 50%;
@@ -1322,21 +1321,6 @@ BASE_CSS = """\n<style>
     .dial-spoke-a { transform: rotate(-30deg); }
     .dial-spoke-b { transform: rotate(90deg); }
     .dial-spoke-c { transform: rotate(210deg); }
-
-    .dial-vector-line-html {
-        z-index: 15;
-        width: 35%;
-        opacity: 0.40;
-        background: repeating-linear-gradient(
-            90deg,
-            rgba(22,170,56,0.65) 0 8px,
-            transparent 8px 14px
-        );
-    }
-
-    .dial-vector-a { transform: rotate(-90deg); }
-    .dial-vector-b { transform: rotate(30deg); }
-    .dial-vector-c { transform: rotate(150deg); }
 
     .css-core {
         position: absolute;
@@ -2746,7 +2730,7 @@ PANELS_CSS = """\n<style>
 
     /* Chrome/Edge can animate same-origin query-parameter navigation.
        Streamlit still reruns Python, but the browser transition hides most
-       of the hard page swap and makes vector changes feel continuous. */
+       of the hard page swap and makes section changes feel continuous. */
     @view-transition { navigation: auto; }
     @keyframes vt-old { to { opacity:0; transform:scale(.998); } }
     @keyframes vt-new { from { opacity:0; transform:translateY(5px); } }
@@ -2954,7 +2938,7 @@ PANELS_CSS = """\n<style>
 # wins on equal specificity.
 LOCAL_CSS = """
 <style>
-    /* News is a fourth intelligence vector, so the dock grows from 3 to 4. */
+    /* News is a fourth intelligence lens, so the dock grows from 3 to 4. */
     .dock-actions {
         grid-template-columns: repeat(4, minmax(0, 1fr));
         max-width: 980px;
@@ -3256,7 +3240,7 @@ LOCAL_CSS = """
 
     .kpi-row {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(var(--cards, 4), minmax(0, 1fr));
         gap: 1rem;
         margin-bottom: 1.4rem;
     }
@@ -3308,7 +3292,7 @@ LOCAL_CSS = """
         opacity: 0;
         transform: translateY(-6px);
         background:
-            linear-gradient(150deg, rgba(10, 22, 13, 0.99), rgba(0, 0, 0, 0.98));
+            linear-gradient(150deg, rgb(10, 22, 13), rgb(0, 0, 0));
         border: 1px solid rgba(19, 172, 51, 0.42);
         clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
         box-shadow:
@@ -3328,6 +3312,18 @@ LOCAL_CSS = """
         opacity: 1;
         transform: translateY(0);
         pointer-events: auto;
+    }
+
+    /* Spans the gap to a panel that opens below, so the pointer can reach
+       its link without the hover dropping on the way. */
+    .kpi-row .kpi-slot:hover::after,
+    .domain-slot:hover::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        height: 0.7rem;
     }
 
     .kpi-explain-head {
@@ -3402,7 +3398,7 @@ LOCAL_CSS = """
     }
     /* ------------------------------------------------------------------
        Dial sectors: one muted hue each — green / yellow / blue — so the
-       three vectors read apart at a glance without the HUD going neon.
+       three sections read apart at a glance without the HUD going neon.
        ------------------------------------------------------------------ */
 
     .css-sector-brief {
@@ -3508,80 +3504,6 @@ LOCAL_CSS = """
         line-height: 1;
     }
 
-    /* ------------------------------------------------------------------
-       Module rail: the dial's stand-in once a module is open.
-       ------------------------------------------------------------------ */
-
-    .module-rail {
-        position: relative;
-        z-index: 6;
-        display: flex;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 0.45rem 0.75rem;
-        max-width: 1040px;
-        margin: 0 auto 1.15rem;
-        padding: 0.55rem 0.85rem;
-        background:
-            linear-gradient(180deg, rgba(12,16,13,0.88), rgba(7,10,8,0.94));
-        border: 1px solid rgba(19,172,51,0.16);
-        clip-path: polygon(18px 0, 100% 0, 100% calc(100% - 18px), calc(100% - 18px) 100%, 0 100%, 0 18px);
-    }
-
-    .rail-home,
-    .rail-link {
-        font-family: "Cascadia Mono", Consolas, monospace;
-        font-size: 0.55rem;
-        font-weight: 760;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        text-decoration: none !important;
-        white-space: nowrap;
-        transition: color 150ms ease, border-color 150ms ease, background 150ms ease;
-    }
-
-    .rail-home {
-        padding: 0.34rem 0.7rem;
-        color: #0A120C !important;
-        background: linear-gradient(135deg, #17A93A, #0F7B2B);
-        border: 1px solid rgba(22,194,57,0.55);
-        clip-path: polygon(9px 0, 100% 0, 100% calc(100% - 9px), calc(100% - 9px) 100%, 0 100%, 0 9px);
-    }
-
-    .rail-home:hover {
-        background: linear-gradient(135deg, #22C24A, #149534);
-    }
-
-    .rail-links {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem;
-        min-width: 0;
-    }
-
-    .rail-link {
-        padding: 0.32rem 0.62rem;
-        color: #4E8F62 !important;
-        background: rgba(19,172,51,0.02);
-        border: 1px solid rgba(19,172,51,0.18);
-    }
-
-    .rail-link:hover {
-        color: #E6F5E9 !important;
-        border-color: rgba(21,186,56,0.55);
-        background: rgba(19,172,51,0.06);
-    }
-
-    .rail-link.is-active {
-        color: #E6F5E9 !important;
-        border-color: #13AE35;
-        background: linear-gradient(145deg, rgba(33,47,36,0.55), rgba(29,34,31,0.35));
-        box-shadow: inset 0 0 16px rgba(19,172,51,0.06);
-    }
-
-    @media (max-width: 700px) {
-        .module-rail { justify-content: center; }
-    }
     /* -------------------------------------------------
        DOMAIN GRID / MORNING BRIEF EXECUTIVE VIEW
        ------------------------------------------------- */
@@ -3602,7 +3524,6 @@ LOCAL_CSS = """
             linear-gradient(150deg, rgba(12,17,14,0.96), rgba(7,10,8,0.94)),
             radial-gradient(circle at 100% 0%, rgba(19,172,51,0.10), transparent 46%);
         border: 1px solid rgba(19,172,51,0.22);
-        clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
     }
 
     .domain-panel::before {
@@ -3761,120 +3682,21 @@ LOCAL_CSS = """
     .domain-tile:focus .domain-tile-more,
     .domain-tile:focus-within .domain-tile-more { color: #13AC33; }
 
-    /* --- The shared explanation stage --------------------------- */
+    /* --- The hover slot ---------------------------------------- */
 
-    .domain-stage {
-        position: relative;
-        grid-column: 1 / -1;
-        min-height: 190px;
-        margin-top: 0.2rem;
-        padding: 0.72rem 0.8rem;
-        background: rgba(6,9,7,0.55);
-        border: 1px solid rgba(19,172,51,0.12);
+    /* Each tile sits in a kpi-slot, so its reading opens over the page like
+       the home KPIs rather than in a stage reserved inside the panel. */
+    .domain-slot { min-width: 0; }
+    .domain-slot .domain-tile { height: 100%; }
+
+    .domain-slot:hover .domain-tile,
+    .domain-slot:focus-visible .domain-tile {
+        background: rgba(19,172,51,0.07);
+        border-color: rgba(19,172,51,0.52);
     }
 
-    .domain-stage-hint,
-    .domain-detail {
-        position: absolute;
-        inset: 0.72rem 0.8rem;
-        transition: opacity .18s ease;
-    }
-
-    .domain-stage-hint {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
-        color: #4C6B54;
-        font-family: "Cascadia Mono", Consolas, monospace;
-        font-size: 0.52rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        text-align: center;
-    }
-
-    .domain-stage-glyph {
-        color: #13AC33;
-        text-shadow: 0 0 10px rgba(19,172,51,0.55);
-    }
-
-    .domain-detail {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        overflow-y: auto;
-    }
-
-    .domain-detail-head {
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 0.6rem;
-        padding-bottom: 0.34rem;
-        margin-bottom: 0.1rem;
-        color: #E6F5E9;
-        font-family: "Cascadia Mono", Consolas, monospace;
-        font-size: 0.54rem;
-        font-weight: 700;
-        letter-spacing: 0.13em;
-        text-transform: uppercase;
-        border-bottom: 1px solid rgba(19,172,51,0.16);
-    }
-
-    .domain-detail-row {
-        display: grid;
-        grid-template-columns: 56px minmax(0, 1fr);
-        gap: 0.5rem;
-        align-items: start;
-    }
-
-    .domain-detail-tag {
-        color: #13AC33;
-        font-family: "Cascadia Mono", Consolas, monospace;
-        font-size: 0.5rem;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
-        padding-top: 0.12rem;
-    }
-
-    .domain-detail-copy {
-        margin: 0;
-        color: #A8C4AF;
-        font-size: 0.66rem;
-        line-height: 1.48;
-    }
-
-    .domain-detail .copilot-action { align-self: flex-start; margin-top: 0.18rem; }
-
-    /* Holding a tile lights its own reading on the panel stage. The rules are
-       written per index because CSS cannot carry the hovered tile's identity
-       across to a sibling any other way. */
-    .domain-tile:hover ~ .domain-stage .domain-stage-hint,
-    .domain-tile:focus ~ .domain-stage .domain-stage-hint,
-    .domain-tile:focus-within ~ .domain-stage .domain-stage-hint,
-    .domain-stage:hover .domain-stage-hint { opacity: 0; }
-
-    .domain-tile[data-tile="1"]:hover ~ .domain-stage .domain-detail[data-tile="1"],
-    .domain-tile[data-tile="1"]:focus ~ .domain-stage .domain-detail[data-tile="1"],
-    .domain-tile[data-tile="1"]:focus-within ~ .domain-stage .domain-detail[data-tile="1"],
-    .domain-tile[data-tile="2"]:hover ~ .domain-stage .domain-detail[data-tile="2"],
-    .domain-tile[data-tile="2"]:focus ~ .domain-stage .domain-detail[data-tile="2"],
-    .domain-tile[data-tile="2"]:focus-within ~ .domain-stage .domain-detail[data-tile="2"],
-    .domain-tile[data-tile="3"]:hover ~ .domain-stage .domain-detail[data-tile="3"],
-    .domain-tile[data-tile="3"]:focus ~ .domain-stage .domain-detail[data-tile="3"],
-    .domain-tile[data-tile="3"]:focus-within ~ .domain-stage .domain-detail[data-tile="3"],
-    .domain-tile[data-tile="4"]:hover ~ .domain-stage .domain-detail[data-tile="4"],
-    .domain-tile[data-tile="4"]:focus ~ .domain-stage .domain-detail[data-tile="4"],
-    .domain-tile[data-tile="4"]:focus-within ~ .domain-stage .domain-detail[data-tile="4"] {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
+    .domain-slot:hover .domain-tile-more,
+    .domain-slot:focus-visible .domain-tile-more { color: #13AC33; }
 
     @media (max-width: 1200px) {
         .domain-grid { grid-template-columns: 1fr; }
@@ -3882,7 +3704,6 @@ LOCAL_CSS = """
 
     @media (max-width: 620px) {
         .domain-panel-body { grid-template-columns: 1fr; }
-        .domain-stage { min-height: 210px; }
     }
 
     /* -------------------------------------------------
@@ -3904,5 +3725,556 @@ LOCAL_CSS = """
             grid-template-columns: minmax(0, 1fr) !important;
         }
     }
+
+    /* -------------------------------------------------
+       ONE-SCREEN HOME
+       KPIs left, dial centre, lenses right — sized off the viewport height
+       so the whole overview reads without scrolling.
+       ------------------------------------------------- */
+
+    .block-container,
+    div[data-testid="stMainBlockContainer"] {
+        padding-bottom: 0.6rem !important;
+    }
+
+    div[data-testid="stElementContainer"]:has(> .stHtml > .hud-hero) {
+        margin-bottom: 0.2rem;
+        padding-bottom: 0.3rem;
+    }
+
+    .home-stage {
+        --stage-h: max(500px, calc(100vh - 10.6rem));
+        display: grid;
+        grid-template-columns: minmax(240px, 1fr) minmax(0, 1.6fr) minmax(240px, 1fr);
+        align-items: stretch;
+        gap: 1.1rem;
+        height: var(--stage-h);
+    }
+
+    .home-left,
+    .home-right {
+        display: grid;
+        grid-template-rows: repeat(4, minmax(0, 1fr));
+        gap: 0.62rem;
+        min-height: 0;
+    }
+
+    .home-center {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        min-height: 0;
+    }
+
+    /* The dial's frame, without the margins and the tall grid it had when it
+       sat alone on the page. */
+    .home-center .integrated-system {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .home-center .system-grid,
+    .home-center .system-grid.is-solo {
+        min-height: 0;
+        width: 100%;
+    }
+
+    .home-center .command-dial-html {
+        width: min(100%, calc(var(--stage-h) - 1.4rem), 660px);
+    }
+
+    /* --- Left: the executive KPI cards ------------------------ */
+
+    .home-left .kpi-slot { min-height: 0; }
+
+    .home-left .kpi-card {
+        min-height: 0;
+        height: 100%;
+        padding: 0.72rem 1rem 0.7rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .home-left .kpi-label { margin-bottom: 0.3rem; font-size: 0.6rem; }
+    .home-left .kpi-value { font-size: clamp(1.45rem, 2.1vw, 2.05rem); }
+    .home-left .executive-delta { margin-top: 0.3rem; font-size: 0.64rem; }
+    .home-left .executive-context { margin-top: 0.18rem; font-size: 0.62rem; line-height: 1.3; }
+    .home-left .kpi-badges { margin-top: 0.42rem; }
+
+    /* The explanation opens to the right, over the dial, instead of below. */
+    .home-left .kpi-explain,
+    .home-left .kpi-slot:nth-child(n + 3) .kpi-explain {
+        top: 0;
+        bottom: auto;
+        left: calc(100% + 0.7rem);
+        right: auto;
+        width: 380px;
+        transform: translateX(-6px);
+    }
+
+    .home-left .kpi-slot:nth-child(n + 3) .kpi-explain {
+        top: auto;
+        bottom: 0;
+    }
+
+    .home-left .kpi-slot:hover .kpi-explain,
+    .home-left .kpi-slot:focus-visible .kpi-explain {
+        transform: translateX(0);
+    }
+
+    /* --- Right: the intelligence lenses ----------------------- */
+
+    .home-right .lens-box {
+        height: 100%;
+        min-height: 0;
+        padding: 0.7rem 0.95rem;
+        grid-template-columns: 38px minmax(0, 1fr);
+        align-items: center;
+    }
+
+    .lens-metric {
+        display: block;
+        margin-top: 0.28rem;
+        color: #E6F5E9;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: clamp(0.82rem, 1.05vw, 1rem);
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .home-right .dock-metric {
+        margin-top: 0.18rem;
+        font-size: 0.56rem;
+        white-space: normal;
+        color: #5F8B69;
+    }
+
+    .home-right .kpi-badges { margin-top: 0.42rem; }
+
+    @media (max-height: 760px) {
+        .home-left .executive-context,
+        .home-right .dock-metric { display: none; }
+    }
+
+    @media (max-width: 1100px) {
+        .home-stage {
+            height: auto;
+            grid-template-columns: 1fr 1fr;
+        }
+        .home-center { grid-column: 1 / -1; order: -1; }
+        .home-center .command-dial-html { width: min(100%, 560px); }
+        .home-left .kpi-explain,
+        .home-left .kpi-slot:nth-child(n + 3) .kpi-explain {
+            top: calc(100% + 0.5rem); bottom: auto; left: 0; width: 100%;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .home-stage { grid-template-columns: 1fr; }
+    }
+
+    .system-footer {
+        margin-top: 0;
+        padding-top: 0.4rem;
+    }
+
+    /* -------------------------------------------------
+       RAG AND CONFIDENCE
+       RAG is the traffic light on a metric; confidence is the violet bar
+       gauge on a prediction, so the two never read as the same signal.
+       ------------------------------------------------- */
+
+    .kpi-badges {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 0.6rem;
+    }
+
+    .rag-badge,
+    .conf-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.34rem;
+        padding: 0.16rem 0.46rem;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.52rem;
+        font-weight: 760;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        border: 1px solid;
+        line-height: 1.35;
+        vertical-align: middle;
+    }
+
+    .rag-dot {
+        width: 7px;
+        height: 7px;
+        flex: none;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 7px currentColor;
+    }
+
+    .rag-green { color: #2BD155; border-color: rgba(43,209,85,0.45); background: rgba(43,209,85,0.08); }
+    .rag-amber { color: #FFCB66; border-color: rgba(255,203,102,0.45); background: rgba(255,203,102,0.08); }
+    .rag-red { color: #FF5D7A; border-color: rgba(255,93,122,0.5); background: rgba(255,93,122,0.09); }
+
+    .rag-rule {
+        margin-left: 0.5rem;
+        color: #7E9E86;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.6rem;
+    }
+
+    .rag-copy { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0; }
+
+    /* The card's accent bar takes the RAG colour. */
+    .kpi-card:has(.rag-green)::before { background: linear-gradient(90deg, #2BD155, transparent); box-shadow: 0 0 12px rgba(43,209,85,0.5); }
+    .kpi-card:has(.rag-amber)::before { background: linear-gradient(90deg, #FFCB66, transparent); box-shadow: 0 0 12px rgba(255,203,102,0.5); }
+    .kpi-card:has(.rag-red)::before { background: linear-gradient(90deg, #FF5D7A, transparent); box-shadow: 0 0 12px rgba(255,93,122,0.55); }
+
+    .conf-badge {
+        color: #C9B0FF;
+        border-color: rgba(184,140,255,0.42);
+        background: rgba(184,140,255,0.08);
+        cursor: help;
+    }
+
+    .conf-bars {
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 9px;
+    }
+
+    .conf-bars i {
+        display: block;
+        width: 3px;
+        background: rgba(184,140,255,0.25);
+    }
+
+    .conf-bars i:nth-child(1) { height: 4px; }
+    .conf-bars i:nth-child(2) { height: 6.5px; }
+    .conf-bars i:nth-child(3) { height: 9px; }
+
+    .conf-low .conf-bars i:nth-child(1),
+    .conf-medium .conf-bars i:nth-child(-n + 2),
+    .conf-high .conf-bars i { background: #C9B0FF; box-shadow: 0 0 5px rgba(184,140,255,0.6); }
+
+    .conf-low { color: #A98ED8; border-style: dashed; }
+
+    .conf-basis {
+        display: block;
+        flex-basis: 100%;
+        margin-top: 0.3rem;
+        color: #8F83AE;
+        font-size: 0.6rem;
+        line-height: 1.4;
+    }
+
+    .kpi-value-name { font-size: clamp(1.25rem, 2vw, 1.7rem) !important; }
+
+    .legend-band {
+        width: 25px;
+        height: 10px;
+        display: inline-block;
+        background: rgba(184,140,255,0.22);
+        border: 1px solid rgba(184,140,255,0.35);
+    }
+
+    /* A strip box styles its last span as the description; the confidence
+       badge now sits after it, so the description is named explicitly. */
+    .decision-strip-item strong + span {
+        color: #759d7f;
+        font-size: .68rem;
+        line-height: 1.42;
+    }
+
+    .decision-strip-item span.conf-badge {
+        color: #C9B0FF;
+        font-size: 0.52rem;
+        line-height: 1.35;
+    }
+
+    .scenario-impact-cell .conf-badge,
+    .decision-strip-item .conf-badge,
+    .feature-callout .conf-badge,
+    .forward-lens-value .conf-badge { margin-top: 0.4rem; }
+
+    .forward-lens-value .conf-badge { margin: 0 0.3rem 0.3rem 0; }
+
+    /* -------------------------------------------------
+       SECTION WINDOW
+       Streamlit's dialog, dressed as a HUD panel and widened so a full
+       section fits. The ✕ sits top right.
+       ------------------------------------------------- */
+
+    div[data-testid="stDialog"] {
+        background: rgba(0, 0, 0, 0.72) !important;
+        backdrop-filter: blur(3px);
+    }
+
+    div[data-testid="stDialog"] div[role="dialog"] {
+        width: min(96vw, 1580px) !important;
+        max-width: 96vw !important;
+        margin-top: -1rem;
+        color: var(--text);
+        background:
+            linear-gradient(150deg, rgba(11,17,13,0.99), rgba(3,5,4,0.99)) !important;
+        border: 1px solid rgba(19,172,51,0.38) !important;
+        border-radius: 0 !important;
+        box-shadow: 0 30px 90px rgba(0,0,0,0.85), inset 0 0 60px rgba(19,172,51,0.04);
+    }
+
+    div[data-testid="stDialog"] div[role="dialog"]::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 30%;
+        height: 2px;
+        background: linear-gradient(90deg, #13AC33, transparent);
+        box-shadow: 0 0 12px rgba(19,172,51,0.6);
+    }
+
+    div[data-testid="stDialog"] div[role="dialog"] > div:first-of-type,
+    div[data-testid="stDialog"] h2 {
+        color: #E6F5E9;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
+
+    div[data-testid="stDialog"] button[aria-label="Close"] {
+        color: #13AC33 !important;
+        border: 1px solid rgba(19,172,51,0.45) !important;
+        border-radius: 0 !important;
+        background: rgba(19,172,51,0.06) !important;
+        transition: color 150ms ease, background 150ms ease;
+    }
+
+    div[data-testid="stDialog"] button[aria-label="Close"]:hover {
+        color: #E6F5E9 !important;
+        background: rgba(19,172,51,0.2) !important;
+    }
+
+    .window-subtitle {
+        margin: -0.6rem 0 0.4rem;
+        color: #6D9878;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.64rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    /* -------------------------------------------------
+       MORNING BRIEF — NEWS LEFT, CHANGES RIGHT
+       Internal news is framed gold, external news blue.
+       ------------------------------------------------- */
+
+    .brief-column-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.8rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .brief-column-head .section-title { margin: 0; }
+
+    .brief-column-note,
+    .feed-legend {
+        color: #5C7D64;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.55rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .feed-legend { display: inline-flex; gap: 0.6rem; }
+
+    .feed-key { display: inline-flex; align-items: center; gap: 0.3rem; }
+    .feed-key::before { content: ""; width: 12px; height: 8px; border: 2px solid; }
+    .feed-key.is-internal { color: #D9B85C; }
+    .feed-key.is-external { color: #7FB0DA; }
+
+    .feed-frame {
+        --frame: #D9B85C;
+        --frame-soft: rgba(217,184,92,0.30);
+        --frame-wash: rgba(217,184,92,0.05);
+        position: relative;
+        margin-bottom: 0.85rem;
+        padding: 0.7rem 0.8rem 0.35rem;
+        background: linear-gradient(160deg, var(--frame-wash), rgba(4,6,5,0.6));
+        border: 1px solid var(--frame-soft);
+        border-left: 3px solid var(--frame);
+    }
+
+    .feed-frame.is-external {
+        --frame: #7FB0DA;
+        --frame-soft: rgba(127,176,218,0.32);
+        --frame-wash: rgba(127,176,218,0.05);
+    }
+
+    .feed-frame-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.6rem;
+        padding-bottom: 0.45rem;
+        margin-bottom: 0.2rem;
+        border-bottom: 1px solid var(--frame-soft);
+    }
+
+    .feed-frame-title {
+        color: var(--frame);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.66rem;
+        font-weight: 780;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .feed-frame-note {
+        color: #6C7F73;
+        font-size: 0.6rem;
+        text-align: right;
+    }
+
+    .feed-item {
+        padding: 0.58rem 0 0.6rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .feed-item:first-of-type { border-top: 0; }
+
+    .feed-item-top {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-bottom: 0.28rem;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.53rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .feed-tag {
+        padding: 0.1rem 0.36rem;
+        color: var(--frame);
+        border: 1px solid var(--frame-soft);
+    }
+
+    .feed-date { color: #7E9E86; }
+
+    .feed-status {
+        margin-left: auto;
+        color: #7E9E86;
+    }
+
+    .feed-status.status-open { color: #FFCB66; }
+    .feed-status.status-certified { color: #2BD155; }
+    .feed-status.status-impact-high { color: #FF5D7A; }
+    .feed-status.status-impact-medium { color: #FFCB66; }
+    .feed-status.status-impact-low { color: #2BD155; }
+
+    .feed-headline {
+        color: #E6F5E9;
+        font-size: 0.8rem;
+        font-weight: 650;
+        line-height: 1.35;
+    }
+
+    .feed-detail {
+        margin-top: 0.22rem;
+        color: #9DB5A4;
+        font-size: 0.7rem;
+        line-height: 1.45;
+    }
+
+    .feed-detail strong {
+        margin-right: 0.3rem;
+        color: var(--frame);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .feed-source {
+        margin-top: 0.25rem;
+        color: #5E7465;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.52rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .feed-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        margin-top: 0.4rem;
+    }
+
+    .feed-empty { padding: 0.6rem 0; color: #6C7F73; font-size: 0.7rem; }
+
+    /* The domain grid in the brief's right column: one domain per row, its
+       tiles side by side, and a stage tall enough for the RAG line. */
+    .brief-domain-grid {
+        grid-template-columns: 1fr;
+        gap: 0.7rem;
+        margin: 0 0 1rem;
+    }
+
+    .brief-domain-grid .domain-panel { padding: 0.8rem 0.9rem 0.85rem; }
+
+    .brief-domain-grid .domain-panel-head {
+        align-items: baseline;
+        margin-bottom: 0.55rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid rgba(19,172,51,0.16);
+    }
+
+    .brief-domain-grid .domain-panel-title {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 0.98rem;
+        text-transform: none;
+        letter-spacing: -0.01em;
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* One column per tile in the domain, so a three-tile domain has no gap. */
+    .brief-domain-grid .domain-panel-body {
+        grid-template-columns: repeat(var(--tiles, 3), minmax(0, 1fr));
+    }
+
+    @media (max-width: 900px) {
+        .brief-domain-grid .domain-panel-body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .brief-domain-grid .kpi-slot:nth-child(even) .kpi-explain { left: auto; right: 0; }
+        .brief-domain-grid .kpi-slot:nth-child(odd) .kpi-explain { left: 0; right: auto; }
+    }
+
+
+    .domain-tile-rag { margin-top: 0.38rem; }
 </style>
 """

@@ -11,7 +11,7 @@ import streamlit as st
 from src.ai_partner import answer_question, build_morning_briefing
 from src.cockpit_views import metrics_history
 from src.gemini_partner import build_cockpit_facts, generate_gemini_response
-from src.hud import clear_query_value, get_query_value, module_url, render_html
+from src.hud import clear_query_value, get_query_value, render_html
 
 INVESTIGATION_PROMPTS = {
     "nim": (
@@ -152,7 +152,6 @@ def _answer(question, history):
 def render_copilot(s):
     render_html(
         """
-        <div class="module-code">Module 04 / Decision intelligence</div>
         <div class="section-title">CFO AI Decision Partner</div>
         <div class="section-subtitle">
             Challenge the numbers, connect signals across the cockpit and turn
@@ -293,13 +292,7 @@ def render_copilot(s):
         st.rerun()
 
     render_html(
-        f"""
-        <div class="copilot-module-dock">
-            <a class="copilot-module-link" href="{module_url('brief')}" target="_self">Morning Brief</a>
-            <a class="copilot-module-link" href="{module_url('horizon')}" target="_self">Horizon</a>
-            <a class="copilot-module-link" href="{module_url('scenario')}" target="_self">What-If</a>
-            <a class="copilot-module-link" href="{module_url('treasury')}" target="_self">Treasury</a>
-        </div>
+        """
         <div class="copilot-evidence-note">
             Financial conclusions are grounded in the cockpit's certified views.
             Scenario calculations remain deterministic in What-If.
