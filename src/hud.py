@@ -2,16 +2,18 @@
 HUD primitives: routing, formatting and status classes.
 
 The cockpit navigates through the ``module`` query parameter rather than
-Streamlit tabs, so every vector is a plain anchor and the browser's back button
-works. These helpers are shared by the shell and by every module renderer.
+Streamlit tabs, so every section is a plain anchor and the browser's back
+button works. The selected section opens as a window over the home page.
+These helpers are shared by the shell and by every section renderer.
 """
 
 import pandas as pd
 import streamlit as st
-import streamlit.components.v1 as components
 from textwrap import dedent
 
-# Every navigable vector. "home" is the collapsed overview state.
+from src.rag import confidence_badge, rag_badge, rag_line
+
+# Every section that can open. "home" is the page with no window open.
 VALID_MODULES = {
     "home",
     "brief",
@@ -65,7 +67,7 @@ def clear_query_value(key):
 
 
 def get_selected_module():
-    """Return the module selected through the radial HUD."""
+    """Return the section whose window is open, or "home"."""
     selected = get_query_value("module", DEFAULT_MODULE).lower()
 
     if selected not in VALID_MODULES:
@@ -75,7 +77,7 @@ def get_selected_module():
 
 
 def navigate_to_module(module):
-    """Update radial navigation state across Streamlit versions."""
+    """Open another section's window from inside the app."""
     if module not in VALID_MODULES:
         return
 
@@ -87,20 +89,27 @@ def navigate_to_module(module):
     st.rerun()
 
 
-def module_url(module):
+def close_module():
     """
-    Build a vector's destination.
+    Return to the home page with no window open.
 
-    Selecting a module scrolls to the output panel; the Overview control
-    collapses the cockpit and scrolls back to the dial.
+    Called when a section window is dismissed. The ``enter`` flag keeps the
+    viewer past the greeting screen.
     """
-    anchor = "radial-command" if module == "home" else "module-output"
-    return f"?module={module}#{anchor}"
+    st.query_params.clear()
+    st.query_params["enter"] = "1"
+
+
+def module_url(module):
+    """A section's link: it opens as a window over the home page."""
+    if module == "home":
+        return enter_url()
+    return f"?module={module}"
 
 
 def investigate_url(topic):
     """One-click handoff from a decision lens into the Copilot."""
-    return f"?module=copilot&investigate={topic}#module-output"
+    return f"?module=copilot&investigate={topic}"
 
 
 def active_class(module, selected_module):
@@ -128,57 +137,21 @@ def enter_url():
 
 
 # ------------------------------------------------------------------
-# Scroll
-# ------------------------------------------------------------------
-
-def scroll_to_module_output():
-    """
-    Put the selected module under the viewer's eyes without a manual scroll.
-
-    A ``#module-output`` fragment alone is unreliable here: Streamlit paints
-    the module after the browser has already tried to honour the hash, so the
-    jump lands on an element that does not exist yet. This retries from inside
-    a zero-height component until the banner has actually rendered.
-    """
-    components.html(
-        """
-        <script>
-        (function () {
-            let attempts = 0;
-
-            function jump() {
-                try {
-                    const target = window.parent.document
-                        .getElementById("module-output");
-                    if (target) {
-                        target.scrollIntoView({behavior: "smooth", block: "start"});
-                        return;
-                    }
-                } catch (err) {
-                    // Parent DOM out of reach; the link's #module-output
-                    // fragment is the fallback.
-                    return;
-                }
-                if (attempts++ < 40) {
-                    window.setTimeout(jump, 50);
-                }
-            }
-
-            jump();
-        })();
-        </script>
-        """,
-        height=0,
-    )
-
-
-# ------------------------------------------------------------------
 # Formatting
 # ------------------------------------------------------------------
 
 def arrow_delta(value, unit="pp"):
+    """
+    A signed movement with its direction.
+
+    Capital ratios move in hundredths of a point, and one decimal renders a
+    real move as "0.0". Small non-zero values get a second decimal so the
+    arrow and the number never contradict each other.
+    """
     arrow = "↑" if value > 0 else "↓" if value < 0 else "→"
-    return f"{arrow} {abs(value):.1f}{unit}"
+    magnitude = abs(value)
+    precision = 2 if 0 < magnitude < 0.1 else 1
+    return f"{arrow} {magnitude:.{precision}f}{unit}"
 
 
 def clip_ui_text(value, max_chars=62):
@@ -196,6 +169,69 @@ def format_eur_millions(value):
 def format_eur_billions(value_m):
     """Render a EUR-millions figure in billions, as the KPI cards do."""
     return f"€{value_m / 1000:.1f}bn"
+
+
+# ------------------------------------------------------------------
+# Metric cards
+# ------------------------------------------------------------------
+
+EXPLAIN_HINT = "why · impact · next"
+
+
+def metric_card(label, value, detail, reading, confidence=None,
+                detail_class="kpi-neutral", value_class="", hint=""):
+    """
+    One headline number: its label, value, one line of context, its RAG
+    reading and — when it is a prediction — its confidence.
+    """
+    value_class = f"kpi-value {value_class}".strip()
+    conf_html = "" if confidence is None else confidence_badge(confidence, with_basis=True)
+    hint_html = "" if not hint else f'<span class="kpi-hint" aria-hidden="true">{hint}</span>'
+    return f"""<div class="kpi-card">
+        <div class="kpi-label">{label}</div>
+        <div class="{value_class}">{value}</div>
+        <div class="{detail_class}">{detail}</div>
+        <div class="kpi-badges">{rag_badge(reading)}{conf_html}</div>
+        {hint_html}<span class="micro-line"></span></div>"""
+
+
+def explain_panel(label, why, impact, next_step, reading, footer=""):
+    """The why / impact / next / RAG reading that opens over a card on hover."""
+    rows = [("Why", why, ""), ("Impact", impact, ""), ("Next", next_step, ""),
+            ("RAG", rag_line(reading), " rag-copy")]
+    rows_html = "".join(
+        f"""<div class="kpi-explain-row">
+            <span class="kpi-explain-tag">{tag}</span>
+            <p class="kpi-explain-copy{copy_class}">{copy}</p>
+        </div>"""
+        for tag, copy, copy_class in rows
+    )
+    return f"""<div class="kpi-explain" role="tooltip">
+        <div class="kpi-explain-head">{label}</div>
+        {rows_html}
+        {footer}
+    </div>"""
+
+
+def explained_metric_card(label, value, detail, reading, why, impact, next_step,
+                          confidence=None, value_class=""):
+    """A metric card that opens its why / impact / next / RAG reading on hover."""
+    card = metric_card(
+        label, value, detail, reading, confidence,
+        value_class=value_class, hint=EXPLAIN_HINT,
+    )
+    return f"""<div class="kpi-slot" tabindex="0">
+        {card}
+        {explain_panel(label, why, impact, next_step, reading)}
+    </div>"""
+
+
+def metric_row(slots):
+    """
+    Explained metric cards side by side in one HTML block. A Streamlit column
+    wrapper per card would clip each hover panel to its own column.
+    """
+    return f'<div class="kpi-row" style="--cards: {len(slots)}">{"".join(slots)}</div>'
 
 
 # ------------------------------------------------------------------
@@ -308,12 +344,12 @@ def build_rate_sensitivity_svg(df, width=300, height=118):
     for x, y in zip(x_values, y_values):
         px, py = sx(x), sy(y)
         circles.append(
-            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3.4" fill="#DDFBFF" '
-            f'stroke="#52E7FF" stroke-width="1.2" />'
+            f'<circle cx="{px:.1f}" cy="{py:.1f}" r="3.4" fill="#E6F5E9" '
+            f'stroke="#13AC33" stroke-width="1.2" />'
         )
         labels.append(
             f'<text x="{px:.1f}" y="{height - 5:.1f}" text-anchor="middle" '
-            f'fill="#557F8E" font-size="8" '
+            f'fill="#476F51" font-size="8" '
             f'font-family="Cascadia Mono, Consolas, monospace">{x:+.0f}bp</text>'
         )
 
@@ -321,11 +357,11 @@ def build_rate_sensitivity_svg(df, width=300, height=118):
         f'<svg class="sensitivity-svg" viewBox="0 0 {width} {height}" role="img" '
         f'aria-label="Treasury economic-value sensitivity to pure rate shocks">'
         f'<line x1="{left}" y1="{zero_y:.1f}" x2="{right}" y2="{zero_y:.1f}" '
-        f'stroke="#1A4B5A" stroke-width="1" stroke-dasharray="3 4" />'
+        f'stroke="#184523" stroke-width="1" stroke-dasharray="3 4" />'
         f'<line x1="{left}" y1="{top}" x2="{left}" y2="{bottom}" '
-        f'stroke="#123744" stroke-width="1" />'
-        f'<polyline points="{points}" fill="none" stroke="#52E7FF" '
-        f'stroke-width="2.2" filter="drop-shadow(0 0 4px rgba(82,231,255,0.35))" />'
+        f'stroke="#1B231D" stroke-width="1" />'
+        f'<polyline points="{points}" fill="none" stroke="#13AC33" '
+        f'stroke-width="2.2" filter="drop-shadow(0 0 4px rgba(19,172,51,0.35))" />'
         + "".join(circles)
         + "".join(labels)
         + "</svg>"

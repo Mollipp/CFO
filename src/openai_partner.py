@@ -3,10 +3,16 @@ from typing import Any
 
 import requests
 
-BASE_URL = 'https://xdp-bifrost-atls-a.nl.eu.abnamro.com/aziagacc/maap-cognitive-services/openai-services/v1'
-PURPOSE = 'hcktgpt56terra'
-BEARER_TOKEN = ''
+PURPOSE = "hcktgpt56terra"
 
+URL = (
+    f"https://xdp-bifrost-atls-a.nl.eu.abnamro.com/"
+    f"aigwacc/openai/v1/openai/deployments/{PURPOSE}/chat/completions"
+    "?api-version=2024-10-21"
+)
+
+
+BEARER_TOKEN = ""
 
 def get_required_env(name: str) -> str:
     value = os.getenv(name)
@@ -20,48 +26,31 @@ def get_required_env(name: str) -> str:
     return value
 
 
-def _post_chat_completions(messages: list[dict], model: str | None = None) -> str:
+def _post_chat_completions(
+    messages: list[dict],
+    model: str | None = None,
+) -> str:
+
     purpose = model or PURPOSE
-    url = (
-        f"{BASE_URL.rstrip('/')}/openai/deployments/{purpose}/chat/completions"
-        "?api-version=2024-10-21"
-    )
+
+    url = URL
+
     headers = {
         "Authorization": f"Bearer {BEARER_TOKEN}",
         "Content-Type": "application/json",
     }
 
-    try:
-        response = requests.post(
-            url=url,
-            json={"messages": messages},
-            headers=headers,
-            timeout=60,
-            verify=False,
-        )
-        response.raise_for_status()
-        data = response.json()
+    response = requests.post(
+        url=url,
+        json={"messages": messages},
+        headers=headers,
+        timeout=60,
+        verify=False,
+    )
 
-    except requests.Timeout as exc:
-        raise RuntimeError("The corporate LLM request timed out.") from exc
+    response.raise_for_status()
 
-    except requests.ConnectionError as exc:
-        raise RuntimeError(
-            "Could not connect to the corporate LLM endpoint. "
-            "Check the base URL and whether the application "
-            "environment has access to it."
-        ) from exc
-
-    except requests.HTTPError as exc:
-        raise RuntimeError(
-            f"The corporate LLM returned HTTP "
-            f"{response.status_code}: {response.text[:1000]}"
-        ) from exc
-
-    except ValueError as exc:
-        raise RuntimeError(
-            "The corporate LLM returned an invalid JSON response."
-        ) from exc
+    data = response.json()
 
     choices = data.get("choices", [])
 
@@ -73,7 +62,9 @@ def _post_chat_completions(messages: list[dict], model: str | None = None) -> st
     text = choices[0].get("message", {}).get("content")
 
     if not text:
-        raise RuntimeError("The corporate LLM returned an empty response.")
+        raise RuntimeError(
+            "The corporate LLM returned an empty response."
+        )
 
     return text
 
@@ -169,22 +160,45 @@ Verified dashboard facts:
 def generate_openai_response(
     user_question: str,
     facts: dict[str, Any],
-    model: str | None = None,
 ) -> str:
-    messages = [
-        {
-            "role": "system",
-            "content": (
-                "You are an AI Financial Partner assisting a "
-                "European bank CFO."
-            ),
-        },
-        {
-            "role": "user",
-            "content": build_executive_prompt(user_question, facts),
-        },
-    ]
-    return _post_chat_completions(messages, model)
+
+    headers = {
+        "Authorization": "Bearer " + BEARER_TOKEN,
+        "Content-Type": "application/json",
+    }
+
+    request_body = {
+        "messages": [
+            {
+                "role": "system",
+                "content": (
+                    "You are an AI Financial Partner assisting "
+                    "a European bank CFO."
+                ),
+            },
+            {
+                "role": "user",
+                "content": build_executive_prompt(
+                    user_question,
+                    facts,
+                ),
+            },
+        ]
+    }
+
+    response = requests.post(
+        verify=False,
+        url=URL,
+        json=request_body,
+        headers=headers,
+        timeout=60,
+    )
+
+    response.raise_for_status()
+
+    response_data = response.json()
+
+    return response_data["choices"][0]["message"]["content"]
 
 
 def generate_prompt_response(prompt: str, model: str | None = None) -> str:

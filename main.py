@@ -1,37 +1,35 @@
 """
 AI-Native CFO Morning Cockpit.
 
-The shell: page setup, the stylesheet, the greeting gate, the hero, the
-executive KPI strip, the radial command dial, the intelligence dock, and the
-dispatch into whichever module the ``module`` query parameter selects.
-Everything below the dispatch lives in ``src/modules``.
+The shell: page setup, the stylesheet, the greeting gate, the pinned command
+bar and the one-screen home — executive KPIs on the left, the radial command
+dial in the centre, the intelligence lenses on the right. Selecting any of
+them opens that section as a window over the home page; everything inside a
+window lives in ``src/modules``.
 """
 
 import html
-import os
+
 import streamlit as st
-import importlib.util
 
 from src.cockpit_state import build_state
 from src.extended_data_loader import datasets_available
 from src.hud import (
     active_class,
     arrow_delta,
-    build_rate_sensitivity_svg,
+    close_module,
     enter_url,
+    explain_panel,
     get_selected_module,
     has_entered,
-    investigate_url,
     module_url,
     render_html,
-    safe_float,
-    scroll_to_module_output,
 )
 from src.hud_css import BASE_CSS, EXTENSIONS_CSS, LOCAL_CSS, PANELS_CSS
 from src.modules import MODULE_METADATA, RENDERERS
 from src.modules.copilot import consume_investigation_topic
+from src.rag import confidence_badge, confidence_label, rag_badge
 from src.weather import get_local_weather
-
 
 st.set_page_config(
     page_title="A.R.C. | CFO Command",
@@ -54,8 +52,8 @@ if not has_entered():
     render_html(
         f"""
         <div class="cockpit-gate">
-            <div class="gate-kicker">AI CFO Command Center</div>
-            <h1 class="gate-greeting">Good morning <strong>Ferdinand</strong></h1>
+            <div class="gate-kicker">CFO Command Center</div>
+            <h1 class="gate-greeting">Good afternoon <strong>Ferdi</strong></h1>
             <a class="gate-orb" href="{enter_url()}" target="_self" aria-label="Start explore">
                 <span class="core-orbit-html" aria-hidden="true"></span>
                 <span class="core-reactor-html" aria-hidden="true"></span>
@@ -73,19 +71,13 @@ if not has_entered():
 
 s = build_state()
 selected_module = get_selected_module()
-active_module_name, active_module_description = MODULE_METADATA[selected_module]
 
 # One-click handoffs from a decision lens must arm the Copilot before it renders.
 consume_investigation_topic(selected_module)
 
-# Only a fresh selection scrolls; widget reruns inside a module must not yank
-# the viewer back up to the banner.
-arrived_at_module = st.session_state.get("last_rendered_module") != selected_module
-st.session_state["last_rendered_module"] = selected_module
-
 
 # ============================================================
-# HERO
+# COMMAND BAR
 # ============================================================
 
 weather = get_local_weather()
@@ -107,17 +99,21 @@ else:
         f'{weather_label}{weather_range}</span>'
     )
 
+# One frozen line: the identity, the dates the cockpit is reading, and the
+# local conditions.
 render_html(
     f"""
-    <div class="hud-hero">
-        <div class="hero-copy">
-            <div class="system-kicker">AI CFO COMMAND CENTER</div>
-            <h1 class="hero-title">MORNING <strong>COMMAND</strong></h1>
-            <div class="hero-status-row">
-                <span class="data-pill">Report date / {s.reporting_date}</span>
-                <span class="data-pill">{s.executive_change_count} changes summarized</span>
-                {weather_pill}
-            </div>
+    <div class="hud-hero" id="command-bar">
+        <a class="system-kicker hero-home-link" href="{module_url('home')}" target="_self"
+           aria-label="Back to the CFO overview">
+            <span class="hero-home-glyph" aria-hidden="true">&#8962;</span>
+            AI CFO COMMAND CENTER
+        </a>
+        <div class="hero-status-row">
+            <span class="data-pill">Live data / {s.live_date}</span>
+            <span class="data-pill">Close / {s.close_date}</span>
+            <span class="data-pill">{s.executive_change_count} changes summarized</span>
+            {weather_pill}
         </div>
     </div>
     """
@@ -125,203 +121,161 @@ render_html(
 
 
 # ============================================================
-# EXECUTIVE SNAPSHOT — CURRENT + CHANGE + CONTEXT
+# LEFT — EXECUTIVE KPIS
 # ============================================================
 
-kpi_1, kpi_2, kpi_3, kpi_4 = st.columns(4)
+def kpi_slot(card):
+    """A headline ratio with its RAG; hovering opens why / impact / next / RAG."""
+    return f"""
+    <div class="kpi-slot" tabindex="0">
+        <div class="kpi-card">
+            <div class="kpi-label">{card['label']}</div>
+            <div class="kpi-value">{card['value']}</div>
+            <div class="executive-delta">{arrow_delta(card['delta_pp'])} vs {s.previous_month_label}</div>
+            <div class="executive-context">{card['context']}</div>
+            <div class="kpi-badges">{rag_badge(card['rag'])}</div>
+            <span class="kpi-hint" aria-hidden="true">why · impact · next</span>
+        </div>
+        {explain_panel(
+            card['label'], card['why'], card['impact'], card['next'], card['rag'],
+            footer=f'<a class="kpi-explain-link" href="{module_url(card["module"])}" target="_self">Open the full lens &rarr;</a>',
+        )}
+    </div>
+    """
 
-with kpi_1:
-    render_html(
-        f"""<div class="kpi-card" data-module="CAP / 01">
-        <div class="kpi-label">CET1 RATIO</div>
-        <div class="kpi-value">{s.cet1_ratio:.1f}%</div>
-        <div class="executive-delta">{arrow_delta(s.cet1_mom_pp)} vs {s.previous_month_label}</div>
-        <div class="executive-context">{s.cet1_peer_gap_pp:+.1f}pp vs peer median · €{s.cet1_capital / 1000:.1f}bn CET1</div>
-        <span class="micro-line"></span></div>"""
-    )
 
-with kpi_2:
-    render_html(
-        f"""<div class="kpi-card" data-module="LIQ / 02">
-        <div class="kpi-label">LIQUIDITY COVERAGE</div>
-        <div class="kpi-value">{s.lcr_ratio:.1f}%</div>
-        <div class="executive-delta">{arrow_delta(s.lcr_mom_pp)} vs {s.previous_month_label}</div>
-        <div class="executive-context">HQLA €{s.hqla / 1000:.1f}bn · L/D {s.loan_to_deposit_ratio:.1f}%</div>
-        <span class="micro-line"></span></div>"""
-    )
-
-with kpi_3:
-    render_html(
-        f"""<div class="kpi-card" data-module="RET / 03">
-        <div class="kpi-label">ANNUALISED YTD ROE PROXY</div>
-        <div class="kpi-value">{s.ytd_roe_proxy:.1f}%</div>
-        <div class="executive-delta">{arrow_delta(s.ytd_roe_delta_pp)} vs {s.previous_month_label}</div>
-        <div class="executive-context">{s.roe_peer_gap_pp:+.1f}pp vs peer median · directional comparison</div>
-        <span class="micro-line"></span></div>"""
-    )
-
-with kpi_4:
-    render_html(
-        f"""<div class="kpi-card" data-module="EFF / 04">
-        <div class="kpi-label">YTD COST / INCOME</div>
-        <div class="kpi-value">{s.ytd_cost_income:.1f}%</div>
-        <div class="executive-delta">{arrow_delta(s.ytd_ci_delta_pp)} vs {s.previous_month_label}</div>
-        <div class="executive-context">{s.efficiency_peer_advantage_pp:+.1f}pp efficiency advantage vs peer median</div>
-        <span class="micro-line"></span></div>"""
-    )
-
-st.write("")
+kpi_column = "".join(kpi_slot(card) for card in s.kpi_cards)
 
 
 # ============================================================
-# NAVIGATION — RADIAL COMMAND DIAL
+# CENTRE — RADIAL COMMAND DIAL
 # ============================================================
-
-selection_class = "has-selection" if selected_module != "home" else ""
-
 
 def dial(module):
     return active_class(module, selected_module)
 
 
-credit_change = (
-    "—"
-    if s.credit_hotspot_stage2_delta_pp is None
-    else f"{s.credit_hotspot_stage2_delta_pp:+.2f}pp vs 30D"
-)
+selection_class = "has-selection" if selected_module != "home" else ""
+horizon_confidence = confidence_label(s.conf_horizon_ye_nim)
 
-render_html(
-    f"""
-    <div class="integrated-system {selection_class}" id="radial-command">
-        <div class="system-topline"><span></span><span><strong>CFO decision cockpit</strong> / {s.reporting_date}</span><span></span></div>
-        <div class="system-grid">
-            <div class="cfo-change-panel">
-                <div class="cfo-panel-kicker">Change / reference period</div><div class="cfo-panel-title">What moved?</div>
-                <a class="change-row" href="{module_url('brief')}" target="_self"><div class="change-row-head"><span class="change-name">Net interest margin</span><span class="change-value">{s.nim_mom_bps:+.1f} bps MoM</span></div><div class="change-detail">Current {s.cert_current_nim:.2f}% vs {s.previous_cert_nim:.2f}% in {s.previous_month_label} · {s.nim_signal_secondary}</div></a>
-                <a class="change-row" href="{module_url('brief')}" target="_self"><div class="change-row-head"><span class="change-name">Deposits</span><span class="change-value">{s.total_deposit_30d_change_pct:+.2f}% vs 30D</span></div><div class="change-detail">€{s.total_deposit_30d_change_m / 1000:+.2f}bn over 30 days · {s.deposit_signal_secondary}</div></a>
-                <a class="change-row" href="{module_url('brief')}" target="_self"><div class="change-row-head"><span class="change-name">Credit migration</span><span class="change-value">{credit_change}</span></div><div class="change-detail">{s.credit_signal_primary}</div></a>
-            </div>
-
-            <div class="dial-viewport">
-                <div class="command-dial-html" role="navigation" aria-label="Interactive CFO command dial">
-                    <span class="dial-grid-disc-html" aria-hidden="true"></span><span class="dial-crosshair-html" aria-hidden="true"></span><span class="dial-tick-shell-html" aria-hidden="true"></span><span class="dial-rotor-html rotor-outer" aria-hidden="true"></span><span class="dial-rotor-html rotor-inner" aria-hidden="true"></span><span class="dial-annulus-bed-html" aria-hidden="true"></span>
-                    <a class="css-sector css-sector-brief {dial('brief')}" href="{module_url('brief')}" target="_self" aria-label="Open Morning Brief" title="Morning Brief — click to open"><span class="dial-hit-copy">Morning Brief</span></a>
-                    <a class="css-sector css-sector-horizon {dial('horizon')}" href="{module_url('horizon')}" target="_self" aria-label="Open Horizon" title="Horizon — click to open"><span class="dial-hit-copy">Horizon</span></a>
-                    <a class="css-sector css-sector-scenario {dial('scenario')}" href="{module_url('scenario')}" target="_self" aria-label="Open What-If Engine" title="What-If Engine — click to open"><span class="dial-hit-copy">What-If Engine</span></a>
-                    <span class="sector-label-html sector-label-brief {dial('brief')}"><strong class="sector-title-html">Morning Brief</strong><span class="sector-metric-html">NIM {s.cert_current_nim:.2f}% · {s.nim_mom_bps:+.1f} bps MoM</span><span class="sector-sub-html">Change · context · impact · next</span></span>
-                    <span class="sector-label-html sector-label-horizon {dial('horizon')}"><strong class="sector-title-html">Horizon</strong><span class="sector-metric-html">{s.cert_nim_months}M actuals · latest {s.cert_current_nim:.2f}%</span><span class="sector-sub-html">Trend · run-rate · stress path</span></span>
-                    <span class="sector-label-html sector-label-scenario {dial('scenario')}"><strong class="sector-title-html">What-If Engine</strong><span class="sector-metric-html">ECB ±100 bps · 365D max</span><span class="sector-sub-html">Simulate · quantify · compare</span></span>
-                    <span class="dial-vector-line-html dial-vector-a" aria-hidden="true"></span><span class="dial-vector-line-html dial-vector-b" aria-hidden="true"></span><span class="dial-vector-line-html dial-vector-c" aria-hidden="true"></span><span class="dial-spoke-html dial-spoke-a" aria-hidden="true"></span><span class="dial-spoke-html dial-spoke-b" aria-hidden="true"></span><span class="dial-spoke-html dial-spoke-c" aria-hidden="true"></span>
-                    <a class="css-core {dial('copilot')}" href="{module_url('copilot')}" target="_self" aria-label="Open CFO Copilot" title="Ask CFO Copilot — click to open"><span class="core-orbit-html" aria-hidden="true"></span><span class="core-reactor-html" aria-hidden="true"></span><span class="core-scan-html" aria-hidden="true"></span><span class="core-copy-html"><span class="core-code-html">AI / Investigate</span><strong class="core-main-html">Ask CFO<br>Copilot</strong><span class="core-online-html">Question → evidence</span><span class="core-hint-html">Select core to investigate</span></span></a>
-                    <span class="dial-cardinal-html dial-cardinal-n" aria-hidden="true">N / 000</span><span class="dial-cardinal-html dial-cardinal-e" aria-hidden="true">E / 090</span><span class="dial-cardinal-html dial-cardinal-s" aria-hidden="true">S / 180</span><span class="dial-cardinal-html dial-cardinal-w" aria-hidden="true">W / 270</span>
-                </div>
-            </div>
-
-            <div class="cfo-decision-panel">
-                <div class="cfo-panel-kicker">Decision lens</div><div class="cfo-panel-title">Why / impact / next</div>
-                <div class="decision-lens-item"><div class="decision-lens-title">Margin</div><div class="decision-lens-line"><span class="decision-lens-label">Why</span><span class="decision-lens-copy">{s.nim_why}</span></div><div class="decision-lens-line"><span class="decision-lens-label">Impact</span><span class="decision-lens-copy">{s.nim_impact}</span></div><div class="decision-lens-line"><span class="decision-lens-label">Next</span><span class="decision-lens-copy">Inspect pricing/pass-through drivers.</span></div><a class="copilot-action" href="{investigate_url('nim')}" target="_self">Ask Copilot →</a></div>
-                <div class="decision-lens-item"><div class="decision-lens-title">Funding</div><div class="decision-lens-line"><span class="decision-lens-label">Why</span><span class="decision-lens-copy">{s.deposit_why}</span></div><div class="decision-lens-line"><span class="decision-lens-label">Impact</span><span class="decision-lens-copy">{s.deposit_impact}</span></div><div class="decision-lens-line"><span class="decision-lens-label">Next</span><span class="decision-lens-copy">Review slower-growth markets before repricing.</span></div><a class="copilot-action" href="{investigate_url('deposits')}" target="_self">Ask Copilot →</a></div>
-                <div class="decision-lens-item"><div class="decision-lens-title">External news</div><div class="decision-lens-line"><span class="decision-lens-label">Why</span><span class="decision-lens-copy">{s.news_why}</span></div><div class="decision-lens-line"><span class="decision-lens-label">Impact</span><span class="decision-lens-copy">Potential metric: {s.news_impact}</span></div><div class="decision-lens-line"><span class="decision-lens-label">Next</span><span class="decision-lens-copy">{s.news_next}</span></div><a class="copilot-action" href="{investigate_url('news')}" target="_self">Ask Copilot →</a></div>
+dial_column = f"""
+<div class="integrated-system {selection_class}" id="radial-command">
+    <div class="system-grid is-solo">
+        <div class="dial-viewport">
+            <div class="command-dial-html" role="navigation" aria-label="Interactive CFO command dial">
+                <span class="dial-grid-disc-html" aria-hidden="true"></span><span class="dial-crosshair-html" aria-hidden="true"></span><span class="dial-tick-shell-html" aria-hidden="true"></span><span class="dial-rotor-html rotor-outer" aria-hidden="true"></span><span class="dial-rotor-html rotor-inner" aria-hidden="true"></span><span class="dial-annulus-bed-html" aria-hidden="true"></span>
+                <a class="css-sector css-sector-brief {dial('brief')}" href="{module_url('brief')}" target="_self" aria-label="Open Morning Brief" title="Morning Brief — click to open"><span class="dial-hit-copy">Morning Brief</span></a>
+                <a class="css-sector css-sector-horizon {dial('horizon')}" href="{module_url('horizon')}" target="_self" aria-label="Open Horizon" title="Horizon — click to open"><span class="dial-hit-copy">Horizon</span></a>
+                <a class="css-sector css-sector-scenario {dial('scenario')}" href="{module_url('scenario')}" target="_self" aria-label="Open What-If Engine" title="What-If Engine — click to open"><span class="dial-hit-copy">What-If Engine</span></a>
+                <span class="sector-label-html sector-label-brief {dial('brief')}"><strong class="sector-title-html">Morning Brief</strong><span class="sector-metric-html">NIM {s.cert_current_nim:.2f}% · {s.nim_mom_bps:+.1f} bps MoM</span><span class="sector-sub-html">News · changes · RAG</span></span>
+                <span class="sector-label-html sector-label-horizon {dial('horizon')}"><strong class="sector-title-html">Horizon</strong><span class="sector-metric-html">YE NIM {s.horizon_year_end_nim:.2f}% · conf {horizon_confidence}</span><span class="sector-sub-html">Trend · run-rate · confidence</span></span>
+                <span class="sector-label-html sector-label-scenario {dial('scenario')}"><strong class="sector-title-html">What-If Engine</strong><span class="sector-metric-html">ECB ±100 bps · 365D max</span><span class="sector-sub-html">Simulate · quantify · compare</span></span>
+                <span class="dial-spoke-html dial-spoke-a" aria-hidden="true"></span><span class="dial-spoke-html dial-spoke-b" aria-hidden="true"></span><span class="dial-spoke-html dial-spoke-c" aria-hidden="true"></span>
+                <a class="css-core {dial('copilot')}" href="{module_url('copilot')}" target="_self" aria-label="Open CFO Copilot" title="Ask CFO Copilot — click to open"><span class="core-orbit-html" aria-hidden="true"></span><span class="core-reactor-html" aria-hidden="true"></span><span class="core-scan-html" aria-hidden="true"></span><span class="core-copy-html"><span class="core-code-html">AI / Investigate</span><strong class="core-main-html">Ask CFO<br>Copilot</strong><span class="core-online-html">Question → evidence</span><span class="core-hint-html">Select core to investigate</span></span></a>
+                <span class="dial-cardinal-html dial-cardinal-n" aria-hidden="true">N / 000</span><span class="dial-cardinal-html dial-cardinal-e" aria-hidden="true">E / 090</span><span class="dial-cardinal-html dial-cardinal-s" aria-hidden="true">S / 180</span><span class="dial-cardinal-html dial-cardinal-w" aria-hidden="true">W / 270</span>
             </div>
         </div>
-        <div class="system-bottom-rail"><span>Current view / {active_module_name}</span><a class="system-reset {'is-home' if selected_module == 'home' else ''}" href="{module_url('home')}" target="_self">◎ Overview</a><span>Select a vector to investigate</span></div>
     </div>
-    """
-)
+</div>
+"""
 
 
 # ============================================================
-# INTELLIGENCE DOCK
+# RIGHT — INTELLIGENCE LENSES
 # ============================================================
 
 top_strategy_name = (
     html.escape(str(s.top_strategy["company_name"])) if s.top_strategy is not None else "—"
 )
-news_focus = (
-    html.escape(str(s.geo_focus["country"])) if s.geo_focus is not None else "—"
-)
+news_focus = html.escape(str(s.geo_focus["country"])) if s.geo_focus is not None else "—"
 
+lenses = [
+    (
+        "news", "◇", "News",
+        f"{news_focus} highest attention",
+        f"{s.high_impact_news_count} high impact · internal & external feeds",
+        s.ratings["news_attention"], None,
+    ),
+    (
+        "treasury", "△", "Treasury",
+        f"+50bp {s.treasury_rate50_text}",
+        "Economic value · hedge options",
+        s.ratings["treasury_rate50"], s.conf_treasury_rate50,
+    ),
+    (
+        "peers", "◌", "Peers",
+        f"ROE proxy {s.roe_peer_gap_pp:+.1f}pp",
+        "vs peer median · directional comparison",
+        s.ratings["peer_roe"], None,
+    ),
+    (
+        "strategy", "◎", "Opportunity",
+        f"#1 {top_strategy_name}",
+        "Opportunity radar · why it ranks first",
+        s.ratings["strategy_top"], s.conf_strategy_rank,
+    ),
+]
+
+
+def lens_box(module, icon, title, metric, sub, reading, confidence):
+    conf_html = "" if confidence is None else confidence_badge(confidence)
+    return f"""
+    <a class="dock-action lens-box {dial(module)}" href="{module_url(module)}" target="_self">
+        <span class="dock-icon">{icon}</span>
+        <span class="dock-copy">
+            <strong class="dock-title">{title}</strong>
+            <span class="lens-metric">{metric}</span>
+            <span class="dock-metric">{html.escape(sub)}</span>
+            <span class="kpi-badges">{rag_badge(reading)}{conf_html}</span>
+        </span>
+    </a>
+    """
+
+
+lens_column = "".join(lens_box(*lens) for lens in lenses)
+
+# One grid rather than st.columns: the KPI explanations have to escape their
+# own card over the dial, and a Streamlit column wrapper would clip them.
 render_html(
     f"""
-    <div class="intelligence-dock">
-        <div class="dock-kicker">Explore intelligence</div>
-        <div class="dock-actions">
-            <a class="dock-action {dial('strategy')}" href="{module_url('strategy')}" target="_self"><span class="dock-icon">◎</span><span class="dock-copy"><strong class="dock-title">Strategy</strong><span class="dock-metric">#1 {top_strategy_name} · why it ranks first</span></span></a>
-            <a class="dock-action {dial('peers')}" href="{module_url('peers')}" target="_self"><span class="dock-icon">◌</span><span class="dock-copy"><strong class="dock-title">Peers</strong><span class="dock-metric">ROE proxy {s.roe_peer_gap_pp:+.1f}pp vs median · directional</span></span></a>
-            <a class="dock-action {dial('treasury')}" href="{module_url('treasury')}" target="_self"><span class="dock-icon">△</span><span class="dock-copy"><strong class="dock-title">Treasury</strong><span class="dock-metric">+50bp impact {s.treasury_rate50_text} · evaluate hedge options</span></span></a>
-            <a class="dock-action {dial('news')}" href="{module_url('news')}" target="_self"><span class="dock-icon">◇</span><span class="dock-copy"><strong class="dock-title">News</strong><span class="dock-metric">{news_focus} highest attention · {s.high_impact_news_count} high impact</span></span></a>
-        </div>
+    <div class="home-stage">
+        <div class="home-left">{kpi_column}</div>
+        <div class="home-center">{dial_column}</div>
+        <div class="home-right">{lens_column}</div>
     </div>
     """
 )
 
 
 # ============================================================
-# MODULE OUTPUT
+# SECTION WINDOW
 # ============================================================
 
-if selected_module == "home":
-    render_html(
-        """
-        <div class="system-overview-note" id="module-output">
-            <span class="overview-title">Today at a glance</span>
-            <span class="overview-copy">Start with Morning Brief for changes, Horizon for the forward view, What-If for decisions under stress, or ask Copilot to investigate.</span>
-        </div>
-        """
-    )
+def open_window(module):
+    """
+    The selected section, in a window over the home page.
 
-    overview_left, overview_right = st.columns([1, 1])
-    with overview_left:
-        render_html(
-            f"""
-            <div class="panel">
-                <div class="readout-label">Rate sensitivity / treasury economic value</div>
-                {build_rate_sensitivity_svg(s.treasury_scenarios)}
-                <div class="copilot-evidence-note">
-                    Pure parallel rate shocks only; scenarios that also move credit
-                    spreads are excluded so the curve stays comparable.
-                </div>
-            </div>
-            """
-        )
-    with overview_right:
-        render_html(
-            f"""
-            <div class="panel">
-                <div class="readout-label">Standing position</div>
-                <div class="copilot-context-strip">
-                    <div class="copilot-context-item"><span>NIM</span><strong>{s.cert_current_nim:.2f}%</strong></div>
-                    <div class="copilot-context-item"><span>Loans</span><strong>€{s.current_loans_m / 1000:.1f}bn</strong></div>
-                    <div class="copilot-context-item"><span>Deposits</span><strong>€{s.current_deposits_m / 1000:.1f}bn</strong></div>
-                    <div class="copilot-context-item"><span>ECB</span><strong>{s.ecb_rate_pct:.2f}%</strong></div>
-                </div>
-                <div class="copilot-evidence-note">
-                    Stage 2 {s.stage_2_share_pct:.1f}% · Stage 3 {s.stage_3_share_pct:.2f}% ·
-                    {s.current_credit_watch_count} credit watch(es) on the latest observation.
-                </div>
-            </div>
-            """
-        )
+    Dismissing it — the ✕, Escape or a click outside — clears the selection,
+    so the next run draws the home page on its own.
+    """
+    title, description = MODULE_METADATA[module]
 
-else:
-    render_html(
-        f"""
-        <div class="active-module-banner" id="module-output">
-            <span class="active-module-name">{active_module_name}</span>
-            <span class="active-module-state">{active_module_description}</span>
-        </div>
-        """
-    )
+    @st.dialog(title, width="large", on_dismiss=close_module)
+    def window():
+        render_html(f'<div class="window-subtitle">{description}</div>')
 
-    # A signal pushed here from the News module explains itself once.
-    applied_signal = st.session_state.pop("scenario_from_signal", None)
-    if applied_signal and selected_module == "scenario":
-        st.info(f"Assumptions pre-filled from an overnight news signal: {applied_signal}.")
+        # A signal pushed here from the News window explains itself once.
+        applied_signal = st.session_state.pop("scenario_from_signal", None)
+        if applied_signal and module == "scenario":
+            st.info(f"Assumptions pre-filled from an overnight news signal: {applied_signal}.")
 
-    RENDERERS[selected_module](s)
+        RENDERERS[module](s)
 
-    if arrived_at_module:
-        scroll_to_module_output()
+    window()
+
+
+if selected_module != "home":
+    open_window(selected_module)
 
 
 # ============================================================
@@ -344,7 +298,7 @@ render_html(
     <div class="system-footer">
         <span>Synthetic data · illustrative only · not for financial decisions</span>
         <span>{dataset_note}</span>
-        <span>Report date / {s.reporting_date}</span>
+        <span>Live data / {s.live_date} · close / {s.close_date}</span>
     </div>
     """
 )

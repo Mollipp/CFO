@@ -41,45 +41,152 @@ def _mock_response() -> dict:
 
 
 def _get_client():
+    import os
+    import streamlit as st
     from databricks.sdk import WorkspaceClient
+
+    user_token = st.context.headers.get("X-Forwarded-Access-Token")
+    if user_token:
+        return WorkspaceClient(
+            host=os.environ.get("DATABRICKS_HOST"),
+            token=user_token,
+            auth_type="pat",
+        )
     return WorkspaceClient()
 
 
 def _extract_answer_text(message) -> str:
     parts = []
-    for attachment in message.attachments or []:
-        if attachment.text and attachment.text.content:
-            parts.append(attachment.text.content)
+    for attachment in getattr(message, "attachments", None) or []:
+        text_obj = getattr(attachment, "text", None)
+        if text_obj:
+            text_content = getattr(text_obj, "content", None)
+            if text_content:
+                parts.append(text_content)
     if parts:
         return "\n\n".join(parts)
-    return message.content or ""
+    return getattr(message, "content", "") or ""
 
 
 def _extract_query_attachment(message):
-    for attachment in message.attachments or []:
-        if attachment.query is not None:
+    for attachment in getattr(message, "attachments", None) or []:
+        if getattr(attachment, "query", None) is not None:
             return attachment
     return None
 
 
 def _rows_to_dataframe(query_result) -> pd.DataFrame:
-    statement_response = query_result.statement_response
-    if statement_response is None or statement_response.result is None:
+    statement_response = getattr(query_result, "statement_response", None)
+    if statement_response is None:
         return pd.DataFrame()
 
-    manifest = statement_response.manifest
+    result_obj = getattr(statement_response, "result", None)
+    if result_obj is None:
+        return pd.DataFrame()
+
+    manifest = getattr(statement_response, "manifest", None)
+    schema_obj = getattr(manifest, "schema", None) if manifest else None
+    schema_columns = getattr(schema_obj, "columns", None) if schema_obj else None
     columns = (
-        [col.name for col in manifest.schema.columns]
-        if manifest and manifest.schema and manifest.schema.columns
+        [getattr(col, "name", f"col_{i}") for i, col in enumerate(schema_columns)]
+        if schema_columns
         else None
     )
 
-    data_array = statement_response.result.data_array or []
+    data_array = getattr(result_obj, "data_array", None) or []
     capped_rows = data_array[:GENIE_ROW_CAP]
 
     if columns:
         return pd.DataFrame(capped_rows, columns=columns)
     return pd.DataFrame(capped_rows)
+
+
+def _fetch_query_result(client, space_id, conversation_id, message_id, attachment_id):
+    """Retrieve Genie query results, resilient across SDK versions."""
+    # Try SDK methods (name changed across versions)
+    for method_name in (
+        "get_message_attachment_query_result",
+        "get_message_query_result_by_attachment",
+        "execute_message_attachment_query",
+    ):
+        method = getattr(client.genie, method_name, None)
+        if method is not None:
+            return method(
+                space_id=space_id,
+                conversation_id=conversation_id,
+                message_id=message_id,
+                attachment_id=attachment_id,
+            )
+
+    # Fallback: direct REST API call
+    import requests
+
+    host = client.config.host.rstrip("/")
+    token = getattr(client.config, "token", None)
+    headers = {"Authorization": f"Bearer {token}"}
+
+    url = (
+        f"{host}/api/2.0/genie/spaces/{space_id}"
+        f"/conversations/{conversation_id}"
+        f"/messages/{message_id}"
+        f"/attachments/{attachment_id}/query-result"
+    )
+    resp = requests.get(url, headers=headers)
+    resp.raise_for_status()
+    return _parse_rest_query_result(resp.json())
+
+
+def _parse_rest_query_result(data: dict):
+    """Wrap REST JSON in a minimal object matching the SDK shape."""
+
+    class _Obj:
+        def __init__(self, d):
+            for k, v in d.items():
+                if isinstance(v, dict):
+                    setattr(self, k, _Obj(v))
+                elif isinstance(v, list):
+                    setattr(self, k, [_Obj(i) if isinstance(i, dict) else i for i in v])
+                else:
+                    setattr(self, k, v)
+
+        def __getattr__(self, name):
+            return None
+
+    return _Obj(data)
+
+
+def _msg_attr(obj, *names):
+    """Return the first truthy attribute found on *obj* from *names*.
+
+    Tries direct attribute access first, then falls back to dictionary
+    introspection via as_dict() / vars() to handle SDK versions where
+    fields exist in the serialised form but not as Python attributes.
+    """
+    if obj is None:
+        return None
+    # 1. Direct attribute access
+    for name in names:
+        val = getattr(obj, name, None)
+        if val is not None:
+            return val
+    # 2. Dictionary introspection fallback
+    d = None
+    if hasattr(obj, "as_dict"):
+        try:
+            d = obj.as_dict()
+        except Exception:
+            pass
+    if d is None:
+        try:
+            d = vars(obj)
+        except TypeError:
+            pass
+    if isinstance(d, dict):
+        for name in names:
+            val = d.get(name)
+            if val is not None:
+                return val
+    return None
 
 
 def ask_genie(question: str, conversation_id: str | None = None) -> dict:
@@ -111,9 +218,13 @@ def ask_genie(question: str, conversation_id: str | None = None) -> dict:
                 content=question,
             )
 
-        if message.status and message.status.value == "FAILED":
-            error_text = message.error.error if message.error else "Unknown error"
-            raise RuntimeError(f"Genie query failed: {error_text}")
+        msg_status = getattr(message, "status", None)
+        if msg_status:
+            status_val = getattr(msg_status, "value", msg_status)
+            if str(status_val) == "FAILED":
+                err_obj = getattr(message, "error", None)
+                error_text = getattr(err_obj, "error", "Unknown error") if err_obj else "Unknown error"
+                raise RuntimeError(f"Genie query failed: {error_text}")
 
         answer_text = _extract_answer_text(message)
 
@@ -121,20 +232,37 @@ def ask_genie(question: str, conversation_id: str | None = None) -> dict:
         data = pd.DataFrame()
         query_attachment = _extract_query_attachment(message)
         if query_attachment is not None:
-            sql = query_attachment.query.query
-            query_result = client.genie.get_message_attachment_query_result(
-                space_id=GENIE_SPACE_ID,
-                conversation_id=message.conversation_id,
-                message_id=message.message_id,
-                attachment_id=query_attachment.attachment_id,
+            query_obj = getattr(query_attachment, "query", None)
+            sql = getattr(query_obj, "query", None) if query_obj else None
+            msg_conversation_id = _msg_attr(message, "conversation_id", "id")
+            msg_message_id = _msg_attr(message, "message_id", "id")
+            att_id = (
+                _msg_attr(query_attachment, "attachment_id", "id")
+                or _msg_attr(query_obj, "id", "attachment_id", "statement_id")
             )
-            data = _rows_to_dataframe(query_result)
+
+            # Data fetch is best-effort — answer text + SQL are the priority.
+            try:
+                msg_qr = getattr(message, "query_result", None)
+                if msg_qr is not None:
+                    data = _rows_to_dataframe(msg_qr)
+                elif att_id is not None:
+                    query_result = _fetch_query_result(
+                        client,
+                        space_id=GENIE_SPACE_ID,
+                        conversation_id=msg_conversation_id,
+                        message_id=msg_message_id,
+                        attachment_id=att_id,
+                    )
+                    data = _rows_to_dataframe(query_result)
+            except Exception:
+                data = pd.DataFrame()  # graceful degradation
 
         return {
             "answer_text": answer_text,
             "sql": sql,
             "data": data,
-            "conversation_id": message.conversation_id,
+            "conversation_id": _msg_attr(message, "conversation_id", "id"),
         }
     except RuntimeError:
         raise

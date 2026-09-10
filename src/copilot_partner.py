@@ -8,7 +8,8 @@ Analyze that data (and only that data) into a CFO-ready answer.
 
 import pandas as pd
 
-from src.databricks_partner import generate
+# from src.databricks_partner import generate
+from src.openai_partner import generate_prompt_response as generate
 from src.genie_partner import ask_genie
 
 PROMPT_MAX_ROWS = 50

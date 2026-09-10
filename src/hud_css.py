@@ -14,21 +14,21 @@ LOCAL_CSS holds this app's own overrides and is emitted last so it wins.
 BASE_CSS = """\n<style>
 
     :root {
-        --void: #02070c;
-        --void-soft: #06111a;
-        --panel: rgba(5, 22, 33, 0.82);
-        --panel-strong: rgba(6, 29, 43, 0.94);
-        --line: rgba(80, 222, 255, 0.18);
-        --line-strong: rgba(80, 222, 255, 0.42);
-        --cyan: #52e7ff;
-        --cyan-soft: #9af2ff;
-        --blue: #3b82f6;
+        --void: #000000;
+        --void-soft: #080a08;
+        --panel: rgba(11,16,13,0.82);
+        --panel-strong: rgba(15,21,16,0.94);
+        --line: rgba(19,171,54,0.18);
+        --line-strong: rgba(19,171,54,0.42);
+        --accent: #13ac33;
+        --accent-soft: #b7e2c0;
+        --accent-deep: #139d45;
         --violet: #b88cff;
-        --green: #42f5a7;
+        --green: #149f4d;
         --amber: #ffcb66;
         --red: #ff5d7a;
-        --text: #e9fbff;
-        --muted: #7fa6b5;
+        --text: #e6f5e9;
+        --muted: #7ca687;
     }
 
     html, body, [class*="css"] {
@@ -38,9 +38,9 @@ BASE_CSS = """\n<style>
     .stApp {
         color: var(--text);
         background:
-            radial-gradient(circle at 82% 4%, rgba(16, 121, 164, 0.18), transparent 28rem),
-            radial-gradient(circle at 12% 35%, rgba(34, 86, 147, 0.10), transparent 34rem),
-            linear-gradient(135deg, #02070c 0%, #04101a 48%, #02070c 100%);
+            radial-gradient(circle at 82% 4%, rgba(20,124,47,0.13), transparent 28rem),
+            radial-gradient(circle at 12% 35%, rgba(33,112,60,0.07), transparent 34rem),
+            linear-gradient(135deg, #000000 0%, #050705 48%, #000000 100%);
     }
 
     .stApp::before {
@@ -51,8 +51,8 @@ BASE_CSS = """\n<style>
         z-index: 0;
         opacity: 0.34;
         background-image:
-            linear-gradient(rgba(82, 231, 255, 0.026) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(82, 231, 255, 0.026) 1px, transparent 1px);
+            linear-gradient(rgba(19,172,51,0.026) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(19,172,51,0.026) 1px, transparent 1px);
         background-size: 44px 44px;
         mask-image: linear-gradient(to bottom, black, transparent 92%);
     }
@@ -74,7 +74,7 @@ BASE_CSS = """\n<style>
     }
 
     header[data-testid="stHeader"] {
-        background: linear-gradient(180deg, rgba(2, 7, 12, 0.96), rgba(2, 7, 12, 0));
+        background: linear-gradient(180deg, rgba(0,0,0,0.96), rgba(0,0,0,0));
     }
 
     [data-testid="stToolbar"] {
@@ -99,19 +99,19 @@ BASE_CSS = """\n<style>
     }
 
     hr {
-        border-color: rgba(82, 231, 255, 0.12) !important;
+        border-color: rgba(19,172,51,0.12) !important;
     }
 
     [data-testid="stMarkdownContainer"] p,
     [data-testid="stMarkdownContainer"] li {
-        color: #b8d4dc;
+        color: #c2d2c6;
     }
 
     [data-testid="stMarkdownContainer"] h1,
     [data-testid="stMarkdownContainer"] h2,
     [data-testid="stMarkdownContainer"] h3,
     [data-testid="stMarkdownContainer"] h4 {
-        color: #e9fbff;
+        color: #e6f5e9;
         letter-spacing: -0.02em;
     }
 
@@ -130,13 +130,13 @@ BASE_CSS = """\n<style>
         padding: 2.1rem 2.35rem;
         margin: 0 0 1.3rem 0;
         background:
-            linear-gradient(105deg, rgba(5, 27, 41, 0.94), rgba(3, 14, 23, 0.72)),
-            radial-gradient(circle at 79% 50%, rgba(82, 231, 255, 0.15), transparent 13rem);
+            linear-gradient(105deg, rgba(14,19,15,0.94), rgba(8,11,9,0.72)),
+            radial-gradient(circle at 79% 50%, rgba(19,172,51,0.15), transparent 13rem);
         border: 1px solid var(--line-strong);
         clip-path: polygon(0 0, calc(100% - 30px) 0, 100% 30px, 100% 100%, 30px 100%, 0 calc(100% - 30px));
         box-shadow:
-            inset 0 0 55px rgba(42, 186, 230, 0.055),
-            0 22px 70px rgba(0, 0, 0, 0.34);
+            inset 0 0 55px rgba(26,135,52,0.055),
+            0 22px 70px rgba(0,0,0,0.34);
     }
 
     .hud-hero::before {
@@ -146,8 +146,8 @@ BASE_CSS = """\n<style>
         left: -45%;
         width: 42%;
         height: 2px;
-        background: linear-gradient(90deg, transparent, var(--cyan), transparent);
-        box-shadow: 0 0 18px var(--cyan);
+        background: linear-gradient(90deg, transparent, var(--accent), transparent);
+        box-shadow: 0 0 18px var(--accent);
         animation: scan-horizontal 7s linear infinite;
     }
 
@@ -158,10 +158,10 @@ BASE_CSS = """\n<style>
         pointer-events: none;
         opacity: 0.65;
         background:
-            linear-gradient(var(--cyan), var(--cyan)) left top / 45px 1px no-repeat,
-            linear-gradient(var(--cyan), var(--cyan)) left top / 1px 45px no-repeat,
-            linear-gradient(var(--cyan), var(--cyan)) right bottom / 45px 1px no-repeat,
-            linear-gradient(var(--cyan), var(--cyan)) right bottom / 1px 45px no-repeat;
+            linear-gradient(var(--accent), var(--accent)) left top / 45px 1px no-repeat,
+            linear-gradient(var(--accent), var(--accent)) left top / 1px 45px no-repeat,
+            linear-gradient(var(--accent), var(--accent)) right bottom / 45px 1px no-repeat,
+            linear-gradient(var(--accent), var(--accent)) right bottom / 1px 45px no-repeat;
     }
 
     .hero-copy, .hero-core {
@@ -183,7 +183,7 @@ BASE_CSS = """\n<style>
         display: flex;
         align-items: center;
         gap: 0.65rem;
-        color: var(--cyan);
+        color: var(--accent);
         font-size: 0.70rem;
         font-weight: 700;
         margin-bottom: 0.8rem;
@@ -193,22 +193,22 @@ BASE_CSS = """\n<style>
         content: "";
         width: 28px;
         height: 1px;
-        background: var(--cyan);
-        box-shadow: 0 0 10px var(--cyan);
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent);
     }
 
     .hero-title {
         margin: 0;
-        color: #f2fdff;
+        color: #e6f5e9;
         font-size: clamp(2.35rem, 4.5vw, 4.85rem);
         line-height: 0.94;
         font-weight: 300;
         letter-spacing: -0.055em;
-        text-shadow: 0 0 34px rgba(82, 231, 255, 0.13);
+        text-shadow: 0 0 34px rgba(19,172,51,0.13);
     }
 
     .hero-title strong {
-        color: var(--cyan);
+        color: var(--accent);
         font-weight: 780;
         letter-spacing: 0.035em;
     }
@@ -216,7 +216,7 @@ BASE_CSS = """\n<style>
     .hero-subtitle {
         max-width: 690px;
         margin-top: 1rem;
-        color: #9bbdca;
+        color: #95bb9f;
         font-size: 0.96rem;
         line-height: 1.65;
     }
@@ -234,9 +234,9 @@ BASE_CSS = """\n<style>
         align-items: center;
         gap: 0.45rem;
         padding: 0.38rem 0.72rem;
-        border: 1px solid rgba(82, 231, 255, 0.24);
-        background: rgba(82, 231, 255, 0.055);
-        color: #aeeffc;
+        border: 1px solid rgba(19,172,51,0.24);
+        background: rgba(19,172,51,0.055);
+        color: #c5e5cc;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.66rem;
         font-weight: 700;
@@ -250,7 +250,7 @@ BASE_CSS = """\n<style>
         height: 7px;
         border-radius: 50%;
         background: var(--green);
-        box-shadow: 0 0 0 4px rgba(66, 245, 167, 0.10), 0 0 12px var(--green);
+        box-shadow: 0 0 0 4px rgba(20,159,77,0.10), 0 0 12px var(--green);
         animation: pulse-dot 1.9s ease-in-out infinite;
     }
 
@@ -268,13 +268,13 @@ BASE_CSS = """\n<style>
         place-items: center;
         border-radius: 50%;
         background:
-            radial-gradient(circle, rgba(225, 252, 255, 0.98) 0 4%, var(--cyan) 5% 9%, rgba(82,231,255,0.17) 10% 24%, rgba(8,31,44,0.92) 25% 42%, transparent 43%),
-            conic-gradient(from 25deg, transparent 0 8%, rgba(82,231,255,0.92) 9% 13%, transparent 14% 29%, rgba(82,231,255,0.42) 30% 33%, transparent 34% 61%, rgba(82,231,255,0.85) 62% 68%, transparent 69% 86%, rgba(82,231,255,0.42) 87% 90%, transparent 91%);
-        border: 1px solid rgba(82, 231, 255, 0.55);
+            radial-gradient(circle, rgba(230,245,233,0.98) 0 4%, var(--accent) 5% 9%, rgba(19,172,51,0.17) 10% 24%, rgba(16,22,17,0.92) 25% 42%, transparent 43%),
+            conic-gradient(from 25deg, transparent 0 8%, rgba(19,172,51,0.92) 9% 13%, transparent 14% 29%, rgba(19,172,51,0.42) 30% 33%, transparent 34% 61%, rgba(19,172,51,0.85) 62% 68%, transparent 69% 86%, rgba(19,172,51,0.42) 87% 90%, transparent 91%);
+        border: 1px solid rgba(19,172,51,0.55);
         box-shadow:
-            0 0 24px rgba(82,231,255,0.40),
-            0 0 80px rgba(44,171,215,0.20),
-            inset 0 0 28px rgba(82,231,255,0.24);
+            0 0 24px rgba(19,172,51,0.40),
+            0 0 80px rgba(32,123,55,0.20),
+            inset 0 0 28px rgba(19,172,51,0.24);
         animation: orb-breathe 3.5s ease-in-out infinite;
     }
 
@@ -287,13 +287,13 @@ BASE_CSS = """\n<style>
 
     .arc-orb::before {
         inset: -13px;
-        border: 1px dashed rgba(82, 231, 255, 0.42);
+        border: 1px dashed rgba(19,172,51,0.42);
         animation: rotate-cw 18s linear infinite;
     }
 
     .arc-orb::after {
         inset: 20px;
-        border: 1px solid rgba(185, 244, 255, 0.34);
+        border: 1px solid rgba(205,235,212,0.34);
         border-left-color: transparent;
         border-right-color: transparent;
         animation: rotate-ccw 7s linear infinite;
@@ -303,8 +303,8 @@ BASE_CSS = """\n<style>
         position: relative;
         z-index: 2;
         text-align: center;
-        color: #eaffff;
-        text-shadow: 0 0 12px var(--cyan);
+        color: #e6f5e8;
+        text-shadow: 0 0 12px var(--accent);
     }
 
     .orb-number {
@@ -318,7 +318,7 @@ BASE_CSS = """\n<style>
     .orb-label {
         display: block;
         margin-top: 0.35rem;
-        color: var(--cyan-soft);
+        color: var(--accent-soft);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.51rem;
         letter-spacing: 0.14em;
@@ -342,7 +342,7 @@ BASE_CSS = """\n<style>
         align-items: center;
         gap: 0.7rem;
         margin: 0 0 0.8rem 0;
-        color: #e8fbff;
+        color: #e6f5e9;
         font-size: 1.12rem;
         font-weight: 650;
         letter-spacing: 0.01em;
@@ -352,9 +352,9 @@ BASE_CSS = """\n<style>
         content: "";
         width: 10px;
         height: 10px;
-        background: var(--cyan);
+        background: var(--accent);
         clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
-        box-shadow: 0 0 14px var(--cyan);
+        box-shadow: 0 0 14px var(--accent);
     }
 
     .section-subtitle {
@@ -366,7 +366,7 @@ BASE_CSS = """\n<style>
     }
 
     .module-code {
-        color: var(--cyan);
+        color: var(--accent);
         font-size: 0.61rem;
         font-weight: 750;
     }
@@ -380,18 +380,18 @@ BASE_CSS = """\n<style>
     }
 
     .attention-copy {
-        color: #cce8ef;
+        color: #d6e5da;
         font-size: 1.05rem;
     }
 
     .attention-copy strong {
-        color: var(--cyan);
+        color: var(--accent);
         font-size: 1.35rem;
-        text-shadow: 0 0 15px rgba(82, 231, 255, 0.35);
+        text-shadow: 0 0 15px rgba(19,172,51,0.35);
     }
 
     .sync-copy {
-        color: #547b8b;
+        color: #476e51;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.63rem;
         letter-spacing: 0.09em;
@@ -408,20 +408,20 @@ BASE_CSS = """\n<style>
         overflow: hidden;
         padding: 1.25rem 1.35rem 1.15rem;
         background:
-            linear-gradient(145deg, rgba(8, 34, 49, 0.94), rgba(3, 17, 27, 0.90)),
-            radial-gradient(circle at 100% 0%, rgba(82,231,255,0.12), transparent 45%);
-        border: 1px solid rgba(82, 231, 255, 0.20);
+            linear-gradient(145deg, rgba(17,24,19,0.94), rgba(9,13,10,0.90)),
+            radial-gradient(circle at 100% 0%, rgba(19,172,51,0.12), transparent 45%);
+        border: 1px solid rgba(19,172,51,0.20);
         clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 13px 100%, 0 calc(100% - 13px));
-        box-shadow: inset 0 0 32px rgba(47, 201, 244, 0.025);
+        box-shadow: inset 0 0 32px rgba(19,150,50,0.025);
         transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
     }
 
     .kpi-card:hover {
         transform: translateY(-3px);
-        border-color: rgba(82, 231, 255, 0.48);
+        border-color: rgba(19,172,51,0.48);
         background:
-            linear-gradient(145deg, rgba(9, 39, 56, 0.98), rgba(3, 18, 29, 0.94)),
-            radial-gradient(circle at 100% 0%, rgba(82,231,255,0.17), transparent 48%);
+            linear-gradient(145deg, rgba(20,27,22,0.98), rgba(9,14,11,0.94)),
+            radial-gradient(circle at 100% 0%, rgba(19,172,51,0.17), transparent 48%);
     }
 
     .kpi-card::before {
@@ -431,8 +431,8 @@ BASE_CSS = """\n<style>
         top: 0;
         width: 34%;
         height: 2px;
-        background: linear-gradient(90deg, var(--cyan), transparent);
-        box-shadow: 0 0 12px rgba(82,231,255,0.55);
+        background: linear-gradient(90deg, var(--accent), transparent);
+        box-shadow: 0 0 12px rgba(19,172,51,0.55);
     }
 
     .kpi-card::after {
@@ -440,7 +440,7 @@ BASE_CSS = """\n<style>
         position: absolute;
         top: 0.86rem;
         right: 1rem;
-        color: rgba(134, 205, 222, 0.30);
+        color: rgba(51,149,73,0.30);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.54rem;
         letter-spacing: 0.14em;
@@ -458,24 +458,24 @@ BASE_CSS = """\n<style>
 
     .kpi-card:has(.kpi-track)::before {
         background: linear-gradient(90deg, var(--green), transparent);
-        box-shadow: 0 0 12px rgba(66,245,167,0.46);
+        box-shadow: 0 0 12px rgba(20,159,77,0.46);
     }
 
     .kpi-label {
-        color: #78a4b4;
+        color: #76a481;
         font-size: 0.65rem;
         font-weight: 750;
         margin-bottom: 0.65rem;
     }
 
     .kpi-value {
-        color: #f0fdff;
+        color: #e6f5e9;
         font-family: "Cascadia Mono", "Segoe UI", monospace;
         font-size: clamp(1.85rem, 3vw, 2.65rem);
         font-weight: 560;
         line-height: 1.08;
         letter-spacing: -0.055em;
-        text-shadow: 0 0 24px rgba(82,231,255,0.16);
+        text-shadow: 0 0 24px rgba(19,172,51,0.16);
     }
 
     .kpi-alert, .kpi-watch, .kpi-track {
@@ -500,9 +500,9 @@ BASE_CSS = """\n<style>
         width: 54px;
         height: 18px;
         opacity: 0.52;
-        background: linear-gradient(155deg, transparent 0 15%, var(--cyan) 16% 19%, transparent 20% 34%, var(--cyan) 35% 39%, transparent 40% 51%, var(--cyan) 52% 56%, transparent 57% 70%, var(--cyan) 71% 75%, transparent 76%);
+        background: linear-gradient(155deg, transparent 0 15%, var(--accent) 16% 19%, transparent 20% 34%, var(--accent) 35% 39%, transparent 40% 51%, var(--accent) 52% 56%, transparent 57% 70%, var(--accent) 71% 75%, transparent 76%);
         clip-path: polygon(0 83%, 18% 58%, 33% 70%, 52% 20%, 68% 43%, 83% 8%, 100% 28%, 100% 100%, 0 100%);
-        filter: drop-shadow(0 0 5px var(--cyan));
+        filter: drop-shadow(0 0 5px var(--accent));
     }
 
     /* -------------------------------------------------
@@ -513,9 +513,9 @@ BASE_CSS = """\n<style>
         position: relative;
         overflow: hidden;
         padding: 1.2rem 1.3rem;
-        color: #c9e1e8;
-        background: linear-gradient(145deg, rgba(7, 29, 42, 0.88), rgba(3, 17, 26, 0.82));
-        border: 1px solid rgba(82, 231, 255, 0.17);
+        color: #d2dfd5;
+        background: linear-gradient(145deg, rgba(15,20,16,0.88), rgba(9,12,10,0.82));
+        border: 1px solid rgba(19,172,51,0.17);
         clip-path: polygon(0 0, calc(100% - 15px) 0, 100% 15px, 100% 100%, 0 100%);
     }
 
@@ -526,19 +526,19 @@ BASE_CSS = """\n<style>
         top: 0;
         width: 38px;
         height: 1px;
-        background: var(--cyan);
-        box-shadow: 0 0 10px var(--cyan);
+        background: var(--accent);
+        box-shadow: 0 0 10px var(--accent);
     }
 
     .scenario-panel {
         margin-top: 1rem;
         background:
-            linear-gradient(145deg, rgba(8, 37, 53, 0.90), rgba(4, 19, 30, 0.88)),
-            radial-gradient(circle at 92% 15%, rgba(82,231,255,0.11), transparent 45%);
+            linear-gradient(145deg, rgba(18,26,20,0.90), rgba(10,14,11,0.88)),
+            radial-gradient(circle at 92% 15%, rgba(19,172,51,0.11), transparent 45%);
     }
 
     .scenario-title {
-        color: #e7fbff;
+        color: #e6f5e9;
         font-size: 0.96rem;
         font-weight: 680;
         letter-spacing: 0.015em;
@@ -546,7 +546,7 @@ BASE_CSS = """\n<style>
     }
 
     .scenario-description {
-        color: #83a9b7;
+        color: #7fa88a;
         font-size: 0.84rem;
         line-height: 1.55;
     }
@@ -556,9 +556,9 @@ BASE_CSS = """\n<style>
         align-items: center;
         margin-top: 0.85rem;
         padding: 0.28rem 0.58rem;
-        color: var(--cyan-soft);
-        background: rgba(82, 231, 255, 0.06);
-        border: 1px solid rgba(82, 231, 255, 0.25);
+        color: var(--accent-soft);
+        background: rgba(19,172,51,0.06);
+        border: 1px solid rgba(19,172,51,0.25);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.58rem;
         font-weight: 750;
@@ -571,8 +571,8 @@ BASE_CSS = """\n<style>
         min-height: 94px;
         padding: 1rem 1rem 0.95rem 3.65rem;
         margin-bottom: 0.72rem;
-        background: linear-gradient(100deg, rgba(8, 31, 44, 0.92), rgba(4, 17, 27, 0.78));
-        border: 1px solid rgba(120, 204, 223, 0.13);
+        background: linear-gradient(100deg, rgba(16,22,17,0.92), rgba(9,13,10,0.78));
+        border: 1px solid rgba(45,148,69,0.13);
         border-left: 2px solid;
         clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
     }
@@ -597,14 +597,14 @@ BASE_CSS = """\n<style>
     .alert-green { border-left-color: var(--green); color: var(--green); }
 
     .alert-title {
-        color: #e7f8fb;
+        color: #e8f3ea;
         font-size: 0.87rem;
         font-weight: 680;
         margin-bottom: 0.3rem;
     }
 
     .alert-text {
-        color: #83a8b5;
+        color: #7fa689;
         font-size: 0.81rem;
         line-height: 1.45;
     }
@@ -619,8 +619,8 @@ BASE_CSS = """\n<style>
     .scenario-summary-item {
         position: relative;
         padding: 0.78rem 0.82rem;
-        background: rgba(82, 231, 255, 0.035);
-        border: 1px solid rgba(82, 231, 255, 0.13);
+        background: rgba(19,172,51,0.035);
+        border: 1px solid rgba(19,172,51,0.13);
     }
 
     .scenario-summary-item::before {
@@ -630,18 +630,18 @@ BASE_CSS = """\n<style>
         top: 0;
         width: 14px;
         height: 1px;
-        background: var(--cyan);
+        background: var(--accent);
     }
 
     .scenario-summary-label {
-        color: #648d9c;
+        color: #658b6f;
         font-size: 0.56rem;
         font-weight: 700;
     }
 
     .scenario-summary-value {
         margin-top: 0.32rem;
-        color: #e6faff;
+        color: #e6f5e9;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.95rem;
         font-weight: 650;
@@ -658,7 +658,7 @@ BASE_CSS = """\n<style>
         justify-content: space-between;
         gap: 0.5rem;
         padding-bottom: 0.78rem;
-        border-bottom: 1px solid rgba(82,231,255,0.10);
+        border-bottom: 1px solid rgba(19,172,51,0.10);
     }
 
     .horizon-readout:last-child {
@@ -672,7 +672,7 @@ BASE_CSS = """\n<style>
         flex-wrap: wrap;
         gap: 1.45rem;
         margin: 0.15rem 0 0.8rem 0;
-        color: #779eac;
+        color: #749d7f;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.64rem;
         font-weight: 650;
@@ -700,11 +700,11 @@ BASE_CSS = """\n<style>
     }
 
     .legend-actual {
-        background: #52e7ff;
-        box-shadow: 0 0 8px rgba(82,231,255,0.75);
+        background: #13ac33;
+        box-shadow: 0 0 8px rgba(19,172,51,0.75);
     }
 
-    .legend-budget { border-color: #577c8a; }
+    .legend-budget { border-color: #496e52; }
     .legend-forecast { border-color: #b88cff; }
 
     .diagnostic-grid {
@@ -720,14 +720,14 @@ BASE_CSS = """\n<style>
         gap: 0.75rem;
         min-width: 0;
         padding: 0.75rem;
-        background: rgba(82,231,255,0.025);
-        border: 1px solid rgba(82,231,255,0.09);
+        background: rgba(19,172,51,0.025);
+        border: 1px solid rgba(19,172,51,0.09);
     }
 
     .diagnostic-value {
         overflow: hidden;
         margin-top: 0.18rem;
-        color: #c8e5eb;
+        color: #d2e1d5;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.67rem;
         text-overflow: ellipsis;
@@ -735,13 +735,13 @@ BASE_CSS = """\n<style>
     }
 
     .readout-label {
-        color: #608997;
+        color: #4f7659;
         font-size: 0.57rem;
         font-weight: 700;
     }
 
     .readout-value {
-        color: #eaffff;
+        color: #e6f5e8;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 1.18rem;
         font-weight: 600;
@@ -758,11 +758,11 @@ BASE_CSS = """\n<style>
         margin: 1.25rem auto 1.5rem;
         padding: 1rem 1.1rem 0.8rem;
         background:
-            radial-gradient(circle at 50% 49%, rgba(0, 157, 220, 0.12), transparent 31rem),
-            linear-gradient(135deg, rgba(2, 13, 21, 0.94), rgba(3, 20, 30, 0.78));
-        border: 1px solid rgba(41, 191, 236, 0.18);
+            radial-gradient(circle at 50% 49%, rgba(11,165,51,0.12), transparent 31rem),
+            linear-gradient(135deg, rgba(7,10,8,0.94), rgba(10,14,11,0.78));
+        border: 1px solid rgba(23,140,51,0.18);
         clip-path: polygon(0 0, calc(100% - 22px) 0, 100% 22px, 100% 100%, 22px 100%, 0 calc(100% - 22px));
-        box-shadow: inset 0 0 70px rgba(0, 139, 190, 0.035), 0 24px 70px rgba(0,0,0,0.30);
+        box-shadow: inset 0 0 70px rgba(9,143,43,0.035), 0 24px 70px rgba(0,0,0,0.30);
     }
 
     .integrated-system::before {
@@ -773,8 +773,8 @@ BASE_CSS = """\n<style>
         pointer-events: none;
         opacity: 0.28;
         background-image:
-            linear-gradient(rgba(35, 182, 225, 0.035) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(35, 182, 225, 0.035) 1px, transparent 1px);
+            linear-gradient(rgba(27,128,51,0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(27,128,51,0.035) 1px, transparent 1px);
         background-size: 24px 24px;
         mask-image: radial-gradient(circle at 50% 50%, black 0 43%, transparent 78%);
     }
@@ -788,8 +788,8 @@ BASE_CSS = """\n<style>
         width: 30%;
         height: 1px;
         pointer-events: none;
-        background: linear-gradient(90deg, transparent, #52e7ff, transparent);
-        box-shadow: 0 0 15px rgba(82,231,255,0.8);
+        background: linear-gradient(90deg, transparent, #13ac33, transparent);
+        box-shadow: 0 0 15px rgba(19,172,51,0.8);
         animation: system-scan 8s linear infinite;
     }
 
@@ -801,7 +801,7 @@ BASE_CSS = """\n<style>
         align-items: center;
         gap: 1rem;
         padding: 0.15rem 0.25rem 0.65rem;
-        color: #4a7483;
+        color: #436f4e;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.54rem;
         font-weight: 700;
@@ -813,15 +813,15 @@ BASE_CSS = """\n<style>
     .system-topline::after {
         content: "";
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(82,231,255,0.26));
+        background: linear-gradient(90deg, transparent, rgba(19,172,51,0.26));
     }
 
     .system-topline::after {
-        background: linear-gradient(90deg, rgba(82,231,255,0.26), transparent);
+        background: linear-gradient(90deg, rgba(19,172,51,0.26), transparent);
     }
 
     .system-topline strong {
-        color: #71dff3;
+        color: #1bac3b;
         font-weight: 750;
     }
 
@@ -850,7 +850,7 @@ BASE_CSS = """\n<style>
         aspect-ratio: 1;
         transform: translate(-50%, -50%);
         border-radius: 50%;
-        background: radial-gradient(circle, rgba(44,200,239,0.08), transparent 68%);
+        background: radial-gradient(circle, rgba(22,144,50,0.08), transparent 68%);
         filter: blur(12px);
         pointer-events: none;
     }
@@ -862,7 +862,7 @@ BASE_CSS = """\n<style>
         width: min(100%, 680px);
         aspect-ratio: 1;
         margin: 0 auto;
-        filter: drop-shadow(0 0 26px rgba(20, 158, 203, 0.11));
+        filter: drop-shadow(0 0 26px rgba(25,154,57,0.11));
     }
 
     .command-dial-html::before {
@@ -870,15 +870,15 @@ BASE_CSS = """\n<style>
         position: absolute;
         inset: 1.5%;
         z-index: 0;
-        border: 1px solid rgba(82,231,255,0.18);
+        border: 1px solid rgba(19,172,51,0.18);
         border-radius: 50%;
         background:
-            radial-gradient(circle, transparent 0 67%, rgba(20,152,196,0.035) 67.4% 68%, transparent 68.4%),
-            radial-gradient(circle, rgba(23,168,211,0.08), transparent 69%);
+            radial-gradient(circle, transparent 0 67%, rgba(24,148,55,0.035) 67.4% 68%, transparent 68.4%),
+            radial-gradient(circle, rgba(27,160,59,0.08), transparent 69%);
         box-shadow:
-            0 0 0 9px rgba(82,231,255,0.014),
-            inset 0 0 48px rgba(20,171,217,0.055),
-            0 0 48px rgba(20,171,217,0.05);
+            0 0 0 9px rgba(19,172,51,0.014),
+            inset 0 0 48px rgba(25,164,59,0.055),
+            0 0 48px rgba(25,164,59,0.05);
         pointer-events: none;
     }
 
@@ -887,7 +887,7 @@ BASE_CSS = """\n<style>
         position: absolute;
         inset: 4.3%;
         z-index: 1;
-        border: 1px dashed rgba(82,231,255,0.16);
+        border: 1px dashed rgba(19,172,51,0.16);
         border-radius: 50%;
         pointer-events: none;
     }
@@ -897,12 +897,12 @@ BASE_CSS = """\n<style>
         inset: 6.5%;
         z-index: 0;
         overflow: hidden;
-        border: 1px solid rgba(82,231,255,0.08);
+        border: 1px solid rgba(19,172,51,0.08);
         border-radius: 50%;
         background:
-            linear-gradient(rgba(82,231,255,0.035) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(82,231,255,0.035) 1px, transparent 1px),
-            radial-gradient(circle, rgba(6,45,61,0.42), rgba(2,15,24,0.12) 61%, transparent 72%);
+            linear-gradient(rgba(19,172,51,0.035) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(19,172,51,0.035) 1px, transparent 1px),
+            radial-gradient(circle, rgba(20,28,22,0.42), rgba(8,11,9,0.12) 61%, transparent 72%);
         background-size: 18px 18px, 18px 18px, auto;
         box-shadow: inset 0 0 72px rgba(0,0,0,0.62);
         pointer-events: none;
@@ -918,17 +918,17 @@ BASE_CSS = """\n<style>
 
     .dial-grid-disc-html::before {
         inset: 11%;
-        border: 1px solid rgba(82,231,255,0.09);
+        border: 1px solid rgba(19,172,51,0.09);
         box-shadow:
-            0 0 0 18px rgba(82,231,255,0.012),
-            0 0 0 19px rgba(82,231,255,0.045),
-            0 0 0 58px rgba(82,231,255,0.009),
-            0 0 0 59px rgba(82,231,255,0.035);
+            0 0 0 18px rgba(19,172,51,0.012),
+            0 0 0 19px rgba(19,172,51,0.045),
+            0 0 0 58px rgba(19,172,51,0.009),
+            0 0 0 59px rgba(19,172,51,0.035);
     }
 
     .dial-grid-disc-html::after {
         inset: 26%;
-        border: 1px dashed rgba(82,231,255,0.12);
+        border: 1px dashed rgba(19,172,51,0.12);
     }
 
     .dial-crosshair-html {
@@ -948,7 +948,7 @@ BASE_CSS = """\n<style>
         opacity: 0.42;
         background: repeating-linear-gradient(
             90deg,
-            rgba(82,231,255,0.16) 0 3px,
+            rgba(19,172,51,0.16) 0 3px,
             transparent 3px 10px
         );
         transform: translate(-50%, -50%);
@@ -979,7 +979,7 @@ BASE_CSS = """\n<style>
         opacity: 0.70;
         background: repeating-conic-gradient(
             from -0.5deg,
-            rgba(91,231,255,0.72) 0deg 0.45deg,
+            rgba(19,175,53,0.72) 0deg 0.45deg,
             transparent 0.45deg 3deg
         );
         -webkit-mask: radial-gradient(circle, transparent 0 95.1%, #000 95.3% 97.6%, transparent 97.8%);
@@ -992,9 +992,9 @@ BASE_CSS = """\n<style>
         background: conic-gradient(
             from 6deg,
             transparent 0 8deg,
-            rgba(82,231,255,0.90) 8deg 39deg,
+            rgba(19,172,51,0.90) 8deg 39deg,
             transparent 39deg 119deg,
-            rgba(88,201,255,0.72) 119deg 157deg,
+            rgba(19,174,61,0.72) 119deg 157deg,
             transparent 157deg 238deg,
             rgba(184,140,255,0.72) 238deg 268deg,
             transparent 268deg 360deg
@@ -1020,21 +1020,21 @@ BASE_CSS = """\n<style>
         background:
             repeating-conic-gradient(
                 from -1deg,
-                rgba(88,219,248,0.055) 0deg 1deg,
+                rgba(20,170,54,0.055) 0deg 1deg,
                 transparent 1deg 6deg
             ),
             conic-gradient(
                 from -30deg,
-                rgba(4,43,58,0.96),
-                rgba(6,63,82,0.76) 33.1%,
-                rgba(4,38,58,0.94) 33.4%,
-                rgba(18,48,76,0.86) 66.3%,
-                rgba(5,37,54,0.94) 66.6%,
-                rgba(7,60,75,0.88)
+                rgba(18,27,20,0.96),
+                rgba(26,38,29,0.76) 33.1%,
+                rgba(18,27,20,0.94) 33.4%,
+                rgba(29,38,32,0.86) 66.3%,
+                rgba(17,25,20,0.94) 66.6%,
+                rgba(24,35,27,0.88)
             );
         -webkit-mask: radial-gradient(circle, transparent 0 57.7%, #000 58.1% 98.2%, transparent 98.6%);
         mask: radial-gradient(circle, transparent 0 57.7%, #000 58.1% 98.2%, transparent 98.6%);
-        box-shadow: 0 0 34px rgba(31,189,229,0.05);
+        box-shadow: 0 0 34px rgba(25,131,49,0.05);
     }
 
     .css-sector {
@@ -1048,10 +1048,10 @@ BASE_CSS = """\n<style>
             repeating-radial-gradient(
                 circle,
                 transparent 0 16px,
-                rgba(113,225,248,0.065) 17px,
+                rgba(22,179,57,0.065) 17px,
                 transparent 18px 27px
             ),
-            linear-gradient(145deg, rgba(14,126,157,0.94), rgba(4,30,44,0.98));
+            linear-gradient(145deg, rgba(18,119,42,0.94), rgba(14,20,16,0.98));
         -webkit-mask: radial-gradient(circle, transparent 0 57.7%, #000 58.1% 98.2%, transparent 98.6%);
         mask: radial-gradient(circle, transparent 0 57.7%, #000 58.1% 98.2%, transparent 98.6%);
         transform-origin: center;
@@ -1079,7 +1079,7 @@ BASE_CSS = """\n<style>
         opacity: 0.54;
         background: repeating-conic-gradient(
             from -1deg,
-            rgba(140,239,255,0.30) 0deg 0.35deg,
+            rgba(22,196,59,0.30) 0deg 0.35deg,
             transparent 0.35deg 4.5deg
         );
         -webkit-mask: radial-gradient(circle, transparent 0 90.5%, #000 90.8% 93%, transparent 93.3%);
@@ -1090,9 +1090,9 @@ BASE_CSS = """\n<style>
         content: "";
         position: absolute;
         inset: 2.2%;
-        border: 1px solid rgba(160,242,255,0.32);
+        border: 1px solid rgba(188,227,196,0.32);
         border-radius: 50%;
-        box-shadow: inset 0 0 30px rgba(74,220,255,0.08);
+        box-shadow: inset 0 0 30px rgba(19,168,53,0.08);
     }
 
     .css-sector-brief {
@@ -1109,8 +1109,8 @@ BASE_CSS = """\n<style>
             92.4% 23.5%
         );
         background:
-            repeating-radial-gradient(circle, transparent 0 16px, rgba(113,225,248,0.075) 17px, transparent 18px 27px),
-            linear-gradient(180deg, rgba(11,126,158,0.95), rgba(4,38,52,0.98));
+            repeating-radial-gradient(circle, transparent 0 16px, rgba(22,179,57,0.075) 17px, transparent 18px 27px),
+            linear-gradient(180deg, rgba(11,79,28,0.95), rgba(10,17,12,0.98));
     }
 
     .css-sector-horizon {
@@ -1127,8 +1127,8 @@ BASE_CSS = """\n<style>
             5.9% 26.5%
         );
         background:
-            repeating-radial-gradient(circle, transparent 0 16px, rgba(99,195,255,0.075) 17px, transparent 18px 27px),
-            linear-gradient(135deg, rgba(5,48,80,0.98), rgba(7,104,133,0.90));
+            repeating-radial-gradient(circle, transparent 0 16px, rgba(20,179,66,0.075) 17px, transparent 18px 27px),
+            linear-gradient(135deg, rgba(16,25,19,0.98), rgba(9,68,24,0.90));
     }
 
     .css-sector-scenario {
@@ -1146,7 +1146,7 @@ BASE_CSS = """\n<style>
         );
         background:
             repeating-radial-gradient(circle, transparent 0 16px, rgba(188,155,255,0.08) 17px, transparent 18px 27px),
-            linear-gradient(225deg, rgba(51,31,91,0.97), rgba(7,77,101,0.94));
+            linear-gradient(225deg, rgba(51,31,91,0.97), rgba(31,46,35,0.94));
     }
 
     .css-sector:hover,
@@ -1157,11 +1157,11 @@ BASE_CSS = """\n<style>
         filter:
             brightness(1.23)
             saturate(1.22)
-            drop-shadow(0 0 10px rgba(87,225,255,0.58));
+            drop-shadow(0 0 10px rgba(19,174,54,0.58));
     }
 
     .css-sector:focus-visible {
-        box-shadow: 0 0 0 2px #d8fbff;
+        box-shadow: 0 0 0 2px #e3f4e7;
     }
 
     .css-sector.is-active {
@@ -1171,15 +1171,15 @@ BASE_CSS = """\n<style>
         filter:
             brightness(1.24)
             saturate(1.28)
-            drop-shadow(0 0 13px rgba(87,225,255,0.72));
+            drop-shadow(0 0 13px rgba(19,174,54,0.72));
     }
 
     .css-sector.is-active::after {
-        border-color: rgba(224,252,255,0.82);
+        border-color: rgba(230,245,233,0.82);
         border-width: 2px;
         box-shadow:
-            inset 0 0 38px rgba(74,220,255,0.16),
-            0 0 16px rgba(74,220,255,0.20);
+            inset 0 0 38px rgba(19,168,53,0.16),
+            0 0 16px rgba(19,168,53,0.20);
     }
 
     .sector-label-html {
@@ -1191,7 +1191,7 @@ BASE_CSS = """\n<style>
         justify-content: center;
         gap: 0.16rem;
         pointer-events: none;
-        color: #dffbff;
+        color: #e6f5e9;
         font-family: "Cascadia Mono", Consolas, monospace;
         text-align: center;
         text-transform: uppercase;
@@ -1220,30 +1220,30 @@ BASE_CSS = """\n<style>
     }
 
     .sector-code-html {
-        color: #63a7b7;
+        color: #64a573;
         font-size: clamp(0.36rem, 0.62vw, 0.50rem);
         font-weight: 750;
         letter-spacing: 0.16em;
     }
 
     .sector-title-html {
-        color: #e8fdff;
+        color: #e6f5e9;
         font-size: clamp(0.57rem, 1vw, 0.84rem);
         font-weight: 760;
         letter-spacing: 0.08em;
         line-height: 1.08;
-        text-shadow: 0 0 10px rgba(99,225,255,0.34);
+        text-shadow: 0 0 10px rgba(20,179,57,0.34);
     }
 
     .sector-metric-html {
-        color: #68e7ff;
+        color: #14b537;
         font-size: clamp(0.42rem, 0.77vw, 0.63rem);
         font-weight: 750;
         letter-spacing: 0.055em;
     }
 
     .sector-sub-html {
-        color: #477887;
+        color: #3f6f4b;
         font-size: clamp(0.30rem, 0.52vw, 0.43rem);
         font-weight: 650;
         letter-spacing: 0.10em;
@@ -1252,7 +1252,7 @@ BASE_CSS = """\n<style>
 
     .sector-label-html.is-active {
         opacity: 1;
-        filter: brightness(1.30) drop-shadow(0 0 7px rgba(82,231,255,0.56));
+        filter: brightness(1.30) drop-shadow(0 0 7px rgba(19,172,51,0.56));
     }
 
     .sector-label-brief.is-active {
@@ -1271,25 +1271,24 @@ BASE_CSS = """\n<style>
     .css-sector-brief:focus-visible ~ .sector-label-brief {
         opacity: 1 !important;
         transform: translateY(-6px) scale(1.045);
-        filter: brightness(1.25) drop-shadow(0 0 7px rgba(82,231,255,0.52));
+        filter: brightness(1.25) drop-shadow(0 0 7px rgba(19,172,51,0.52));
     }
 
     .css-sector-horizon:hover ~ .sector-label-horizon,
     .css-sector-horizon:focus-visible ~ .sector-label-horizon {
         opacity: 1 !important;
         transform: translate(-6px, 5px) scale(1.045);
-        filter: brightness(1.25) drop-shadow(0 0 7px rgba(82,231,255,0.52));
+        filter: brightness(1.25) drop-shadow(0 0 7px rgba(19,172,51,0.52));
     }
 
     .css-sector-scenario:hover ~ .sector-label-scenario,
     .css-sector-scenario:focus-visible ~ .sector-label-scenario {
         opacity: 1 !important;
         transform: translate(6px, 5px) scale(1.045);
-        filter: brightness(1.25) drop-shadow(0 0 7px rgba(82,231,255,0.52));
+        filter: brightness(1.25) drop-shadow(0 0 7px rgba(19,172,51,0.52));
     }
 
-    .dial-spoke-html,
-    .dial-vector-line-html {
+    .dial-spoke-html {
         position: absolute;
         left: 50%;
         top: 50%;
@@ -1302,8 +1301,8 @@ BASE_CSS = """\n<style>
     .dial-spoke-html {
         width: 42.5%;
         opacity: 0.74;
-        background: linear-gradient(90deg, transparent 0 38%, rgba(121,231,249,0.64) 52%, rgba(74,183,216,0.16));
-        box-shadow: 0 0 5px rgba(82,231,255,0.17);
+        background: linear-gradient(90deg, transparent 0 38%, rgba(22,184,57,0.64) 52%, rgba(38,131,60,0.16));
+        box-shadow: 0 0 5px rgba(19,172,51,0.17);
     }
 
     .dial-spoke-html::after {
@@ -1313,30 +1312,15 @@ BASE_CSS = """\n<style>
         top: -2px;
         width: 5px;
         height: 5px;
-        border: 1px solid rgba(123,234,251,0.66);
+        border: 1px solid rgba(21,187,56,0.66);
         border-radius: 50%;
-        background: #0a2d3b;
-        box-shadow: 0 0 8px rgba(82,231,255,0.55);
+        background: #151d17;
+        box-shadow: 0 0 8px rgba(19,172,51,0.55);
     }
 
     .dial-spoke-a { transform: rotate(-30deg); }
     .dial-spoke-b { transform: rotate(90deg); }
     .dial-spoke-c { transform: rotate(210deg); }
-
-    .dial-vector-line-html {
-        z-index: 15;
-        width: 35%;
-        opacity: 0.40;
-        background: repeating-linear-gradient(
-            90deg,
-            rgba(95,220,246,0.65) 0 8px,
-            transparent 8px 14px
-        );
-    }
-
-    .dial-vector-a { transform: rotate(-90deg); }
-    .dial-vector-b { transform: rotate(30deg); }
-    .dial-vector-c { transform: rotate(150deg); }
 
     .css-core {
         position: absolute;
@@ -1348,18 +1332,18 @@ BASE_CSS = """\n<style>
         aspect-ratio: 1;
         place-items: center;
         overflow: hidden;
-        color: #eaffff !important;
-        border: 1px solid rgba(115,231,249,0.66);
+        color: #e6f5e8 !important;
+        border: 1px solid rgba(21,182,55,0.66);
         border-radius: 50%;
         outline: none;
         background:
-            radial-gradient(circle at 50% 45%, rgba(32,126,154,0.40), transparent 30%),
-            radial-gradient(circle, #0b3c50 0, #062636 46%, #020f18 75%);
+            radial-gradient(circle at 50% 45%, rgba(31,117,52,0.40), transparent 30%),
+            radial-gradient(circle, #1b261e 0, #121914 46%, #080b09 75%);
         box-shadow:
-            inset 0 0 34px rgba(68,224,255,0.16),
-            0 0 0 8px rgba(5,31,43,0.82),
-            0 0 0 9px rgba(82,231,255,0.28),
-            0 0 32px rgba(82,231,255,0.16);
+            inset 0 0 34px rgba(18,166,51,0.16),
+            0 0 0 8px rgba(14,20,16,0.82),
+            0 0 0 9px rgba(19,172,51,0.28),
+            0 0 32px rgba(19,172,51,0.16);
         text-decoration: none !important;
         transform: translate(-50%, -50%);
         transition:
@@ -1373,7 +1357,7 @@ BASE_CSS = """\n<style>
         content: "";
         position: absolute;
         inset: 5%;
-        border: 1px dashed rgba(115,231,249,0.40);
+        border: 1px dashed rgba(21,182,55,0.40);
         border-radius: 50%;
         animation: rotate-cw 24s linear infinite;
     }
@@ -1383,10 +1367,10 @@ BASE_CSS = """\n<style>
         position: absolute;
         inset: 14%;
         border: 2px solid transparent;
-        border-top-color: rgba(162,243,255,0.92);
-        border-right-color: rgba(108,208,255,0.36);
+        border-top-color: rgba(189,228,197,0.92);
+        border-right-color: rgba(20,182,64,0.36);
         border-radius: 50%;
-        box-shadow: inset 0 0 18px rgba(82,231,255,0.07);
+        box-shadow: inset 0 0 18px rgba(19,172,51,0.07);
         animation: rotate-ccw 12s linear infinite;
     }
 
@@ -1403,7 +1387,7 @@ BASE_CSS = """\n<style>
         opacity: 0.88;
         background: repeating-conic-gradient(
             from 0deg,
-            #71eaff 0deg 5deg,
+            #14b838 0deg 5deg,
             transparent 5deg 17deg
         );
         -webkit-mask: radial-gradient(circle, transparent 0 78%, #000 80% 97%, transparent 99%);
@@ -1413,12 +1397,12 @@ BASE_CSS = """\n<style>
 
     .core-reactor-html {
         inset: 33%;
-        border: 1px solid rgba(121,236,255,0.65);
+        border: 1px solid rgba(21,188,56,0.65);
         background:
-            conic-gradient(from 45deg, rgba(82,231,255,0.85), transparent 14%, rgba(175,137,255,0.78) 26%, transparent 42%, rgba(82,231,255,0.85) 56%, transparent 72%, rgba(109,255,210,0.72) 87%, transparent),
-            #062331;
+            conic-gradient(from 45deg, rgba(19,172,51,0.85), transparent 14%, rgba(175,137,255,0.78) 26%, transparent 42%, rgba(19,172,51,0.85) 56%, transparent 72%, rgba(20,183,98,0.72) 87%, transparent),
+            #101712;
         clip-path: polygon(50% 0, 88% 18%, 100% 50%, 82% 88%, 50% 100%, 12% 82%, 0 50%, 18% 12%);
-        box-shadow: 0 0 16px rgba(82,231,255,0.42);
+        box-shadow: 0 0 16px rgba(19,172,51,0.42);
         animation: rotate-ccw 8s linear infinite;
     }
 
@@ -1428,8 +1412,8 @@ BASE_CSS = """\n<style>
         top: 50%;
         height: 1px;
         border-radius: 0;
-        background: linear-gradient(90deg, transparent, rgba(130,242,255,0.82), transparent);
-        box-shadow: 0 0 8px rgba(82,231,255,0.62);
+        background: linear-gradient(90deg, transparent, rgba(21,192,56,0.82), transparent);
+        box-shadow: 0 0 8px rgba(19,172,51,0.62);
         animation: core-scan 3.8s ease-in-out infinite;
     }
 
@@ -1441,33 +1425,33 @@ BASE_CSS = """\n<style>
         align-items: center;
         gap: 0.18rem;
         padding: 0 0.7rem;
-        color: #eaffff;
+        color: #e6f5e8;
         font-family: "Cascadia Mono", Consolas, monospace;
         text-align: center;
         text-transform: uppercase;
     }
 
     .core-code-html {
-        color: #5d96a5;
+        color: #60926c;
         font-size: clamp(0.32rem, 0.56vw, 0.45rem);
         font-weight: 750;
         letter-spacing: 0.16em;
     }
 
     .core-main-html {
-        color: #f0feff;
+        color: #e6f5e9;
         font-size: clamp(0.62rem, 1.12vw, 0.94rem);
         font-weight: 780;
         letter-spacing: 0.08em;
         line-height: 1.02;
-        text-shadow: 0 0 11px rgba(93,230,255,0.62);
+        text-shadow: 0 0 11px rgba(20,176,54,0.62);
     }
 
     .core-online-html {
         display: inline-flex;
         align-items: center;
         gap: 0.34rem;
-        color: #52f1b2;
+        color: #19a053;
         font-size: clamp(0.32rem, 0.56vw, 0.45rem);
         font-weight: 750;
         letter-spacing: 0.14em;
@@ -1478,13 +1462,13 @@ BASE_CSS = """\n<style>
         width: 5px;
         height: 5px;
         border-radius: 50%;
-        background: #52f1b2;
-        box-shadow: 0 0 7px #52f1b2;
+        background: #19a053;
+        box-shadow: 0 0 7px #19a053;
         animation: bar-pulse 2s ease-in-out infinite;
     }
 
     .core-hint-html {
-        color: #426f7d;
+        color: #3f6f4b;
         font-size: clamp(0.26rem, 0.45vw, 0.37rem);
         font-weight: 650;
         letter-spacing: 0.08em;
@@ -1493,15 +1477,15 @@ BASE_CSS = """\n<style>
     .css-core:hover,
     .css-core:focus-visible {
         opacity: 1 !important;
-        border-color: #e0fbff;
+        border-color: #e6f5e9;
         transform: translate(-50%, -50%) scale(1.06);
-        filter: brightness(1.22) drop-shadow(0 0 13px rgba(82,231,255,0.68));
+        filter: brightness(1.22) drop-shadow(0 0 13px rgba(19,172,51,0.68));
     }
 
     .css-core:focus-visible {
         box-shadow:
-            0 0 0 2px #e0fbff,
-            0 0 32px rgba(82,231,255,0.34);
+            0 0 0 2px #e6f5e9,
+            0 0 32px rgba(19,172,51,0.34);
     }
 
     .css-core.is-active {
@@ -1511,13 +1495,13 @@ BASE_CSS = """\n<style>
         filter:
             brightness(1.24)
             saturate(1.22)
-            drop-shadow(0 0 15px rgba(112,229,255,0.75));
+            drop-shadow(0 0 15px rgba(20,184,58,0.75));
     }
 
     .dial-cardinal-html {
         position: absolute;
         z-index: 18;
-        color: #69b7c7;
+        color: #357a45;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: clamp(0.32rem, 0.53vw, 0.44rem);
         font-weight: 750;
@@ -1559,9 +1543,9 @@ BASE_CSS = """\n<style>
         z-index: 4;
         min-width: 0;
         padding: 0.95rem 0.9rem;
-        background: linear-gradient(145deg, rgba(5,32,45,0.92), rgba(2,16,25,0.88));
-        border: 1px solid rgba(82,231,255,0.20);
-        box-shadow: inset 0 0 25px rgba(82,231,255,0.035);
+        background: linear-gradient(145deg, rgba(15,21,17,0.92), rgba(8,12,9,0.88));
+        border: 1px solid rgba(19,172,51,0.20);
+        box-shadow: inset 0 0 25px rgba(19,172,51,0.035);
     }
 
     .telemetry-console.console-left {
@@ -1578,8 +1562,8 @@ BASE_CSS = """\n<style>
         top: 50%;
         width: 44px;
         height: 1px;
-        background: linear-gradient(90deg, rgba(82,231,255,0.60), transparent);
-        box-shadow: 0 0 7px rgba(82,231,255,0.30);
+        background: linear-gradient(90deg, rgba(19,172,51,0.60), transparent);
+        box-shadow: 0 0 7px rgba(19,172,51,0.30);
     }
 
     .console-left::after { left: 100%; }
@@ -1595,8 +1579,8 @@ BASE_CSS = """\n<style>
         gap: 0.5rem;
         margin-bottom: 0.8rem;
         padding-bottom: 0.55rem;
-        color: #72dced;
-        border-bottom: 1px solid rgba(82,231,255,0.14);
+        color: #21a43d;
+        border-bottom: 1px solid rgba(19,172,51,0.14);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.57rem;
         font-weight: 750;
@@ -1605,7 +1589,7 @@ BASE_CSS = """\n<style>
     }
 
     .console-head span:last-child {
-        color: #376675;
+        color: #397047;
         font-size: 0.48rem;
     }
 
@@ -1616,7 +1600,7 @@ BASE_CSS = """\n<style>
         gap: 0.65rem;
         min-width: 0;
         padding: 0.43rem 0;
-        border-bottom: 1px solid rgba(82,231,255,0.07);
+        border-bottom: 1px solid rgba(19,172,51,0.07);
     }
 
     .console-row:last-of-type {
@@ -1625,7 +1609,7 @@ BASE_CSS = """\n<style>
 
     .console-label {
         overflow: hidden;
-        color: #4d7887;
+        color: #446f4e;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.52rem;
         letter-spacing: 0.07em;
@@ -1635,7 +1619,7 @@ BASE_CSS = """\n<style>
     }
 
     .console-value {
-        color: #c9f3f8;
+        color: #d7eadb;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.61rem;
         font-weight: 700;
@@ -1654,14 +1638,14 @@ BASE_CSS = """\n<style>
         height: 28px;
         margin-top: 0.8rem;
         padding-top: 0.45rem;
-        border-top: 1px solid rgba(82,231,255,0.09);
+        border-top: 1px solid rgba(19,172,51,0.09);
     }
 
     .console-bars span {
         flex: 1;
         min-width: 2px;
-        background: linear-gradient(180deg, #65e9ff, rgba(25,104,130,0.24));
-        box-shadow: 0 0 5px rgba(82,231,255,0.17);
+        background: linear-gradient(180deg, #14b436, rgba(25,99,43,0.24));
+        box-shadow: 0 0 5px rgba(19,172,51,0.17);
         animation: bar-pulse 3.4s ease-in-out infinite;
     }
 
@@ -1670,7 +1654,7 @@ BASE_CSS = """\n<style>
 
     .console-caption {
         margin-top: 0.55rem;
-        color: #345e6c;
+        color: #3B7048;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.45rem;
         letter-spacing: 0.08em;
@@ -1687,8 +1671,8 @@ BASE_CSS = """\n<style>
         gap: 0.8rem;
         margin-top: -0.25rem;
         padding: 0.72rem 0.2rem 0.1rem;
-        color: #3e6978;
-        border-top: 1px solid rgba(82,231,255,0.11);
+        color: #3f6f4b;
+        border-top: 1px solid rgba(19,172,51,0.11);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.51rem;
         letter-spacing: 0.09em;
@@ -1704,22 +1688,22 @@ BASE_CSS = """\n<style>
         align-items: center;
         gap: 0.45rem;
         padding: 0.34rem 0.7rem;
-        color: #78dcec !important;
-        background: rgba(82,231,255,0.04);
-        border: 1px solid rgba(82,231,255,0.22);
+        color: #23a43e !important;
+        background: rgba(19,172,51,0.04);
+        border: 1px solid rgba(19,172,51,0.22);
         text-decoration: none !important;
         transition: border-color 160ms ease, box-shadow 160ms ease, color 160ms ease;
     }
 
     .system-reset:hover {
         color: #ffffff !important;
-        border-color: rgba(82,231,255,0.72);
-        box-shadow: 0 0 16px rgba(82,231,255,0.12);
+        border-color: rgba(19,172,51,0.72);
+        box-shadow: 0 0 16px rgba(19,172,51,0.12);
     }
 
     .system-reset.is-home {
-        color: #416b79 !important;
-        border-color: rgba(82,231,255,0.09);
+        color: #416e4c !important;
+        border-color: rgba(19,172,51,0.09);
         pointer-events: none;
     }
 
@@ -1732,15 +1716,15 @@ BASE_CSS = """\n<style>
         gap: 1rem;
         margin: 0.15rem 0 1.15rem;
         padding: 0.72rem 0.95rem;
-        background: linear-gradient(90deg, rgba(82,231,255,0.065), rgba(82,231,255,0.01));
-        border-left: 2px solid var(--cyan);
-        border-top: 1px solid rgba(82,231,255,0.11);
-        border-bottom: 1px solid rgba(82,231,255,0.07);
+        background: linear-gradient(90deg, rgba(19,172,51,0.065), rgba(19,172,51,0.01));
+        border-left: 2px solid var(--accent);
+        border-top: 1px solid rgba(19,172,51,0.11);
+        border-bottom: 1px solid rgba(19,172,51,0.07);
     }
 
     .overview-title,
     .active-module-name {
-        color: #dffaff;
+        color: #e6f5e9;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.67rem;
         font-weight: 750;
@@ -1750,7 +1734,7 @@ BASE_CSS = """\n<style>
 
     .overview-copy,
     .active-module-state {
-        color: #527d8c;
+        color: #446e4f;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.55rem;
         letter-spacing: 0.07em;
@@ -1851,24 +1835,24 @@ BASE_CSS = """\n<style>
 
     [data-testid="stForm"] {
         padding: 1.2rem 1.25rem 1.3rem;
-        background: linear-gradient(145deg, rgba(7, 29, 42, 0.85), rgba(3, 16, 25, 0.82));
-        border: 1px solid rgba(82, 231, 255, 0.16);
+        background: linear-gradient(145deg, rgba(15,20,16,0.85), rgba(8,12,9,0.82));
+        border: 1px solid rgba(19,172,51,0.16);
         border-radius: 0;
         clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 0 100%);
     }
 
     .stSlider [data-baseweb="slider"] > div > div {
-        background: rgba(82, 231, 255, 0.18);
+        background: rgba(19,172,51,0.18);
     }
 
     .stSlider [role="slider"] {
-        background: var(--cyan) !important;
-        border-color: #d9fbff !important;
-        box-shadow: 0 0 0 4px rgba(82,231,255,0.10), 0 0 16px rgba(82,231,255,0.75) !important;
+        background: var(--accent) !important;
+        border-color: #e4f4e7 !important;
+        box-shadow: 0 0 0 4px rgba(19,172,51,0.10), 0 0 16px rgba(19,172,51,0.75) !important;
     }
 
     .stSlider label, .stTextInput label {
-        color: #a5c9d4 !important;
+        color: #9dc5a7 !important;
         font-family: "Cascadia Mono", Consolas, monospace !important;
         font-size: 0.69rem !important;
         letter-spacing: 0.045em;
@@ -1878,9 +1862,9 @@ BASE_CSS = """\n<style>
     div.stButton > button,
     div[data-testid="stFormSubmitButton"] > button {
         min-height: 2.65rem;
-        color: var(--cyan-soft);
-        background: linear-gradient(120deg, rgba(13, 65, 84, 0.92), rgba(5, 34, 49, 0.94));
-        border: 1px solid rgba(82, 231, 255, 0.42);
+        color: var(--accent-soft);
+        background: linear-gradient(120deg, rgba(29,41,32,0.92), rgba(16,23,18,0.94));
+        border: 1px solid rgba(19,172,51,0.42);
         border-radius: 0;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.68rem;
@@ -1888,44 +1872,44 @@ BASE_CSS = """\n<style>
         letter-spacing: 0.055em;
         text-transform: uppercase;
         clip-path: polygon(8px 0, 100% 0, 100% calc(100% - 8px), calc(100% - 8px) 100%, 0 100%, 0 8px);
-        box-shadow: inset 0 0 15px rgba(82,231,255,0.035);
+        box-shadow: inset 0 0 15px rgba(19,172,51,0.035);
         transition: all 160ms ease;
     }
 
     div.stButton > button:hover,
     div[data-testid="stFormSubmitButton"] > button:hover {
         color: #ffffff;
-        border-color: var(--cyan);
-        background: linear-gradient(120deg, rgba(18, 89, 112, 0.95), rgba(6, 44, 61, 0.96));
-        box-shadow: 0 0 22px rgba(82,231,255,0.15), inset 0 0 22px rgba(82,231,255,0.08);
+        border-color: var(--accent);
+        background: linear-gradient(120deg, rgba(19,85,35,0.95), rgba(20,28,22,0.96));
+        box-shadow: 0 0 22px rgba(19,172,51,0.15), inset 0 0 22px rgba(19,172,51,0.08);
         transform: translateY(-1px);
     }
 
     div.stButton > button:focus:not(:active),
     div[data-testid="stFormSubmitButton"] > button:focus:not(:active) {
-        border-color: var(--cyan);
-        box-shadow: 0 0 0 2px rgba(82,231,255,0.15);
+        border-color: var(--accent);
+        box-shadow: 0 0 0 2px rgba(19,172,51,0.15);
     }
 
     [data-baseweb="input"] {
-        background: rgba(3, 15, 24, 0.92) !important;
-        border: 1px solid rgba(82,231,255,0.20) !important;
+        background: rgba(8,11,9,0.92) !important;
+        border: 1px solid rgba(19,172,51,0.20) !important;
         border-radius: 0 !important;
     }
 
     [data-baseweb="input"]:focus-within {
-        border-color: rgba(82,231,255,0.62) !important;
-        box-shadow: 0 0 18px rgba(82,231,255,0.08);
+        border-color: rgba(19,172,51,0.62) !important;
+        box-shadow: 0 0 18px rgba(19,172,51,0.08);
     }
 
     [data-testid="stExpander"] {
-        background: rgba(4, 18, 28, 0.68);
-        border: 1px solid rgba(82, 231, 255, 0.13);
+        background: rgba(10,13,11,0.68);
+        border: 1px solid rgba(19,172,51,0.13);
         border-radius: 0;
     }
 
     [data-testid="stExpander"] summary {
-        color: #87afbd;
+        color: #83ae8e;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.68rem;
         letter-spacing: 0.04em;
@@ -1934,51 +1918,51 @@ BASE_CSS = """\n<style>
 
     [data-testid="stMetric"] {
         padding: 0.9rem 1rem;
-        background: rgba(5, 28, 40, 0.76);
-        border: 1px solid rgba(82,231,255,0.15);
+        background: rgba(13,19,15,0.76);
+        border: 1px solid rgba(19,172,51,0.15);
     }
 
     [data-testid="stMetricLabel"] {
-        color: #79a1af;
+        color: #76a081;
     }
 
     [data-testid="stMetricValue"] {
-        color: #eaffff;
+        color: #e6f5e8;
         font-family: "Cascadia Mono", Consolas, monospace;
     }
 
     [data-testid="stCaptionContainer"] {
-        color: #557f8f;
+        color: #477051;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.66rem;
     }
 
     [data-testid="stChatMessage"] {
-        background: linear-gradient(120deg, rgba(6, 28, 41, 0.84), rgba(3, 16, 25, 0.80));
-        border: 1px solid rgba(82, 231, 255, 0.13);
+        background: linear-gradient(120deg, rgba(14,20,16,0.84), rgba(8,12,9,0.80));
+        border: 1px solid rgba(19,172,51,0.13);
         border-radius: 0;
         margin-bottom: 0.65rem;
         clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
     }
 
     [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarUser"] {
-        background: rgba(184, 140, 255, 0.16);
-        border: 1px solid rgba(184, 140, 255, 0.38);
+        background: rgba(184,140,255,0.16);
+        border: 1px solid rgba(184,140,255,0.38);
     }
 
     [data-testid="stChatMessage"] [data-testid="stChatMessageAvatarAssistant"] {
-        background: rgba(82, 231, 255, 0.12);
-        border: 1px solid rgba(82, 231, 255, 0.38);
+        background: rgba(19,172,51,0.12);
+        border: 1px solid rgba(19,172,51,0.38);
     }
 
     [data-testid="stVegaLiteChart"] {
         padding: 0.5rem 0.35rem 0.25rem;
         background:
-            linear-gradient(180deg, rgba(6, 27, 39, 0.64), rgba(3, 15, 23, 0.42)),
-            linear-gradient(rgba(82,231,255,0.025) 1px, transparent 1px),
-            linear-gradient(90deg, rgba(82,231,255,0.025) 1px, transparent 1px);
+            linear-gradient(180deg, rgba(14,19,15,0.64), rgba(8,11,9,0.42)),
+            linear-gradient(rgba(19,172,51,0.025) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(19,172,51,0.025) 1px, transparent 1px);
         background-size: auto, 28px 28px, 28px 28px;
-        border: 1px solid rgba(82,231,255,0.11);
+        border: 1px solid rgba(19,172,51,0.11);
     }
 
     .copilot-intro {
@@ -1993,24 +1977,24 @@ BASE_CSS = """\n<style>
         height: 54px;
         display: grid;
         place-items: center;
-        color: var(--cyan);
-        border: 1px solid rgba(82,231,255,0.50);
-        background: radial-gradient(circle, rgba(82,231,255,0.18), transparent 66%);
+        color: var(--accent);
+        border: 1px solid rgba(19,172,51,0.50);
+        background: radial-gradient(circle, rgba(19,172,51,0.18), transparent 66%);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 1rem;
         clip-path: polygon(50% 0, 100% 25%, 100% 75%, 50% 100%, 0 75%, 0 25%);
-        box-shadow: 0 0 24px rgba(82,231,255,0.11);
+        box-shadow: 0 0 24px rgba(19,172,51,0.11);
     }
 
     .copilot-name {
-        color: #ecfdff;
+        color: #e6f5e9;
         font-size: 0.98rem;
         font-weight: 680;
         margin-bottom: 0.22rem;
     }
 
     .copilot-copy {
-        color: #789fac;
+        color: #759d7f;
         font-size: 0.82rem;
         line-height: 1.5;
     }
@@ -2019,50 +2003,50 @@ BASE_CSS = """\n<style>
         display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; margin:.75rem 0 1rem;
     }
     .copilot-context-item {
-        padding:.62rem .72rem; background:rgba(82,231,255,.025); border:1px solid rgba(82,231,255,.10);
+        padding:.62rem .72rem; background:rgba(19,172,51,.025); border:1px solid rgba(19,172,51,.10);
     }
     .copilot-context-item span {
-        display:block; color:#557f8f; font:700 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.10em; text-transform:uppercase;
+        display:block; color:#477051; font:700 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.10em; text-transform:uppercase;
     }
     .copilot-context-item strong {
-        display:block; margin-top:.18rem; color:#e7fbff; font-size:.80rem; font-weight:720;
+        display:block; margin-top:.18rem; color:#e6f5e9; font-size:.80rem; font-weight:720;
     }
     .copilot-thread-label {
-        color:#52e7ff; font:750 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.30rem;
+        color:#13ac33; font:750 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.30rem;
     }
     .copilot-answer-label {
-        color:#8eeaff; font:750 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.38rem;
+        color:#16c43e; font:750 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.38rem;
     }
     .copilot-user-label {
         color:#b99cff; font:750 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.12em; text-transform:uppercase; margin-bottom:.38rem;
     }
     .copilot-command-bar {
         display:flex; align-items:center; justify-content:space-between; gap:.8rem; margin:.55rem 0 .75rem;
-        color:#567f8e; font:700 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.08em; text-transform:uppercase;
+        color:#476f52; font:700 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.08em; text-transform:uppercase;
     }
     .copilot-module-dock {
         display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.55rem; margin:1rem 0 .55rem;
     }
     .copilot-module-link {
         display:flex; align-items:center; justify-content:center; min-height:42px; padding:.55rem .7rem;
-        color:#9ac8d2 !important; background:rgba(82,231,255,.025); border:1px solid rgba(82,231,255,.12);
+        color:#94c29e !important; background:rgba(19,172,51,.025); border:1px solid rgba(19,172,51,.12);
         text-decoration:none !important; font:750 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.08em; text-transform:uppercase;
         transition:all 160ms ease;
     }
     .copilot-module-link:hover {
-        color:#ecfdff !important; border-color:rgba(82,231,255,.42); background:rgba(82,231,255,.08); box-shadow:0 0 18px rgba(82,231,255,.08);
+        color:#e6f5e9 !important; border-color:rgba(19,172,51,.42); background:rgba(19,172,51,.08); box-shadow:0 0 18px rgba(19,172,51,.08);
     }
     .copilot-evidence-note {
-        color:#547987; font:650 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.05em; margin-top:.3rem;
+        color:#486d52; font:650 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.05em; margin-top:.3rem;
     }
     [data-testid="stChatMessage"] {
         padding:1rem 1.05rem;
     }
     [data-testid="stChatMessage"] p,
     [data-testid="stChatMessage"] li {
-        color:#b9ced5; line-height:1.55;
+        color:#c1cdc4; line-height:1.55;
     }
-    [data-testid="stChatMessage"] strong { color:#effdff; }
+    [data-testid="stChatMessage"] strong { color:#e6f5e9; }
     [data-testid="stChatMessageAvatarUser"],
     [data-testid="stChatMessageAvatarAssistant"] {
         border-radius:0 !important;
@@ -2076,8 +2060,8 @@ BASE_CSS = """\n<style>
         gap: 1rem;
         margin-top: 2.2rem;
         padding-top: 0.85rem;
-        color: #496f7d;
-        border-top: 1px solid rgba(82,231,255,0.10);
+        color: #446e4f;
+        border-top: 1px solid rgba(19,172,51,0.10);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.57rem;
         letter-spacing: 0.08em;
@@ -2089,9 +2073,9 @@ BASE_CSS = """\n<style>
     }
 
     ::-webkit-scrollbar { width: 9px; height: 9px; }
-    ::-webkit-scrollbar-track { background: #02080d; }
-    ::-webkit-scrollbar-thumb { background: #124355; border: 2px solid #02080d; }
-    ::-webkit-scrollbar-thumb:hover { background: #1b6077; }
+    ::-webkit-scrollbar-track { background: #050605; }
+    ::-webkit-scrollbar-thumb { background: #202A22; border: 2px solid #050605; }
+    ::-webkit-scrollbar-thumb:hover { background: #1a5b2a; }
 
     @keyframes scan-horizontal {
         from { transform: translateX(0); }
@@ -2155,7 +2139,7 @@ EXTENSIONS_CSS = """\n<style>
         align-items: center;
         gap: 0.45rem;
         margin-top: 0.78rem;
-        color: var(--cyan-soft);
+        color: var(--accent-soft);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.72rem;
         font-weight: 700;
@@ -2163,13 +2147,13 @@ EXTENSIONS_CSS = """\n<style>
     }
 
     .kpi-card:has(.kpi-neutral)::before {
-        background: linear-gradient(90deg, var(--cyan), transparent);
-        box-shadow: 0 0 12px rgba(82,231,255,0.55);
+        background: linear-gradient(90deg, var(--accent), transparent);
+        box-shadow: 0 0 12px rgba(19,172,51,0.55);
     }
 
     .brief-grid-label {
         margin: 0.85rem 0 0.45rem;
-        color: #608997;
+        color: #4f7659;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.58rem;
         font-weight: 750;
@@ -2178,22 +2162,22 @@ EXTENSIONS_CSS = """\n<style>
     }
 
     .alert-neutral {
-        border-left-color: var(--cyan);
-        color: var(--cyan);
+        border-left-color: var(--accent);
+        color: var(--accent);
     }
 
     .intel-card {
         position: relative;
         padding: 0.95rem 1rem;
         margin-bottom: 0.68rem;
-        background: linear-gradient(100deg, rgba(8,31,44,0.92), rgba(4,17,27,0.78));
-        border: 1px solid rgba(120,204,223,0.13);
-        border-left: 2px solid rgba(82,231,255,0.52);
+        background: linear-gradient(100deg, rgba(16,22,17,0.92), rgba(9,13,10,0.78));
+        border: 1px solid rgba(45,148,69,0.13);
+        border-left: 2px solid rgba(19,172,51,0.52);
         clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 0 100%);
     }
 
     .intel-meta {
-        color: #5f8d9d;
+        color: #4f7b5a;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.57rem;
         font-weight: 700;
@@ -2203,7 +2187,7 @@ EXTENSIONS_CSS = """\n<style>
 
     .intel-headline {
         margin-top: 0.35rem;
-        color: #e4f8fb;
+        color: #e8f3ea;
         font-size: 0.84rem;
         font-weight: 650;
         line-height: 1.42;
@@ -2211,7 +2195,7 @@ EXTENSIONS_CSS = """\n<style>
 
     .intel-detail {
         margin-top: 0.35rem;
-        color: #7fa6b5;
+        color: #7ca687;
         font-size: 0.76rem;
         line-height: 1.42;
     }
@@ -2219,7 +2203,7 @@ EXTENSIONS_CSS = """\n<style>
     .intel-link {
         display: inline-block;
         margin-top: 0.45rem;
-        color: var(--cyan) !important;
+        color: var(--accent) !important;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.62rem;
         font-weight: 700;
@@ -2227,8 +2211,8 @@ EXTENSIONS_CSS = """\n<style>
     }
 
     .intel-link:hover {
-        color: #dffcff !important;
-        text-shadow: 0 0 10px rgba(82,231,255,0.55);
+        color: #e6f5e9 !important;
+        text-shadow: 0 0 10px rgba(19,172,51,0.55);
     }
 
     .certified-chip {
@@ -2236,9 +2220,9 @@ EXTENSIONS_CSS = """\n<style>
         align-items: center;
         gap: 0.35rem;
         padding: 0.25rem 0.5rem;
-        color: #8eeaff;
-        border: 1px solid rgba(82,231,255,0.22);
-        background: rgba(82,231,255,0.04);
+        color: #16c43e;
+        border: 1px solid rgba(19,172,51,0.22);
+        background: rgba(19,172,51,0.04);
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.56rem;
         font-weight: 700;
@@ -2260,9 +2244,9 @@ PANELS_CSS = """\n<style>
         align-items:center;
         gap:0.38rem;
         padding:0.28rem 0.52rem;
-        color:#86C8D6;
-        background:rgba(82,231,255,0.035);
-        border:1px solid rgba(82,231,255,0.13);
+        color:#388B4B;
+        background:rgba(19,172,51,0.035);
+        border:1px solid rgba(19,172,51,0.13);
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.55rem;
         font-weight:700;
@@ -2276,7 +2260,7 @@ PANELS_CSS = """\n<style>
         height:5px;
         border-radius:50%;
         background:var(--green);
-        box-shadow:0 0 8px rgba(66,245,167,0.8);
+        box-shadow:0 0 8px rgba(20,159,77,0.8);
     }
 
     /* The core dial stays visually pure. Secondary intelligence sits
@@ -2293,12 +2277,12 @@ PANELS_CSS = """\n<style>
         z-index:5;
         min-width:0;
         overflow:hidden;
-        color:#BFDCE4;
+        color:#CAD9CD;
         background:
-            linear-gradient(145deg,rgba(4,25,37,0.94),rgba(2,15,24,0.92)),
-            radial-gradient(circle at 100% 0%,rgba(82,231,255,0.08),transparent 48%);
-        border:1px solid rgba(82,231,255,0.22);
-        box-shadow:inset 0 0 36px rgba(82,231,255,0.025),0 18px 50px rgba(0,0,0,0.18);
+            linear-gradient(145deg,rgba(12,17,14,0.94),rgba(8,11,9,0.92)),
+            radial-gradient(circle at 100% 0%,rgba(19,172,51,0.08),transparent 48%);
+        border:1px solid rgba(19,172,51,0.22);
+        box-shadow:inset 0 0 36px rgba(19,172,51,0.025),0 18px 50px rgba(0,0,0,0.18);
     }
 
     .decision-panel {
@@ -2317,11 +2301,11 @@ PANELS_CSS = """\n<style>
         justify-content:space-between;
         gap:0.6rem;
         padding-bottom:0.72rem;
-        border-bottom:1px solid rgba(82,231,255,0.14);
+        border-bottom:1px solid rgba(19,172,51,0.14);
     }
 
     .side-panel-title {
-        color:#E8FBFF;
+        color:#E6F5E9;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.72rem;
         font-weight:780;
@@ -2333,7 +2317,7 @@ PANELS_CSS = """\n<style>
         display:inline-flex;
         align-items:center;
         gap:0.35rem;
-        color:#65E7B5;
+        color:#239957;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.50rem;
         font-weight:760;
@@ -2347,7 +2331,7 @@ PANELS_CSS = """\n<style>
         height:6px;
         border-radius:50%;
         background:var(--green);
-        box-shadow:0 0 10px rgba(66,245,167,0.85);
+        box-shadow:0 0 10px rgba(20,159,77,0.85);
     }
 
     .decision-list {
@@ -2362,7 +2346,7 @@ PANELS_CSS = """\n<style>
         gap:0.72rem;
         min-height:92px;
         padding:0.78rem 0.05rem;
-        border-bottom:1px solid rgba(82,231,255,0.10);
+        border-bottom:1px solid rgba(19,172,51,0.10);
         color:inherit !important;
         text-decoration:none !important;
         transition:background 160ms ease,transform 160ms ease;
@@ -2372,7 +2356,7 @@ PANELS_CSS = """\n<style>
 
     .decision-item:hover {
         transform:translateX(3px);
-        background:linear-gradient(90deg,rgba(82,231,255,0.055),transparent);
+        background:linear-gradient(90deg,rgba(19,172,51,0.055),transparent);
     }
 
     .decision-icon {
@@ -2381,17 +2365,17 @@ PANELS_CSS = """\n<style>
         display:grid;
         place-items:center;
         border-radius:50%;
-        border:1px solid rgba(82,231,255,0.42);
-        color:#7FEAFF;
+        border:1px solid rgba(19,172,51,0.42);
+        color:#15BE3B;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.9rem;
-        box-shadow:inset 0 0 18px rgba(82,231,255,0.05),0 0 16px rgba(82,231,255,0.05);
+        box-shadow:inset 0 0 18px rgba(19,172,51,0.05),0 0 16px rgba(19,172,51,0.05);
     }
 
     .decision-icon.is-green {
-        color:#55F1B0;
-        border-color:rgba(66,245,167,0.55);
-        box-shadow:inset 0 0 18px rgba(66,245,167,0.05),0 0 16px rgba(66,245,167,0.07);
+        color:#19A152;
+        border-color:rgba(20,159,77,0.55);
+        box-shadow:inset 0 0 18px rgba(20,159,77,0.05),0 0 16px rgba(20,159,77,0.07);
     }
 
     .decision-icon.is-violet {
@@ -2402,7 +2386,7 @@ PANELS_CSS = """\n<style>
     .decision-copy { min-width:0; }
 
     .decision-title {
-        color:#E5F8FB;
+        color:#E8F3EA;
         font-size:0.80rem;
         font-weight:720;
         line-height:1.25;
@@ -2410,7 +2394,7 @@ PANELS_CSS = """\n<style>
 
     .decision-primary {
         margin-top:0.25rem;
-        color:#7CCBDA;
+        color:#328F47;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.60rem;
         font-weight:700;
@@ -2419,13 +2403,13 @@ PANELS_CSS = """\n<style>
 
     .decision-secondary {
         margin-top:0.16rem;
-        color:#577F8E;
+        color:#486F52;
         font-size:0.64rem;
         line-height:1.38;
     }
 
     .decision-arrow {
-        color:#50CDE5;
+        color:#209239;
         font-size:1.0rem;
         opacity:0.78;
     }
@@ -2436,7 +2420,7 @@ PANELS_CSS = """\n<style>
         align-items:center;
         gap:0.72rem;
         padding-bottom:0.8rem;
-        border-bottom:1px solid rgba(82,231,255,0.14);
+        border-bottom:1px solid rgba(19,172,51,0.14);
     }
 
     .focus-glyph {
@@ -2444,16 +2428,16 @@ PANELS_CSS = """\n<style>
         height:40px;
         display:grid;
         place-items:center;
-        color:#79E9FF;
-        border:1px solid rgba(82,231,255,0.42);
+        color:#15BC3A;
+        border:1px solid rgba(19,172,51,0.42);
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.95rem;
         clip-path:polygon(50% 0,100% 25%,100% 75%,50% 100%,0 75%,0 25%);
-        background:rgba(82,231,255,0.04);
+        background:rgba(19,172,51,0.04);
     }
 
     .focus-title {
-        color:#EAFBFF;
+        color:#E6F5E9;
         font-size:1rem;
         font-weight:760;
         letter-spacing:0.02em;
@@ -2461,7 +2445,7 @@ PANELS_CSS = """\n<style>
 
     .focus-subtitle {
         margin-top:0.18rem;
-        color:#5F91A1;
+        color:#628F6D;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.48rem;
         font-weight:700;
@@ -2470,7 +2454,7 @@ PANELS_CSS = """\n<style>
     }
 
     .focus-open {
-        color:#6BE4F7 !important;
+        color:#17B037 !important;
         text-decoration:none !important;
         font-size:1rem;
     }
@@ -2485,12 +2469,12 @@ PANELS_CSS = """\n<style>
     .focus-metric {
         min-width:0;
         padding:0.62rem 0.65rem;
-        background:rgba(82,231,255,0.025);
-        border:1px solid rgba(82,231,255,0.09);
+        background:rgba(19,172,51,0.025);
+        border:1px solid rgba(19,172,51,0.09);
     }
 
     .focus-metric-label {
-        color:#4E7E8E;
+        color:#416F4D;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.46rem;
         font-weight:720;
@@ -2500,7 +2484,7 @@ PANELS_CSS = """\n<style>
 
     .focus-metric-value {
         margin-top:0.25rem;
-        color:#EAFBFF;
+        color:#E6F5E9;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.86rem;
         font-weight:720;
@@ -2508,7 +2492,7 @@ PANELS_CSS = """\n<style>
 
     .focus-metric-sub {
         margin-top:0.16rem;
-        color:#5B8796;
+        color:#4C7556;
         font-size:0.56rem;
         line-height:1.3;
     }
@@ -2519,7 +2503,7 @@ PANELS_CSS = """\n<style>
         justify-content:space-between;
         gap:0.5rem;
         margin-top:0.82rem;
-        color:#6FA7B6;
+        color:#6EA57B;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.48rem;
         font-weight:720;
@@ -2541,9 +2525,9 @@ PANELS_CSS = """\n<style>
         justify-content:center;
         min-height:34px;
         margin-top:0.55rem;
-        color:#86ECFF !important;
-        border:1px solid rgba(82,231,255,0.25);
-        background:rgba(82,231,255,0.025);
+        color:#15C13B !important;
+        border:1px solid rgba(19,172,51,0.25);
+        background:rgba(19,172,51,0.025);
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.53rem;
         font-weight:760;
@@ -2554,8 +2538,8 @@ PANELS_CSS = """\n<style>
     }
 
     .focus-cta:hover {
-        background:rgba(82,231,255,0.07);
-        border-color:rgba(137,241,255,0.62);
+        background:rgba(19,172,51,0.07);
+        border-color:rgba(22,194,57,0.62);
     }
 
     .intelligence-dock {
@@ -2565,9 +2549,9 @@ PANELS_CSS = """\n<style>
         margin:-0.25rem auto 1.45rem;
         padding:0.72rem 1rem 0.9rem;
         background:
-            linear-gradient(180deg,rgba(4,24,35,0.86),rgba(2,13,21,0.94)),
-            radial-gradient(circle at 50% 0%,rgba(82,231,255,0.08),transparent 60%);
-        border:1px solid rgba(82,231,255,0.16);
+            linear-gradient(180deg,rgba(12,16,13,0.86),rgba(7,10,8,0.94)),
+            radial-gradient(circle at 50% 0%,rgba(19,172,51,0.08),transparent 60%);
+        border:1px solid rgba(19,172,51,0.16);
         clip-path:polygon(24px 0,calc(100% - 24px) 0,100% 24px,100% 100%,0 100%,0 24px);
     }
 
@@ -2576,7 +2560,7 @@ PANELS_CSS = """\n<style>
         align-items:center;
         justify-content:center;
         gap:0.65rem;
-        color:#58CDE2;
+        color:#24913B;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.52rem;
         font-weight:780;
@@ -2589,11 +2573,11 @@ PANELS_CSS = """\n<style>
         content:"";
         width:95px;
         height:1px;
-        background:linear-gradient(90deg,transparent,rgba(82,231,255,0.32));
+        background:linear-gradient(90deg,transparent,rgba(19,172,51,0.32));
     }
 
     .dock-kicker::after {
-        background:linear-gradient(90deg,rgba(82,231,255,0.32),transparent);
+        background:linear-gradient(90deg,rgba(19,172,51,0.32),transparent);
     }
 
     .dock-actions {
@@ -2611,9 +2595,9 @@ PANELS_CSS = """\n<style>
         gap:0.62rem;
         min-height:56px;
         padding:0.55rem 0.72rem;
-        color:#8BCDDD !important;
-        background:rgba(82,231,255,0.018);
-        border:1px solid rgba(82,231,255,0.20);
+        color:#35944B !important;
+        background:rgba(19,172,51,0.018);
+        border:1px solid rgba(19,172,51,0.20);
         text-decoration:none !important;
         clip-path:polygon(11px 0,100% 0,100% calc(100% - 11px),calc(100% - 11px) 100%,0 100%,0 11px);
         transition:transform 160ms ease,border-color 160ms ease,background 160ms ease;
@@ -2621,16 +2605,16 @@ PANELS_CSS = """\n<style>
 
     .dock-action:hover {
         transform:translateY(-2px);
-        color:#EAFBFF !important;
-        border-color:rgba(116,236,255,0.68);
-        background:rgba(82,231,255,0.055);
+        color:#E6F5E9 !important;
+        border-color:rgba(21,186,56,0.68);
+        background:rgba(19,172,51,0.055);
     }
 
     .dock-action.is-active {
-        color:#EAFBFF !important;
-        border-color:#58E4FF;
-        background:linear-gradient(145deg,rgba(12,80,99,0.44),rgba(26,28,61,0.32));
-        box-shadow:0 0 18px rgba(82,231,255,0.11),inset 0 0 18px rgba(82,231,255,0.04);
+        color:#E6F5E9 !important;
+        border-color:#13AE35;
+        background:linear-gradient(145deg,rgba(33,47,36,0.44),rgba(29,34,31,0.32));
+        box-shadow:0 0 18px rgba(19,172,51,0.11),inset 0 0 18px rgba(19,172,51,0.04);
     }
 
     .dock-icon {
@@ -2638,8 +2622,8 @@ PANELS_CSS = """\n<style>
         height:34px;
         display:grid;
         place-items:center;
-        color:#62DDF3;
-        border:1px solid rgba(82,231,255,0.30);
+        color:#19A738;
+        border:1px solid rgba(19,172,51,0.30);
         border-radius:50%;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.82rem;
@@ -2649,7 +2633,7 @@ PANELS_CSS = """\n<style>
 
     .dock-title {
         display:block;
-        color:#DFF8FC;
+        color:#E7F3EA;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.66rem;
         font-weight:780;
@@ -2661,7 +2645,7 @@ PANELS_CSS = """\n<style>
         display:block;
         margin-top:0.15rem;
         overflow:hidden;
-        color:#548493;
+        color:#467351;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.46rem;
         font-weight:690;
@@ -2671,15 +2655,15 @@ PANELS_CSS = """\n<style>
 
     .trend-up { color:var(--green) !important; }
     .trend-down { color:var(--red) !important; }
-    .trend-flat { color:#6F9DAA !important; }
+    .trend-flat { color:#6D9B78 !important; }
 
     .strategy-explainer {
         margin:0.8rem 0 1rem;
         padding:1rem 1.05rem;
         background:
-            linear-gradient(135deg,rgba(7,34,48,0.92),rgba(7,20,35,0.88)),
-            radial-gradient(circle at 10% 0%,rgba(82,231,255,0.08),transparent 42%);
-        border:1px solid rgba(82,231,255,0.18);
+            linear-gradient(135deg,rgba(17,23,18,0.92),rgba(13,17,14,0.88)),
+            radial-gradient(circle at 10% 0%,rgba(19,172,51,0.08),transparent 42%);
+        border:1px solid rgba(19,172,51,0.18);
         clip-path:polygon(0 0,calc(100% - 16px) 0,100% 16px,100% 100%,0 100%);
     }
 
@@ -2691,16 +2675,16 @@ PANELS_CSS = """\n<style>
     }
 
     .strategy-score-bridge {
-        color:#E9FBFF;
+        color:#E6F5E9;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:1.15rem;
         font-weight:760;
     }
 
-    .strategy-score-bridge span { color:#66E5FA; }
+    .strategy-score-bridge span { color:#14B235; }
 
     .strategy-explainer-copy {
-        color:#7FA6B5;
+        color:#7CA687;
         font-size:0.77rem;
         line-height:1.55;
     }
@@ -2714,9 +2698,9 @@ PANELS_CSS = """\n<style>
 
     .strategy-delta-pill {
         padding:0.26rem 0.48rem;
-        border:1px solid rgba(82,231,255,0.15);
-        background:rgba(82,231,255,0.025);
-        color:#8FC8D5;
+        border:1px solid rgba(19,172,51,0.15);
+        background:rgba(19,172,51,0.025);
+        color:#3D8B4F;
         font-family:"Cascadia Mono",Consolas,monospace;
         font-size:0.50rem;
         font-weight:700;
@@ -2742,11 +2726,11 @@ PANELS_CSS = """\n<style>
     /* -------------------------------------------------
        CFO DECISION LAYER / MOTION
        ------------------------------------------------- */
-    html { background:#02070c; scroll-behavior:smooth; }
+    html { background:#040605; scroll-behavior:smooth; }
 
     /* Chrome/Edge can animate same-origin query-parameter navigation.
        Streamlit still reruns Python, but the browser transition hides most
-       of the hard page swap and makes vector changes feel continuous. */
+       of the hard page swap and makes section changes feel continuous. */
     @view-transition { navigation: auto; }
     @keyframes vt-old { to { opacity:0; transform:scale(.998); } }
     @keyframes vt-new { from { opacity:0; transform:translateY(5px); } }
@@ -2766,41 +2750,41 @@ PANELS_CSS = """\n<style>
         animation:module-enter 260ms cubic-bezier(.2,.8,.2,1) both;
     }
     .executive-delta {
-        display:flex; align-items:center; gap:.42rem; margin-top:.68rem; color:#9cecff;
+        display:flex; align-items:center; gap:.42rem; margin-top:.68rem; color:#b9e2c2;
         font-family:"Cascadia Mono",Consolas,monospace; font-size:.70rem; font-weight:700;
     }
-    .executive-context { margin-top:.35rem; color:#6f98a7; font-size:.70rem; line-height:1.4; }
+    .executive-context { margin-top:.35rem; color:#6d9878; font-size:.70rem; line-height:1.4; }
     .cfo-change-panel,.cfo-decision-panel {
         position:relative; min-width:0; min-height:410px; padding:1rem 1rem .9rem;
-        background:linear-gradient(145deg,rgba(5,27,40,.95),rgba(2,14,23,.86));
-        border:1px solid rgba(82,231,255,.18);
+        background:linear-gradient(145deg,rgba(13,19,15,.95),rgba(7,11,8,.86));
+        border:1px solid rgba(19,172,51,.18);
         clip-path:polygon(0 0,calc(100% - 13px) 0,100% 13px,100% 100%,0 100%);
     }
-    .cfo-panel-kicker { color:#52e7ff; font:700 .56rem "Cascadia Mono",Consolas,monospace; letter-spacing:.16em; text-transform:uppercase; margin-bottom:.22rem; }
-    .cfo-panel-title { color:#effdff; font-size:1rem; font-weight:700; margin-bottom:.8rem; }
-    .change-row { display:block; text-decoration:none; color:inherit; padding:.84rem 0; border-top:1px solid rgba(82,231,255,.10); transition:transform 160ms ease; }
+    .cfo-panel-kicker { color:#13ac33; font:700 .56rem "Cascadia Mono",Consolas,monospace; letter-spacing:.16em; text-transform:uppercase; margin-bottom:.22rem; }
+    .cfo-panel-title { color:#e6f5e9; font-size:1rem; font-weight:700; margin-bottom:.8rem; }
+    .change-row { display:block; text-decoration:none; color:inherit; padding:.84rem 0; border-top:1px solid rgba(19,172,51,.10); transition:transform 160ms ease; }
     .change-row:first-of-type { border-top:0; }
     .change-row:hover { transform:translateX(4px); }
     .change-row-head { display:flex; justify-content:space-between; gap:.6rem; align-items:baseline; }
-    .change-name { color:#dff9ff; font-size:.80rem; font-weight:700; }
-    .change-value { color:#52e7ff; font:750 .75rem "Cascadia Mono",Consolas,monospace; white-space:nowrap; }
-    .change-detail { margin-top:.30rem; color:#7399a7; font-size:.68rem; line-height:1.45; }
-    .decision-lens-item { padding:.78rem 0 .82rem; border-top:1px solid rgba(82,231,255,.10); }
+    .change-name { color:#e6f5e9; font-size:.80rem; font-weight:700; }
+    .change-value { color:#13ac33; font:750 .75rem "Cascadia Mono",Consolas,monospace; white-space:nowrap; }
+    .change-detail { margin-top:.30rem; color:#70997b; font-size:.68rem; line-height:1.45; }
+    .decision-lens-item { padding:.78rem 0 .82rem; border-top:1px solid rgba(19,172,51,.10); }
     .decision-lens-item:first-of-type { border-top:0; }
-    .decision-lens-title { color:#e9fbff; font-size:.78rem; font-weight:700; margin-bottom:.45rem; }
+    .decision-lens-title { color:#e6f5e9; font-size:.78rem; font-weight:700; margin-bottom:.45rem; }
     .decision-lens-line { display:grid; grid-template-columns:50px 1fr; gap:.48rem; margin:.22rem 0; font-size:.66rem; line-height:1.42; }
-    .decision-lens-label { color:#52e7ff; font:700 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.08em; text-transform:uppercase; }
-    .decision-lens-copy { color:#8db0bc; }
-    .decision-flow-card { position:relative; padding:1rem 1.05rem; margin-bottom:.72rem; background:linear-gradient(145deg,rgba(7,31,44,.92),rgba(3,17,27,.82)); border:1px solid rgba(82,231,255,.14); clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%); }
-    .flow-title { color:#edfaff; font-size:.88rem; font-weight:700; margin-bottom:.62rem; }
+    .decision-lens-label { color:#13ac33; font:700 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.08em; text-transform:uppercase; }
+    .decision-lens-copy { color:#88ad91; }
+    .decision-flow-card { position:relative; padding:1rem 1.05rem; margin-bottom:.72rem; background:linear-gradient(145deg,rgba(15,21,17,.92),rgba(9,13,10,.82)); border:1px solid rgba(19,172,51,.14); clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%); }
+    .flow-title { color:#e6f5e9; font-size:.88rem; font-weight:700; margin-bottom:.62rem; }
     .flow-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.48rem; }
-    .flow-cell { padding:.58rem .62rem; background:rgba(82,231,255,.025); border:1px solid rgba(82,231,255,.08); min-width:0; }
-    .flow-label { display:block; color:#52e7ff; font:700 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.10em; text-transform:uppercase; margin-bottom:.28rem; }
-    .flow-copy { color:#93b5c0; font-size:.68rem; line-height:1.42; }
+    .flow-cell { padding:.58rem .62rem; background:rgba(19,172,51,.025); border:1px solid rgba(19,172,51,.08); min-width:0; }
+    .flow-label { display:block; color:#13ac33; font:700 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.10em; text-transform:uppercase; margin-bottom:.28rem; }
+    .flow-copy { color:#8db196; font-size:.68rem; line-height:1.42; }
     .decision-strip { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.72rem; margin:0 0 1rem; }
-    .decision-strip-item { padding:.85rem .92rem; background:rgba(82,231,255,.025); border:1px solid rgba(82,231,255,.11); }
-    .decision-strip-item strong { display:block; color:#e9fbff; font-size:.83rem; margin:.20rem 0 .28rem; }
-    .decision-strip-item span:last-child { color:#789eab; font-size:.68rem; line-height:1.42; }
+    .decision-strip-item { padding:.85rem .92rem; background:rgba(19,172,51,.025); border:1px solid rgba(19,172,51,.11); }
+    .decision-strip-item strong { display:block; color:#e6f5e9; font-size:.83rem; margin:.20rem 0 .28rem; }
+    .decision-strip-item span:last-child { color:#759d7f; font-size:.68rem; line-height:1.42; }
     .dock-metric { line-height:1.35; }
     .intelligence-dock { max-width:920px; margin-left:auto; margin-right:auto; }
     .dock-actions { gap:.85rem; }
@@ -2811,56 +2795,56 @@ PANELS_CSS = """\n<style>
     }
     .comparison-chip {
         display:inline-flex; align-items:center; gap:.35rem; padding:.30rem .55rem;
-        color:#7fa8b5; background:rgba(82,231,255,.025); border:1px solid rgba(82,231,255,.10);
+        color:#7ca686; background:rgba(19,172,51,.025); border:1px solid rgba(19,172,51,.10);
         font:700 .54rem "Cascadia Mono",Consolas,monospace; letter-spacing:.07em; text-transform:uppercase;
     }
-    .comparison-chip strong { color:#bfeef7; font-weight:750; }
+    .comparison-chip strong { color:#cfe7d4; font-weight:750; }
 
     .copilot-action {
         display:inline-flex; align-items:center; gap:.35rem; margin-top:.55rem; padding:.34rem .52rem;
-        color:#8eeaff !important; background:rgba(82,231,255,.045); border:1px solid rgba(82,231,255,.18);
+        color:#16c43e !important; background:rgba(19,172,51,.045); border:1px solid rgba(19,172,51,.18);
         text-decoration:none !important; font:750 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.06em; text-transform:uppercase;
         transition:transform 150ms ease, border-color 150ms ease, background 150ms ease, box-shadow 150ms ease;
     }
     .copilot-action:hover {
-        transform:translateX(2px); background:rgba(82,231,255,.09); border-color:rgba(82,231,255,.42);
-        box-shadow:0 0 18px rgba(82,231,255,.09); color:#e5fcff !important;
+        transform:translateX(2px); background:rgba(19,172,51,.09); border-color:rgba(19,172,51,.42);
+        box-shadow:0 0 18px rgba(19,172,51,.09); color:#e6f5e9 !important;
     }
 
 
     .forward-lens-panel {
         position:relative; padding:1.05rem 1.05rem 1rem;
-        background:linear-gradient(145deg,rgba(7,31,44,.92),rgba(3,17,27,.84));
-        border:1px solid rgba(82,231,255,.15);
+        background:linear-gradient(145deg,rgba(15,21,17,.92),rgba(9,13,10,.84));
+        border:1px solid rgba(19,172,51,.15);
         clip-path:polygon(0 0,calc(100% - 14px) 0,100% 14px,100% 100%,0 100%);
     }
     .forward-lens-kicker {
-        color:#52e7ff; font:750 .55rem "Cascadia Mono",Consolas,monospace;
+        color:#13ac33; font:750 .55rem "Cascadia Mono",Consolas,monospace;
         letter-spacing:.14em; text-transform:uppercase; margin-bottom:.28rem;
     }
     .forward-lens-title {
-        color:#effdff; font-size:1rem; font-weight:720; margin-bottom:.75rem;
+        color:#e6f5e9; font-size:1rem; font-weight:720; margin-bottom:.75rem;
     }
     .forward-lens-row {
         display:grid; grid-template-columns:92px 1fr; gap:.72rem; align-items:start;
-        padding:.70rem 0; border-top:1px solid rgba(82,231,255,.09);
+        padding:.70rem 0; border-top:1px solid rgba(19,172,51,.09);
     }
     .forward-lens-row:first-of-type { border-top:0; }
     .forward-lens-label {
-        color:#52e7ff; font:750 .54rem "Cascadia Mono",Consolas,monospace;
+        color:#13ac33; font:750 .54rem "Cascadia Mono",Consolas,monospace;
         letter-spacing:.08em; text-transform:uppercase;
     }
     .forward-lens-value {
-        color:#8fb2be; font-size:.72rem; line-height:1.48;
+        color:#8aaf93; font-size:.72rem; line-height:1.48;
     }
-    .forward-lens-value strong { color:#e6fbff; font-weight:720; }
+    .forward-lens-value strong { color:#e6f5e9; font-weight:720; }
     .forward-lens-meaning {
         margin-top:.85rem; padding:.78rem .82rem;
-        background:rgba(82,231,255,.035); border:1px solid rgba(82,231,255,.10);
-        color:#9fc1cb; font-size:.70rem; line-height:1.48;
+        background:rgba(19,172,51,.035); border:1px solid rgba(19,172,51,.10);
+        color:#98bca1; font-size:.70rem; line-height:1.48;
     }
     .forward-lens-meaning strong {
-        display:block; margin-bottom:.25rem; color:#dff9ff;
+        display:block; margin-bottom:.25rem; color:#e6f5e9;
         font:750 .56rem "Cascadia Mono",Consolas,monospace;
         letter-spacing:.08em; text-transform:uppercase;
     }
@@ -2870,80 +2854,80 @@ PANELS_CSS = """\n<style>
     .module-action-link {
         flex:0 1 320px; display:flex; align-items:center; justify-content:center;
         min-height:44px; padding:.72rem 1rem; text-decoration:none !important;
-        color:#d9f9ff !important;
-        background:linear-gradient(90deg,rgba(13,92,116,.58),rgba(6,49,69,.42));
-        border:1px solid rgba(82,231,255,.34);
+        color:#e4f4e7 !important;
+        background:linear-gradient(90deg,rgba(15,88,33,.58),rgba(22,32,25,.42));
+        border:1px solid rgba(19,172,51,.34);
         clip-path:polygon(0 0,calc(100% - 11px) 0,100% 11px,100% 100%,11px 100%,0 calc(100% - 11px));
         font-size:.78rem; font-weight:650; letter-spacing:.02em;
         transition:transform 160ms ease,box-shadow 160ms ease,border-color 160ms ease;
     }
     .module-action-link:hover {
-        transform:translateY(-2px); border-color:rgba(82,231,255,.70);
-        box-shadow:0 0 24px rgba(82,231,255,.11);
+        transform:translateY(-2px); border-color:rgba(19,172,51,.70);
+        box-shadow:0 0 24px rgba(19,172,51,.11);
     }
     .scenario-impact-grid {
         display:grid; grid-template-columns:repeat(3,minmax(0,1fr));
         gap:.65rem; margin:.75rem 0 1rem;
     }
     .scenario-impact-cell {
-        padding:.78rem .82rem; background:rgba(82,231,255,.025);
-        border:1px solid rgba(82,231,255,.10);
+        padding:.78rem .82rem; background:rgba(19,172,51,.025);
+        border:1px solid rgba(19,172,51,.10);
     }
     .scenario-impact-label {
-        color:#52e7ff; font:750 .52rem "Cascadia Mono",Consolas,monospace;
+        color:#13ac33; font:750 .52rem "Cascadia Mono",Consolas,monospace;
         letter-spacing:.08em; text-transform:uppercase;
     }
     .scenario-impact-value {
-        margin-top:.28rem; color:#edfaff;
+        margin-top:.28rem; color:#e6f5e9;
         font:700 .88rem "Cascadia Mono",Consolas,monospace;
     }
     .scenario-impact-copy {
-        margin-top:.22rem; color:#749aa8; font-size:.65rem; line-height:1.4;
+        margin-top:.22rem; color:#719a7c; font-size:.65rem; line-height:1.4;
     }
     .scenario-decision-card {
         margin-top:.85rem; padding:1rem 1.05rem;
-        background:linear-gradient(145deg,rgba(7,31,44,.90),rgba(3,17,27,.82));
-        border:1px solid rgba(82,231,255,.14);
+        background:linear-gradient(145deg,rgba(15,21,17,.90),rgba(9,13,10,.82));
+        border:1px solid rgba(19,172,51,.14);
     }
     .scenario-decision-line {
         display:grid; grid-template-columns:68px 1fr; gap:.6rem;
         padding:.36rem 0; font-size:.70rem; line-height:1.45;
     }
     .scenario-decision-line span:first-child {
-        color:#52e7ff; font:750 .53rem "Cascadia Mono",Consolas,monospace;
+        color:#13ac33; font:750 .53rem "Cascadia Mono",Consolas,monospace;
         letter-spacing:.07em; text-transform:uppercase;
     }
-    .scenario-decision-line span:last-child { color:#8fb1bd; }
+    .scenario-decision-line span:last-child { color:#8aae93; }
 
     .news-section-head {
         display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom:.75rem;
     }
-    .news-section-copy { color:#668e9d; font-size:.68rem; line-height:1.4; max-width:320px; text-align:right; }
+    .news-section-copy { color:#678d70; font-size:.68rem; line-height:1.4; max-width:320px; text-align:right; }
     .news-card {
         position:relative; padding:1rem 1.05rem .95rem; margin-bottom:.72rem; overflow:hidden;
-        background:linear-gradient(105deg,rgba(8,31,44,.95),rgba(4,17,27,.80));
-        border:1px solid rgba(82,231,255,.14); border-left:2px solid rgba(82,231,255,.60);
+        background:linear-gradient(105deg,rgba(16,22,17,.95),rgba(9,13,10,.80));
+        border:1px solid rgba(19,172,51,.14); border-left:2px solid rgba(19,172,51,.60);
         clip-path:polygon(0 0,calc(100% - 12px) 0,100% 12px,100% 100%,0 100%);
     }
     .news-card::after {
         content:""; position:absolute; right:-32px; top:-32px; width:90px; height:90px; border-radius:50%;
-        border:1px solid rgba(82,231,255,.09); box-shadow:0 0 0 12px rgba(82,231,255,.018),0 0 0 24px rgba(82,231,255,.010);
+        border:1px solid rgba(19,172,51,.09); box-shadow:0 0 0 12px rgba(19,172,51,.018),0 0 0 24px rgba(19,172,51,.010);
     }
     .news-topline { display:flex; align-items:center; gap:.5rem; margin-bottom:.42rem; }
     .news-badge {
-        display:inline-flex; align-items:center; gap:.30rem; padding:.20rem .42rem; color:#051219; background:#52e7ff;
+        display:inline-flex; align-items:center; gap:.30rem; padding:.20rem .42rem; color:#090c0a; background:#13ac33;
         font:850 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.10em; text-transform:uppercase;
     }
-    .news-meta { color:#668f9f; font:700 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.07em; text-transform:uppercase; }
-    .news-headline { color:#edfaff; font-size:.86rem; font-weight:720; line-height:1.38; margin-bottom:.52rem; }
+    .news-meta { color:#668f71; font:700 .55rem "Cascadia Mono",Consolas,monospace; letter-spacing:.07em; text-transform:uppercase; }
+    .news-headline { color:#e6f5e9; font-size:.86rem; font-weight:720; line-height:1.38; margin-bottom:.52rem; }
     .news-context-grid { display:grid; grid-template-columns:1fr; gap:.28rem; }
     .news-context-line { display:grid; grid-template-columns:82px 1fr; gap:.45rem; font-size:.72rem; line-height:1.4; }
-    .news-context-label { color:#52e7ff; font:700 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.07em; text-transform:uppercase; }
-    .news-context-copy { color:#82a7b4; }
+    .news-context-label { color:#13ac33; font:700 .52rem "Cascadia Mono",Consolas,monospace; letter-spacing:.07em; text-transform:uppercase; }
+    .news-context-copy { color:#7ea588; }
     .news-footer { display:flex; align-items:center; justify-content:space-between; gap:.75rem; margin-top:.58rem; }
-    .news-source-link { color:#8eeaff !important; text-decoration:none !important; font:750 .57rem "Cascadia Mono",Consolas,monospace; text-transform:uppercase; letter-spacing:.06em; }
-    .news-source-link:hover { color:#e5fcff !important; text-shadow:0 0 10px rgba(82,231,255,.4); }
-    .news-public-note { color:#4f7786; font:650 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.05em; text-transform:uppercase; }
+    .news-source-link { color:#16c43e !important; text-decoration:none !important; font:750 .57rem "Cascadia Mono",Consolas,monospace; text-transform:uppercase; letter-spacing:.06em; }
+    .news-source-link:hover { color:#e6f5e9 !important; text-shadow:0 0 10px rgba(19,172,51,.4); }
+    .news-public-note { color:#456e50; font:650 .50rem "Cascadia Mono",Consolas,monospace; letter-spacing:.05em; text-transform:uppercase; }
 
     @media (max-width:1100px) { .flow-grid,.decision-strip { grid-template-columns:repeat(2,minmax(0,1fr)); } .news-section-head{align-items:flex-start;flex-direction:column;} .news-section-copy{text-align:left;} }
     @media (max-width:760px) { .flow-grid,.decision-strip { grid-template-columns:1fr; } .news-context-line{grid-template-columns:1fr;} }
@@ -2954,7 +2938,7 @@ PANELS_CSS = """\n<style>
 # wins on equal specificity.
 LOCAL_CSS = """
 <style>
-    /* News is a fourth intelligence vector, so the dock grows from 3 to 4. */
+    /* News is a fourth intelligence lens, so the dock grows from 3 to 4. */
     .dock-actions {
         grid-template-columns: repeat(4, minmax(0, 1fr));
         max-width: 980px;
@@ -2988,7 +2972,7 @@ LOCAL_CSS = """
         display: flex;
         align-items: center;
         gap: 0.7rem;
-        color: #52e7ff;
+        color: #13ac33;
         font-family: "Cascadia Mono", Consolas, monospace;
         font-size: 0.62rem;
         font-weight: 780;
@@ -3001,25 +2985,25 @@ LOCAL_CSS = """
         content: "";
         width: 54px;
         height: 1px;
-        background: linear-gradient(90deg, transparent, rgba(82, 231, 255, 0.55));
+        background: linear-gradient(90deg, transparent, rgba(19,172,51,0.55));
     }
 
     .gate-kicker::after {
-        background: linear-gradient(90deg, rgba(82, 231, 255, 0.55), transparent);
+        background: linear-gradient(90deg, rgba(19,172,51,0.55), transparent);
     }
 
     .gate-greeting {
         margin: 0;
-        color: #f2fdff;
+        color: #e6f5e9;
         font-size: clamp(2.1rem, 5.4vw, 4.6rem);
         font-weight: 300;
         line-height: 1;
         letter-spacing: -0.045em;
-        text-shadow: 0 0 38px rgba(82, 231, 255, 0.16);
+        text-shadow: 0 0 38px rgba(19,172,51,0.16);
     }
 
     .gate-greeting strong {
-        color: var(--cyan);
+        color: var(--accent);
         font-weight: 780;
         letter-spacing: 0.01em;
     }
@@ -3032,18 +3016,18 @@ LOCAL_CSS = """
         width: clamp(190px, 21vw, 250px);
         aspect-ratio: 1;
         overflow: hidden;
-        color: #eaffff !important;
-        border: 1px solid rgba(115, 231, 249, 0.66);
+        color: #e6f5e8 !important;
+        border: 1px solid rgba(21,182,55,0.66);
         border-radius: 50%;
         outline: none;
         background:
-            radial-gradient(circle at 50% 45%, rgba(32, 126, 154, 0.40), transparent 30%),
-            radial-gradient(circle, #0b3c50 0, #062636 46%, #020f18 75%);
+            radial-gradient(circle at 50% 45%, rgba(31,117,52,0.40), transparent 30%),
+            radial-gradient(circle, #1b261e 0, #121914 46%, #080b09 75%);
         box-shadow:
-            inset 0 0 34px rgba(68, 224, 255, 0.16),
-            0 0 0 8px rgba(5, 31, 43, 0.82),
-            0 0 0 9px rgba(82, 231, 255, 0.28),
-            0 0 42px rgba(82, 231, 255, 0.20);
+            inset 0 0 34px rgba(18,166,51,0.16),
+            0 0 0 8px rgba(14,20,16,0.82),
+            0 0 0 9px rgba(19,172,51,0.28),
+            0 0 42px rgba(19,172,51,0.20);
         text-decoration: none !important;
         transition:
             transform 220ms cubic-bezier(.2, .8, .2, 1),
@@ -3055,7 +3039,7 @@ LOCAL_CSS = """
         content: "";
         position: absolute;
         inset: 5%;
-        border: 1px dashed rgba(115, 231, 249, 0.40);
+        border: 1px dashed rgba(21,182,55,0.40);
         border-radius: 50%;
         animation: rotate-cw 24s linear infinite;
     }
@@ -3065,24 +3049,24 @@ LOCAL_CSS = """
         position: absolute;
         inset: 14%;
         border: 2px solid transparent;
-        border-top-color: rgba(162, 243, 255, 0.92);
-        border-right-color: rgba(108, 208, 255, 0.36);
+        border-top-color: rgba(189,228,197,0.92);
+        border-right-color: rgba(20,182,64,0.36);
         border-radius: 50%;
-        box-shadow: inset 0 0 18px rgba(82, 231, 255, 0.07);
+        box-shadow: inset 0 0 18px rgba(19,172,51,0.07);
         animation: rotate-ccw 12s linear infinite;
     }
 
     .gate-orb:hover,
     .gate-orb:focus-visible {
-        border-color: #e0fbff;
+        border-color: #e6f5e9;
         transform: scale(1.06);
-        filter: brightness(1.22) drop-shadow(0 0 16px rgba(82, 231, 255, 0.68));
+        filter: brightness(1.22) drop-shadow(0 0 16px rgba(19,172,51,0.68));
     }
 
     .gate-orb:focus-visible {
         box-shadow:
-            0 0 0 2px #e0fbff,
-            0 0 36px rgba(82, 231, 255, 0.34);
+            0 0 0 2px #e6f5e9,
+            0 0 36px rgba(19,172,51,0.34);
     }
 
     /* The dial sizes its core copy off the viewport; here it is fixed. */
@@ -3111,21 +3095,1186 @@ LOCAL_CSS = """
 
     .weather-pill {
         gap: 0.5rem;
-        border-color: rgba(82, 231, 255, 0.30);
-        background: rgba(82, 231, 255, 0.085);
+        border-color: rgba(19,172,51,0.30);
+        background: rgba(19,172,51,0.085);
         text-transform: none;
         letter-spacing: 0.045em;
     }
 
     .weather-glyph {
-        color: #9df0ff;
+        color: #b9e3c2;
         font-size: 0.92rem;
         line-height: 1;
-        text-shadow: 0 0 10px rgba(82, 231, 255, 0.55);
+        text-shadow: 0 0 10px rgba(19,172,51,0.55);
+    }
+
+    /* Streamlit's own alerts hardcode a blue tint for st.info that survives the
+       theme. Retint info to the HUD green; warning and error keep their
+       semantic amber and red so a caution still reads as one. */
+    [data-testid="stAlertContainer"] {
+        border-radius: 0 !important;
+        border-left: 2px solid var(--accent) !important;
+        color: var(--text) !important;
+        background: rgba(19,172,51,0.11) !important;
+    }
+
+    [data-testid="stAlertContainer"]:has([data-testid="stAlertContentSuccess"]) {
+        border-left-color: var(--green) !important;
+        background: rgba(20,159,77,0.13) !important;
+    }
+
+    [data-testid="stAlertContainer"]:has([data-testid="stAlertContentWarning"]) {
+        border-left-color: var(--amber) !important;
+        background: rgba(255,203,102,0.13) !important;
+    }
+
+    [data-testid="stAlertContainer"]:has([data-testid="stAlertContentError"]) {
+        border-left-color: var(--red) !important;
+        background: rgba(255,93,122,0.13) !important;
+    }
+
+    /* Inline links default to Streamlit's blue. */
+    .stApp a, .stMarkdown a {
+        color: var(--accent);
+        text-decoration-color: rgba(19,172,51,0.45);
+    }
+
+
+    /* -------------------------------------------------
+       FROZEN COMMAND BAR
+       The hero collapses to a single pinned line: identity on the left, the
+       dates and conditions the cockpit is reading on the right. Pinning it
+       keeps the reporting basis visible while a module is being read.
+       ------------------------------------------------- */
+
+    /* Streamlit wraps every element in its own container, and that wrapper is
+       the sticky element's containing block: pinning .hud-hero itself only
+       pins it inside a 64px box that scrolls away with the page. The wrapper
+       has to be the sticky one, so it sticks within the tall vertical block. */
+    div[data-testid="stElementContainer"]:has(> .stHtml > .hud-hero) {
+        position: sticky;
+        top: 0;
+        z-index: 60;
+        /* The bar's own panel is notched at the corners and sits on a blur, so
+           the pinned wrapper carries the opaque ground; without it the page
+           scrolls visibly through the notches. */
+        background: #000000;
+        padding: 0.35rem 0 0.5rem;
+        margin-bottom: 1.1rem;
+        box-shadow: 0 10px 26px rgba(0, 0, 0, 0.85);
+    }
+
+    /* Content passing under the bar gets sliced mid-line at a hard edge; a
+       short fade lets it dissolve instead. */
+    div[data-testid="stElementContainer"]:has(> .stHtml > .hud-hero)::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        height: 1.1rem;
+        pointer-events: none;
+        background: linear-gradient(180deg, #000000, rgba(0, 0, 0, 0));
+    }
+
+    .hud-hero {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 0.75rem 1.5rem;
+        min-height: 0;
+        padding: 0.72rem 1.35rem;
+        margin: 0;
+        background: linear-gradient(105deg, #0a170d, #000000);
+        clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+        box-shadow:
+            inset 0 0 34px rgba(19, 172, 51, 0.045),
+            0 14px 34px rgba(0, 0, 0, 0.55);
+    }
+
+    /* The scanning line and the corner brackets belong to the tall hero and
+       only add noise at this height. */
+    .hud-hero::before,
+    .hud-hero::after {
+        content: none;
+    }
+
+    .hud-hero .system-kicker {
+        margin-bottom: 0;
+        white-space: nowrap;
+    }
+
+    .hud-hero .hero-status-row {
+        margin-top: 0;
+        gap: 0.5rem;
+    }
+
+    /* Streamlit paints its own translucent chrome over the first rows; the
+       bar has to clear it and the containers above must not clip the pin. */
+    header[data-testid="stHeader"] {
+        height: 2.6rem;
+    }
+
+    .block-container,
+    div[data-testid="stMainBlockContainer"],
+    div[data-testid="stAppViewBlockContainer"] {
+        padding-top: 2.1rem !important;
+    }
+
+    div[data-testid="stVerticalBlock"],
+    div[data-testid="stVerticalBlockBorderWrapper"],
+    div[data-testid="stElementContainer"] {
+        overflow: visible;
+    }
+
+    /* Scroll targets must clear the frozen bar rather than land under it. */
+    #module-output,
+    #radial-command {
+        scroll-margin-top: 5.5rem;
+    }
+
+    /* -------------------------------------------------
+       EXECUTIVE KPI HOVER — WHY / IMPACT / NEXT
+       ------------------------------------------------- */
+
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(var(--cards, 4), minmax(0, 1fr));
+        gap: 1rem;
+        margin-bottom: 1.4rem;
+    }
+
+    /* The card itself clips its own decoration, so the panel is a sibling in
+       an unclipped slot rather than a child. */
+    .kpi-slot {
+        position: relative;
+        outline: none;
+    }
+
+    .kpi-slot .kpi-card {
+        height: 100%;
+    }
+
+    .kpi-hint {
+        position: absolute;
+        top: 0.82rem;
+        right: 1rem;
+        color: rgba(19, 172, 51, 0.55);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+        opacity: 0;
+        transition: opacity 160ms ease;
+    }
+
+    .kpi-slot:hover .kpi-hint,
+    .kpi-slot:focus-visible .kpi-hint {
+        opacity: 1;
+    }
+
+    /* The hint stands in for the module code in the same corner. */
+    .kpi-slot:hover .kpi-card::after,
+    .kpi-slot:focus-visible .kpi-card::after {
+        opacity: 0;
+    }
+
+    .kpi-explain {
+        position: absolute;
+        top: calc(100% + 0.55rem);
+        left: 0;
+        z-index: 55;
+        width: max(100%, 340px);
+        padding: 1.05rem 1.15rem 1rem;
+        pointer-events: none;
+        opacity: 0;
+        transform: translateY(-6px);
+        background:
+            linear-gradient(150deg, rgb(10, 22, 13), rgb(0, 0, 0));
+        border: 1px solid rgba(19, 172, 51, 0.42);
+        clip-path: polygon(0 0, calc(100% - 16px) 0, 100% 16px, 100% 100%, 16px 100%, 0 calc(100% - 16px));
+        box-shadow:
+            inset 0 0 30px rgba(19, 172, 51, 0.05),
+            0 20px 46px rgba(0, 0, 0, 0.72);
+        transition: opacity 170ms ease, transform 170ms ease;
+    }
+
+    /* The last two panels would run off the right edge of the grid. */
+    .kpi-slot:nth-child(n + 3) .kpi-explain {
+        left: auto;
+        right: 0;
+    }
+
+    .kpi-slot:hover .kpi-explain,
+    .kpi-slot:focus-visible .kpi-explain {
+        opacity: 1;
+        transform: translateY(0);
+        pointer-events: auto;
+    }
+
+    /* Spans the gap to a panel that opens below, so the pointer can reach
+       its link without the hover dropping on the way. */
+    .kpi-row .kpi-slot:hover::after,
+    .domain-slot:hover::after {
+        content: "";
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: 100%;
+        height: 0.7rem;
+    }
+
+    .kpi-explain-head {
+        margin-bottom: 0.8rem;
+        padding-bottom: 0.55rem;
+        border-bottom: 1px solid rgba(19, 172, 51, 0.20);
+        color: var(--accent);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.58rem;
+        font-weight: 780;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+    }
+
+    .kpi-explain-row {
+        display: grid;
+        grid-template-columns: 58px minmax(0, 1fr);
+        gap: 0.7rem;
+        margin-bottom: 0.7rem;
+    }
+
+    .kpi-explain-tag {
+        padding-top: 0.08rem;
+        color: var(--accent);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.55rem;
+        font-weight: 780;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+    }
+
+    .kpi-explain-copy {
+        margin: 0;
+        color: #c2d2c6;
+        font-size: 0.775rem;
+        line-height: 1.5;
+    }
+
+    .kpi-explain-link {
+        display: inline-block;
+        margin-top: 0.25rem;
+        padding-top: 0.6rem;
+        border-top: 1px solid rgba(19, 172, 51, 0.16);
+        width: 100%;
+        color: var(--accent) !important;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.6rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        text-decoration: none !important;
+    }
+
+    .kpi-explain-link:hover {
+        color: #35d45c !important;
+    }
+
+    @media (max-width: 1180px) {
+        .kpi-row { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .kpi-slot:nth-child(even) .kpi-explain { left: auto; right: 0; }
+        .kpi-slot:nth-child(odd) .kpi-explain { left: 0; right: auto; }
+    }
+
+    @media (max-width: 700px) {
+        .kpi-row { grid-template-columns: 1fr; }
+        .kpi-explain { width: 100%; }
+        .hud-hero { position: static; }
     }
 
     @media (max-width: 900px) {
-        .hud-hero { padding: 1.15rem 1.25rem 1.25rem; }
+        .hud-hero { padding: 0.7rem 1.05rem; }
     }
+    /* ------------------------------------------------------------------
+       Dial sectors: one muted hue each — green / yellow / blue — so the
+       three sections read apart at a glance without the HUD going neon.
+       ------------------------------------------------------------------ */
+
+    .css-sector-brief {
+        background:
+            repeating-radial-gradient(circle, transparent 0 16px, rgba(126,186,142,0.055) 17px, transparent 18px 27px),
+            linear-gradient(180deg, rgba(31,84,47,0.94), rgba(11,18,13,0.98));
+    }
+
+    .css-sector-horizon {
+        background:
+            repeating-radial-gradient(circle, transparent 0 16px, rgba(206,183,109,0.055) 17px, transparent 18px 27px),
+            linear-gradient(135deg, rgba(17,19,14,0.98), rgba(107,88,30,0.88));
+    }
+
+    .css-sector-scenario {
+        background:
+            repeating-radial-gradient(circle, transparent 0 16px, rgba(133,171,212,0.055) 17px, transparent 18px 27px),
+            linear-gradient(225deg, rgba(29,60,92,0.94), rgba(13,20,27,0.97));
+    }
+
+    /* Hover and selection lift each sector in its own hue. */
+    .css-sector-brief:hover,
+    .css-sector-brief:focus-visible,
+    .css-sector-brief.is-active {
+        filter: brightness(1.16) saturate(1.10) drop-shadow(0 0 11px rgba(58,140,80,0.48));
+    }
+
+    .css-sector-horizon:hover,
+    .css-sector-horizon:focus-visible,
+    .css-sector-horizon.is-active {
+        filter: brightness(1.16) saturate(1.10) drop-shadow(0 0 11px rgba(176,148,58,0.44));
+    }
+
+    .css-sector-scenario:hover,
+    .css-sector-scenario:focus-visible,
+    .css-sector-scenario.is-active {
+        filter: brightness(1.16) saturate(1.10) drop-shadow(0 0 11px rgba(80,132,186,0.46));
+    }
+
+    .css-sector-brief::after { border-color: rgba(163,208,177,0.30); }
+    .css-sector-horizon::after { border-color: rgba(214,196,138,0.28); }
+    .css-sector-scenario::after { border-color: rgba(158,190,222,0.28); }
+
+    .css-sector-brief.is-active::after { border-color: rgba(186,224,197,0.78); }
+    .css-sector-horizon.is-active::after { border-color: rgba(226,209,150,0.74); }
+    .css-sector-scenario.is-active::after { border-color: rgba(176,205,233,0.76); }
+
+    /* Labels carry the same hue as the sector they name. */
+    .sector-label-brief .sector-metric-html { color: #6FB584; }
+    .sector-label-horizon .sector-metric-html { color: #C4A94F; }
+    .sector-label-scenario .sector-metric-html { color: #7FA9CE; }
+
+    .sector-label-brief .sector-title-html { text-shadow: 0 0 10px rgba(58,140,80,0.30); }
+    .sector-label-horizon .sector-title-html { text-shadow: 0 0 10px rgba(176,148,58,0.28); }
+    .sector-label-scenario .sector-title-html { text-shadow: 0 0 10px rgba(80,132,186,0.30); }
+
+    .sector-label-horizon.is-active,
+    .css-sector-horizon:hover ~ .sector-label-horizon,
+    .css-sector-horizon:focus-visible ~ .sector-label-horizon {
+        filter: brightness(1.20) drop-shadow(0 0 7px rgba(176,148,58,0.44));
+    }
+
+    .sector-label-scenario.is-active,
+    .css-sector-scenario:hover ~ .sector-label-scenario,
+    .css-sector-scenario:focus-visible ~ .sector-label-scenario {
+        filter: brightness(1.20) drop-shadow(0 0 7px rgba(80,132,186,0.46));
+    }
+
+    .sector-label-brief.is-active,
+    .css-sector-brief:hover ~ .sector-label-brief,
+    .css-sector-brief:focus-visible ~ .sector-label-brief {
+        filter: brightness(1.20) drop-shadow(0 0 7px rgba(58,140,80,0.46));
+    }
+
+    /* ------------------------------------------------------------------
+       Command-bar title as the way home.
+       ------------------------------------------------------------------ */
+
+    a.system-kicker.hero-home-link {
+        color: var(--accent) !important;
+        text-decoration: none !important;
+        cursor: pointer;
+        transition: color 160ms ease, text-shadow 160ms ease;
+    }
+
+    a.system-kicker.hero-home-link:hover,
+    a.system-kicker.hero-home-link:focus-visible {
+        color: #E6F5E9 !important;
+        text-shadow: 0 0 12px rgba(19,172,51,0.45);
+    }
+
+    a.system-kicker.hero-home-link::before {
+        transition: width 160ms ease;
+    }
+
+    a.system-kicker.hero-home-link:hover::before {
+        width: 38px;
+    }
+
+    .hero-home-glyph {
+        margin-right: 0.4rem;
+        font-size: 0.9rem;
+        line-height: 1;
+    }
+
+    /* -------------------------------------------------
+       DOMAIN GRID / MORNING BRIEF EXECUTIVE VIEW
+       ------------------------------------------------- */
+
+    .domain-grid {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.9rem;
+        margin: 0.9rem 0 1.4rem;
+    }
+
+    .domain-panel {
+        position: relative;
+        min-width: 0;
+        padding: 1.05rem 1.1rem 1.1rem;
+        color: #CAD9CD;
+        background:
+            linear-gradient(150deg, rgba(12,17,14,0.96), rgba(7,10,8,0.94)),
+            radial-gradient(circle at 100% 0%, rgba(19,172,51,0.10), transparent 46%);
+        border: 1px solid rgba(19,172,51,0.22);
+    }
+
+    .domain-panel::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 34%;
+        height: 2px;
+        background: linear-gradient(90deg, #13AC33, rgba(19,172,51,0));
+        pointer-events: none;
+    }
+
+    .domain-panel-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.8rem;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.52rem;
+        font-weight: 700;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .domain-panel-code { color: #13AC33; }
+    .domain-panel-metrics { color: #5C7D64; text-align: right; }
+
+    .domain-panel-title {
+        margin: 0.42rem 0 0.72rem;
+        padding-bottom: 0.6rem;
+        color: #E6F5E9;
+        font-size: 1.12rem;
+        font-weight: 750;
+        letter-spacing: -0.01em;
+        border-bottom: 1px solid rgba(19,172,51,0.16);
+    }
+
+    .domain-panel-body {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.5rem;
+    }
+
+    /* --- The KPI tile ------------------------------------------ */
+
+    .domain-tile {
+        position: relative;
+        min-width: 0;
+        padding: 0.62rem 0.7rem 0.68rem;
+        background: rgba(19,172,51,0.028);
+        border: 1px solid rgba(19,172,51,0.16);
+        cursor: pointer;
+        outline: none;
+        transition: border-color .16s ease, background .16s ease, transform .16s ease;
+    }
+
+    .domain-tile:hover,
+    .domain-tile:focus,
+    .domain-tile:focus-within {
+        background: rgba(19,172,51,0.07);
+        border-color: rgba(19,172,51,0.52);
+        transform: translateY(-1px);
+    }
+
+    .domain-tile-top {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.5rem;
+    }
+
+    .domain-tile-label {
+        color: #9FBFA7;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.53rem;
+        font-weight: 700;
+        letter-spacing: 0.13em;
+        text-transform: uppercase;
+    }
+
+    .domain-tile-code {
+        flex: none;
+        color: #45624C;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.47rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .domain-tile-value {
+        margin: 0.22rem 0 0.18rem;
+        color: #E6F5E9;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 1.62rem;
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.02em;
+    }
+
+    .domain-tile-delta {
+        display: flex;
+        align-items: center;
+        gap: 0.34rem;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.58rem;
+        font-weight: 700;
+        letter-spacing: 0.03em;
+    }
+
+    .domain-tile-dot {
+        width: 5px;
+        height: 5px;
+        flex: none;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 7px currentColor;
+    }
+
+    .domain-tile.tone-is-up .domain-tile-delta { color: #13AC33; }
+    .domain-tile.tone-is-down .domain-tile-delta { color: #FFCB66; }
+    .domain-tile.tone-is-flat .domain-tile-delta { color: #7CA687; }
+
+    .domain-tile-why {
+        margin-top: 0.42rem;
+        color: #7E9E86;
+        font-size: 0.62rem;
+        line-height: 1.44;
+    }
+
+    .domain-tile-why span {
+        margin-right: 0.32rem;
+        color: #13AC33;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.5rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .domain-tile-more {
+        display: block;
+        margin-top: 0.46rem;
+        color: #3F5A46;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.47rem;
+        font-weight: 700;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        text-align: right;
+        transition: color .16s ease;
+    }
+
+    .domain-tile:hover .domain-tile-more,
+    .domain-tile:focus .domain-tile-more,
+    .domain-tile:focus-within .domain-tile-more { color: #13AC33; }
+
+    /* --- The hover slot ---------------------------------------- */
+
+    /* Each tile sits in a kpi-slot, so its reading opens over the page like
+       the home KPIs rather than in a stage reserved inside the panel. */
+    .domain-slot { min-width: 0; }
+    .domain-slot .domain-tile { height: 100%; }
+
+    .domain-slot:hover .domain-tile,
+    .domain-slot:focus-visible .domain-tile {
+        background: rgba(19,172,51,0.07);
+        border-color: rgba(19,172,51,0.52);
+    }
+
+    .domain-slot:hover .domain-tile-more,
+    .domain-slot:focus-visible .domain-tile-more { color: #13AC33; }
+
+    @media (max-width: 1200px) {
+        .domain-grid { grid-template-columns: 1fr; }
+    }
+
+    @media (max-width: 620px) {
+        .domain-panel-body { grid-template-columns: 1fr; }
+    }
+
+    /* -------------------------------------------------
+       RADIAL DIAL / SOLO LAYOUT
+       ------------------------------------------------- */
+
+    .system-grid.is-solo {
+        grid-template-columns: minmax(0, 1fr) !important;
+        justify-items: center;
+    }
+
+    .system-grid.is-solo .dial-viewport {
+        width: 100%;
+        max-width: 880px;
+    }
+
+    @media (max-width: 1120px) {
+        .system-grid.is-solo {
+            grid-template-columns: minmax(0, 1fr) !important;
+        }
+    }
+
+    /* -------------------------------------------------
+       ONE-SCREEN HOME
+       KPIs left, dial centre, lenses right — sized off the viewport height
+       so the whole overview reads without scrolling.
+       ------------------------------------------------- */
+
+    .block-container,
+    div[data-testid="stMainBlockContainer"] {
+        padding-bottom: 0.6rem !important;
+    }
+
+    div[data-testid="stElementContainer"]:has(> .stHtml > .hud-hero) {
+        margin-bottom: 0.2rem;
+        padding-bottom: 0.3rem;
+    }
+
+    .home-stage {
+        --stage-h: max(500px, calc(100vh - 10.6rem));
+        display: grid;
+        grid-template-columns: minmax(240px, 1fr) minmax(0, 1.6fr) minmax(240px, 1fr);
+        align-items: stretch;
+        gap: 1.1rem;
+        height: var(--stage-h);
+    }
+
+    .home-left,
+    .home-right {
+        display: grid;
+        grid-template-rows: repeat(4, minmax(0, 1fr));
+        gap: 0.62rem;
+        min-height: 0;
+    }
+
+    .home-center {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 0;
+        min-height: 0;
+    }
+
+    /* The dial's frame, without the margins and the tall grid it had when it
+       sat alone on the page. */
+    .home-center .integrated-system {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0.4rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .home-center .system-grid,
+    .home-center .system-grid.is-solo {
+        min-height: 0;
+        width: 100%;
+    }
+
+    .home-center .command-dial-html {
+        width: min(100%, calc(var(--stage-h) - 1.4rem), 660px);
+    }
+
+    /* --- Left: the executive KPI cards ------------------------ */
+
+    .home-left .kpi-slot { min-height: 0; }
+
+    .home-left .kpi-card {
+        min-height: 0;
+        height: 100%;
+        padding: 0.72rem 1rem 0.7rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+    }
+
+    .home-left .kpi-label { margin-bottom: 0.3rem; font-size: 0.6rem; }
+    .home-left .kpi-value { font-size: clamp(1.45rem, 2.1vw, 2.05rem); }
+    .home-left .executive-delta { margin-top: 0.3rem; font-size: 0.64rem; }
+    .home-left .executive-context { margin-top: 0.18rem; font-size: 0.62rem; line-height: 1.3; }
+    .home-left .kpi-badges { margin-top: 0.42rem; }
+
+    /* The explanation opens to the right, over the dial, instead of below. */
+    .home-left .kpi-explain,
+    .home-left .kpi-slot:nth-child(n + 3) .kpi-explain {
+        top: 0;
+        bottom: auto;
+        left: calc(100% + 0.7rem);
+        right: auto;
+        width: 380px;
+        transform: translateX(-6px);
+    }
+
+    .home-left .kpi-slot:nth-child(n + 3) .kpi-explain {
+        top: auto;
+        bottom: 0;
+    }
+
+    .home-left .kpi-slot:hover .kpi-explain,
+    .home-left .kpi-slot:focus-visible .kpi-explain {
+        transform: translateX(0);
+    }
+
+    /* --- Right: the intelligence lenses ----------------------- */
+
+    .home-right .lens-box {
+        height: 100%;
+        min-height: 0;
+        padding: 0.7rem 0.95rem;
+        grid-template-columns: 38px minmax(0, 1fr);
+        align-items: center;
+    }
+
+    .lens-metric {
+        display: block;
+        margin-top: 0.28rem;
+        color: #E6F5E9;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: clamp(0.82rem, 1.05vw, 1rem);
+        font-weight: 650;
+        letter-spacing: -0.01em;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .home-right .dock-metric {
+        margin-top: 0.18rem;
+        font-size: 0.56rem;
+        white-space: normal;
+        color: #5F8B69;
+    }
+
+    .home-right .kpi-badges { margin-top: 0.42rem; }
+
+    @media (max-height: 760px) {
+        .home-left .executive-context,
+        .home-right .dock-metric { display: none; }
+    }
+
+    @media (max-width: 1100px) {
+        .home-stage {
+            height: auto;
+            grid-template-columns: 1fr 1fr;
+        }
+        .home-center { grid-column: 1 / -1; order: -1; }
+        .home-center .command-dial-html { width: min(100%, 560px); }
+        .home-left .kpi-explain,
+        .home-left .kpi-slot:nth-child(n + 3) .kpi-explain {
+            top: calc(100% + 0.5rem); bottom: auto; left: 0; width: 100%;
+        }
+    }
+
+    @media (max-width: 700px) {
+        .home-stage { grid-template-columns: 1fr; }
+    }
+
+    .system-footer {
+        margin-top: 0;
+        padding-top: 0.4rem;
+    }
+
+    /* -------------------------------------------------
+       RAG AND CONFIDENCE
+       RAG is the traffic light on a metric; confidence is the violet bar
+       gauge on a prediction, so the two never read as the same signal.
+       ------------------------------------------------- */
+
+    .kpi-badges {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        gap: 0.35rem;
+        margin-top: 0.6rem;
+    }
+
+    .rag-badge,
+    .conf-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.34rem;
+        padding: 0.16rem 0.46rem;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.52rem;
+        font-weight: 760;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        white-space: nowrap;
+        border: 1px solid;
+        line-height: 1.35;
+        vertical-align: middle;
+    }
+
+    .rag-dot {
+        width: 7px;
+        height: 7px;
+        flex: none;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 7px currentColor;
+    }
+
+    .rag-green { color: #2BD155; border-color: rgba(43,209,85,0.45); background: rgba(43,209,85,0.08); }
+    .rag-amber { color: #FFCB66; border-color: rgba(255,203,102,0.45); background: rgba(255,203,102,0.08); }
+    .rag-red { color: #FF5D7A; border-color: rgba(255,93,122,0.5); background: rgba(255,93,122,0.09); }
+
+    .rag-rule {
+        margin-left: 0.5rem;
+        color: #7E9E86;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.6rem;
+    }
+
+    .rag-copy { display: flex; flex-wrap: wrap; align-items: center; gap: 0.2rem 0; }
+
+    /* The card's accent bar takes the RAG colour. */
+    .kpi-card:has(.rag-green)::before { background: linear-gradient(90deg, #2BD155, transparent); box-shadow: 0 0 12px rgba(43,209,85,0.5); }
+    .kpi-card:has(.rag-amber)::before { background: linear-gradient(90deg, #FFCB66, transparent); box-shadow: 0 0 12px rgba(255,203,102,0.5); }
+    .kpi-card:has(.rag-red)::before { background: linear-gradient(90deg, #FF5D7A, transparent); box-shadow: 0 0 12px rgba(255,93,122,0.55); }
+
+    .conf-badge {
+        color: #C9B0FF;
+        border-color: rgba(184,140,255,0.42);
+        background: rgba(184,140,255,0.08);
+        cursor: help;
+    }
+
+    .conf-bars {
+        display: inline-flex;
+        align-items: flex-end;
+        gap: 2px;
+        height: 9px;
+    }
+
+    .conf-bars i {
+        display: block;
+        width: 3px;
+        background: rgba(184,140,255,0.25);
+    }
+
+    .conf-bars i:nth-child(1) { height: 4px; }
+    .conf-bars i:nth-child(2) { height: 6.5px; }
+    .conf-bars i:nth-child(3) { height: 9px; }
+
+    .conf-low .conf-bars i:nth-child(1),
+    .conf-medium .conf-bars i:nth-child(-n + 2),
+    .conf-high .conf-bars i { background: #C9B0FF; box-shadow: 0 0 5px rgba(184,140,255,0.6); }
+
+    .conf-low { color: #A98ED8; border-style: dashed; }
+
+    .conf-basis {
+        display: block;
+        flex-basis: 100%;
+        margin-top: 0.3rem;
+        color: #8F83AE;
+        font-size: 0.6rem;
+        line-height: 1.4;
+    }
+
+    .kpi-value-name { font-size: clamp(1.25rem, 2vw, 1.7rem) !important; }
+
+    .legend-band {
+        width: 25px;
+        height: 10px;
+        display: inline-block;
+        background: rgba(184,140,255,0.22);
+        border: 1px solid rgba(184,140,255,0.35);
+    }
+
+    /* A strip box styles its last span as the description; the confidence
+       badge now sits after it, so the description is named explicitly. */
+    .decision-strip-item strong + span {
+        color: #759d7f;
+        font-size: .68rem;
+        line-height: 1.42;
+    }
+
+    .decision-strip-item span.conf-badge {
+        color: #C9B0FF;
+        font-size: 0.52rem;
+        line-height: 1.35;
+    }
+
+    .scenario-impact-cell .conf-badge,
+    .decision-strip-item .conf-badge,
+    .feature-callout .conf-badge,
+    .forward-lens-value .conf-badge { margin-top: 0.4rem; }
+
+    .forward-lens-value .conf-badge { margin: 0 0.3rem 0.3rem 0; }
+
+    /* -------------------------------------------------
+       SECTION WINDOW
+       Streamlit's dialog, dressed as a HUD panel and widened so a full
+       section fits. The ✕ sits top right.
+       ------------------------------------------------- */
+
+    div[data-testid="stDialog"] {
+        background: rgba(0, 0, 0, 0.72) !important;
+        backdrop-filter: blur(3px);
+    }
+
+    div[data-testid="stDialog"] div[role="dialog"] {
+        width: min(96vw, 1580px) !important;
+        max-width: 96vw !important;
+        margin-top: -1rem;
+        color: var(--text);
+        background:
+            linear-gradient(150deg, rgba(11,17,13,0.99), rgba(3,5,4,0.99)) !important;
+        border: 1px solid rgba(19,172,51,0.38) !important;
+        border-radius: 0 !important;
+        box-shadow: 0 30px 90px rgba(0,0,0,0.85), inset 0 0 60px rgba(19,172,51,0.04);
+    }
+
+    div[data-testid="stDialog"] div[role="dialog"]::before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 30%;
+        height: 2px;
+        background: linear-gradient(90deg, #13AC33, transparent);
+        box-shadow: 0 0 12px rgba(19,172,51,0.6);
+    }
+
+    div[data-testid="stDialog"] div[role="dialog"] > div:first-of-type,
+    div[data-testid="stDialog"] h2 {
+        color: #E6F5E9;
+        font-weight: 700;
+        letter-spacing: 0.01em;
+    }
+
+    div[data-testid="stDialog"] button[aria-label="Close"] {
+        color: #13AC33 !important;
+        border: 1px solid rgba(19,172,51,0.45) !important;
+        border-radius: 0 !important;
+        background: rgba(19,172,51,0.06) !important;
+        transition: color 150ms ease, background 150ms ease;
+    }
+
+    div[data-testid="stDialog"] button[aria-label="Close"]:hover {
+        color: #E6F5E9 !important;
+        background: rgba(19,172,51,0.2) !important;
+    }
+
+    .window-subtitle {
+        margin: -0.6rem 0 0.4rem;
+        color: #6D9878;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.64rem;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+    }
+
+    /* -------------------------------------------------
+       MORNING BRIEF — NEWS LEFT, CHANGES RIGHT
+       Internal news is framed gold, external news blue.
+       ------------------------------------------------- */
+
+    .brief-column-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.8rem;
+        margin-bottom: 0.55rem;
+    }
+
+    .brief-column-head .section-title { margin: 0; }
+
+    .brief-column-note,
+    .feed-legend {
+        color: #5C7D64;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.55rem;
+        font-weight: 700;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+    }
+
+    .feed-legend { display: inline-flex; gap: 0.6rem; }
+
+    .feed-key { display: inline-flex; align-items: center; gap: 0.3rem; }
+    .feed-key::before { content: ""; width: 12px; height: 8px; border: 2px solid; }
+    .feed-key.is-internal { color: #D9B85C; }
+    .feed-key.is-external { color: #7FB0DA; }
+
+    .feed-frame {
+        --frame: #D9B85C;
+        --frame-soft: rgba(217,184,92,0.30);
+        --frame-wash: rgba(217,184,92,0.05);
+        position: relative;
+        margin-bottom: 0.85rem;
+        padding: 0.7rem 0.8rem 0.35rem;
+        background: linear-gradient(160deg, var(--frame-wash), rgba(4,6,5,0.6));
+        border: 1px solid var(--frame-soft);
+        border-left: 3px solid var(--frame);
+    }
+
+    .feed-frame.is-external {
+        --frame: #7FB0DA;
+        --frame-soft: rgba(127,176,218,0.32);
+        --frame-wash: rgba(127,176,218,0.05);
+    }
+
+    .feed-frame-head {
+        display: flex;
+        align-items: baseline;
+        justify-content: space-between;
+        gap: 0.6rem;
+        padding-bottom: 0.45rem;
+        margin-bottom: 0.2rem;
+        border-bottom: 1px solid var(--frame-soft);
+    }
+
+    .feed-frame-title {
+        color: var(--frame);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.66rem;
+        font-weight: 780;
+        letter-spacing: 0.16em;
+        text-transform: uppercase;
+    }
+
+    .feed-frame-note {
+        color: #6C7F73;
+        font-size: 0.6rem;
+        text-align: right;
+    }
+
+    .feed-item {
+        padding: 0.58rem 0 0.6rem;
+        border-top: 1px solid rgba(255,255,255,0.05);
+    }
+
+    .feed-item:first-of-type { border-top: 0; }
+
+    .feed-item-top {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 0.45rem;
+        margin-bottom: 0.28rem;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.53rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .feed-tag {
+        padding: 0.1rem 0.36rem;
+        color: var(--frame);
+        border: 1px solid var(--frame-soft);
+    }
+
+    .feed-date { color: #7E9E86; }
+
+    .feed-status {
+        margin-left: auto;
+        color: #7E9E86;
+    }
+
+    .feed-status.status-open { color: #FFCB66; }
+    .feed-status.status-certified { color: #2BD155; }
+    .feed-status.status-impact-high { color: #FF5D7A; }
+    .feed-status.status-impact-medium { color: #FFCB66; }
+    .feed-status.status-impact-low { color: #2BD155; }
+
+    .feed-headline {
+        color: #E6F5E9;
+        font-size: 0.8rem;
+        font-weight: 650;
+        line-height: 1.35;
+    }
+
+    .feed-detail {
+        margin-top: 0.22rem;
+        color: #9DB5A4;
+        font-size: 0.7rem;
+        line-height: 1.45;
+    }
+
+    .feed-detail strong {
+        margin-right: 0.3rem;
+        color: var(--frame);
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.55rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .feed-source {
+        margin-top: 0.25rem;
+        color: #5E7465;
+        font-family: "Cascadia Mono", Consolas, monospace;
+        font-size: 0.52rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+    }
+
+    .feed-foot {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 0.6rem;
+        margin-top: 0.4rem;
+    }
+
+    .feed-empty { padding: 0.6rem 0; color: #6C7F73; font-size: 0.7rem; }
+
+    /* The domain grid in the brief's right column: one domain per row, its
+       tiles side by side, and a stage tall enough for the RAG line. */
+    .brief-domain-grid {
+        grid-template-columns: 1fr;
+        gap: 0.7rem;
+        margin: 0 0 1rem;
+    }
+
+    .brief-domain-grid .domain-panel { padding: 0.8rem 0.9rem 0.85rem; }
+
+    .brief-domain-grid .domain-panel-head {
+        align-items: baseline;
+        margin-bottom: 0.55rem;
+        padding-bottom: 0.45rem;
+        border-bottom: 1px solid rgba(19,172,51,0.16);
+    }
+
+    .brief-domain-grid .domain-panel-title {
+        margin: 0;
+        padding: 0;
+        border: 0;
+        font-size: 0.98rem;
+        text-transform: none;
+        letter-spacing: -0.01em;
+        font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    /* One column per tile in the domain, so a three-tile domain has no gap. */
+    .brief-domain-grid .domain-panel-body {
+        grid-template-columns: repeat(var(--tiles, 3), minmax(0, 1fr));
+    }
+
+    @media (max-width: 900px) {
+        .brief-domain-grid .domain-panel-body { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        .brief-domain-grid .kpi-slot:nth-child(even) .kpi-explain { left: auto; right: 0; }
+        .brief-domain-grid .kpi-slot:nth-child(odd) .kpi-explain { left: 0; right: auto; }
+    }
+
+
+    .domain-tile-rag { margin-top: 0.38rem; }
 </style>
 """
